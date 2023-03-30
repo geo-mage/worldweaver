@@ -1,0 +1,85 @@
+import geopandas as g
+from mage_procgen.Utils.Utils import RenderingData, GeoData
+from shapely.geometry import MultiPolygon
+
+# Maybe this souldn't have like 10 subtypes, but it should take raw data and conf as input, and output a set of sorted, cleaned up and tagged data
+# So it has to hold literally everything, and cross-check if plot x touches object y to caracterise it.
+
+
+class Preprocessor:
+
+    _window_threshold = 1e-2
+    _minimal_size = 20
+
+    def __init__(self, geo_data, geowindow, crs):
+        self.geo_data = geo_data
+        self.window = geowindow.to_dataframe() #.to_crs(crs)
+        self.crs = crs
+
+    def process(self):
+
+        # First pass: selection
+        print("Selecting regions")
+        # Plots
+        new_plots = self.geo_data.plots.overlay(self.window, how="intersection", keep_geom_type=True)
+        print("Plots selected")
+
+        # Buildings
+        new_buildings = self.geo_data.buildings.overlay(self.window, how="intersection", keep_geom_type=True)
+        print("Buildings selected")
+
+        # Forests
+        new_forests = self.geo_data.forests.overlay(self.window, how="intersection", keep_geom_type=True)
+        print("Forests selected")
+
+        # Residential Areas
+        # TODO
+
+        # Water
+        # TODO
+
+        # Roads
+        # TODO
+
+        #TODO: find if needed. would prob be useful to split this function
+        new_geo_data = GeoData(new_plots, new_buildings, new_forests)
+        print("Selection done")
+
+        # Second pass: processing
+        print("Processing")
+        #TODO: need to take into account polygons with holes
+        #TODO For now just pass the lists of geom, tagging will be handled later
+
+        # Forests can intersect buildings, which we don't want
+        cleaned_forests = new_forests.overlay(new_buildings, how="difference", keep_geom_type=True)
+        forests_geom = Preprocessor.extract_geom(cleaned_forests.geometry)
+
+        # Plots can either be forests, gardens or fields. We need to eliminate the forests, and distinguish between gardens and fields
+        #TODO: add road distinction. add case for "field inside residential", which should be more or less a garden
+        non_forest_plots = new_plots.overlay(new_forests, how="difference", keep_geom_type=True)
+        plot_building_inters = new_plots.overlay(new_buildings, how="intersection", keep_geom_type=True)
+        gardens = new_plots.query("IDU in @plot_building_inters.IDU.values")
+        fields = non_forest_plots.query("IDU not in @plot_building_inters.IDU.values")
+        fields_geom = Preprocessor.extract_geom(fields.geometry)
+        gardens_geom = Preprocessor.extract_geom(gardens.geometry)
+
+        buildings_geom = Preprocessor.extract_geom(new_buildings.geometry)
+
+        rendering_data = RenderingData(fields_geom, forests_geom, gardens_geom, buildings_geom)
+
+        return rendering_data
+
+    @staticmethod
+    def extract_geom(geometry_list):
+
+        to_return = []
+        for x in geometry_list:
+            # If it's a multipolygon, it has multiple polygons inside of it that we need to separate for later
+            if type(x) == MultiPolygon:
+                for y in x.geoms:
+                    to_return.append(y)
+            else:
+                to_return.append(x)
+
+        return to_return
+
