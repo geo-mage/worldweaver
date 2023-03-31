@@ -7,37 +7,46 @@ from tqdm import tqdm
 
 
 class BaseRenderer:
-
     _GNSetup = ""
     _GNFile = ""
     _AssetsFolder = "Assets"
     _mesh_name = ""
 
     def __init__(self):
-        _location = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
-        filepath = os.path.realpath(os.path.join(_location, "..", self._AssetsFolder, self._GNFile))
+        _location = os.path.realpath(
+            os.path.join(os.getcwd(), os.path.dirname(__file__))
+        )
+        filepath = os.path.realpath(
+            os.path.join(_location, "..", self._AssetsFolder, self._GNFile)
+        )
         try:
             with bpy.data.libraries.load(filepath) as (data_from, data_to):
                 data_to.node_groups = [self._GNSetup]
         except Exception as _:
             raise Exception(
-                "Unable to load the Geometry Nodes setup with tha name \"" + self._GNSetup + "\"" + \
-                "from the file " + filepath
+                'Unable to load the Geometry Nodes setup with tha name "'
+                + self._GNSetup
+                + '"'
+                + "from the file "
+                + filepath
             )
 
-        #TODO: Understand following comment:
+        # TODO: Understand following comment:
 
         # A Geometry Nodes setup with name <self.gnSetup2d> may alredy exist.
         # That's why following line
         self.gnSetup2d = data_to.node_groups[0].name
 
     def render(self, polygons, geo_center):
-
         mesh = bmesh.new()
 
         for polygon in tqdm(polygons):
             # Kind of hack because Polygon.coords is not implemented
-            points_coords = [(x[0], x[1], 0) for x in mapping(polygon)["coordinates"][0]]
+            polygon_geometry = mapping(polygon)["coordinates"]
+            points_coords = [
+                (x[0], x[1], 0) for x in polygon_geometry[0]
+            ]
+
             face = mesh.faces.new(mesh.verts.new(x) for x in points_coords)
 
         mesh_name = self._mesh_name

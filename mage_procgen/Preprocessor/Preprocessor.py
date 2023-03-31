@@ -7,29 +7,33 @@ from shapely.geometry import MultiPolygon
 
 
 class Preprocessor:
-
     _window_threshold = 1e-2
     _minimal_size = 20
 
     def __init__(self, geo_data, geowindow, crs):
         self.geo_data = geo_data
-        self.window = geowindow.to_dataframe() #.to_crs(crs)
+        self.window = geowindow.to_dataframe()  # .to_crs(crs)
         self.crs = crs
 
     def process(self):
-
         # First pass: selection
         print("Selecting regions")
         # Plots
-        new_plots = self.geo_data.plots.overlay(self.window, how="intersection", keep_geom_type=True)
+        new_plots = self.geo_data.plots.overlay(
+            self.window, how="intersection", keep_geom_type=True
+        )
         print("Plots selected")
 
         # Buildings
-        new_buildings = self.geo_data.buildings.overlay(self.window, how="intersection", keep_geom_type=True)
+        new_buildings = self.geo_data.buildings.overlay(
+            self.window, how="intersection", keep_geom_type=True
+        )
         print("Buildings selected")
 
         # Forests
-        new_forests = self.geo_data.forests.overlay(self.window, how="intersection", keep_geom_type=True)
+        new_forests = self.geo_data.forests.overlay(
+            self.window, how="intersection", keep_geom_type=True
+        )
         print("Forests selected")
 
         # Residential Areas
@@ -41,23 +45,29 @@ class Preprocessor:
         # Roads
         # TODO
 
-        #TODO: find if needed. would prob be useful to split this function
+        # TODO: find if needed. would prob be useful to split this function
         new_geo_data = GeoData(new_plots, new_buildings, new_forests)
         print("Selection done")
 
         # Second pass: processing
         print("Processing")
-        #TODO: need to take into account polygons with holes
-        #TODO For now just pass the lists of geom, tagging will be handled later
+        # TODO: need to take into account polygons with holes
+        # TODO For now just pass the lists of geom, tagging will be handled later
 
         # Forests can intersect buildings, which we don't want
-        cleaned_forests = new_forests.overlay(new_buildings, how="difference", keep_geom_type=True)
+        cleaned_forests = new_forests.overlay(
+            new_buildings, how="difference", keep_geom_type=True
+        )
         forests_geom = Preprocessor.extract_geom(cleaned_forests.geometry)
 
         # Plots can either be forests, gardens or fields. We need to eliminate the forests, and distinguish between gardens and fields
-        #TODO: add road distinction. add case for "field inside residential", which should be more or less a garden
-        non_forest_plots = new_plots.overlay(new_forests, how="difference", keep_geom_type=True)
-        plot_building_inters = new_plots.overlay(new_buildings, how="intersection", keep_geom_type=True)
+        # TODO: add road distinction. add case for "field inside residential", which should be more or less a garden
+        non_forest_plots = new_plots.overlay(
+            new_forests, how="difference", keep_geom_type=True
+        )
+        plot_building_inters = new_plots.overlay(
+            new_buildings, how="intersection", keep_geom_type=True
+        )
         gardens = new_plots.query("IDU in @plot_building_inters.IDU.values")
         fields = non_forest_plots.query("IDU not in @plot_building_inters.IDU.values")
         fields_geom = Preprocessor.extract_geom(fields.geometry)
@@ -65,13 +75,14 @@ class Preprocessor:
 
         buildings_geom = Preprocessor.extract_geom(new_buildings.geometry)
 
-        rendering_data = RenderingData(fields_geom, forests_geom, gardens_geom, buildings_geom)
+        rendering_data = RenderingData(
+            fields_geom, forests_geom, gardens_geom, buildings_geom
+        )
 
         return rendering_data
 
     @staticmethod
     def extract_geom(geometry_list):
-
         to_return = []
         for x in geometry_list:
             # If it's a multipolygon, it has multiple polygons inside of it that we need to separate for later
@@ -82,4 +93,3 @@ class Preprocessor:
                 to_return.append(x)
 
         return to_return
-

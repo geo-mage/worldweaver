@@ -10,11 +10,14 @@ def main():
     print("Loading shp files")
 
     plot_data = parser.load(
-        "/home/verstraa/Work/maps/PARCELLAIRE_EXPRESS/PARCELLAIRE_EXPRESS/1_DONNEES_LIVRAISON_2022-11-00045/PEPCI_1-1_SHP_LAMB93_D077/PARCELLE.SHP")
+        "/home/verstraa/Work/maps/PARCELLAIRE_EXPRESS/PARCELLAIRE_EXPRESS/1_DONNEES_LIVRAISON_2022-11-00045/PEPCI_1-1_SHP_LAMB93_D077/PARCELLE.SHP"
+    )
     building_data = parser.load(
-        "/home/verstraa/Work/maps/PARCELLAIRE_EXPRESS/PARCELLAIRE_EXPRESS/1_DONNEES_LIVRAISON_2022-11-00045/PEPCI_1-1_SHP_LAMB93_D077/BATIMENT.SHP")
+        "/home/verstraa/Work/maps/PARCELLAIRE_EXPRESS/PARCELLAIRE_EXPRESS/1_DONNEES_LIVRAISON_2022-11-00045/PEPCI_1-1_SHP_LAMB93_D077/BATIMENT.SHP"
+    )
     forest_data = parser.load(
-        "/home/verstraa/Work/maps/BDTOPO/BDTOPO/1_DONNEES_LIVRAISON_2022-12-00159/BDT_3-3_SHP_LAMB93_D077-ED2022-12-15/OCCUPATION_DU_SOL/ZONE_DE_VEGETATION.shp")
+        "/home/verstraa/Work/maps/BDTOPO/BDTOPO/1_DONNEES_LIVRAISON_2022-12-00159/BDT_3-3_SHP_LAMB93_D077-ED2022-12-15/OCCUPATION_DU_SOL/ZONE_DE_VEGETATION.shp"
+    )
 
     geo_data = GeoData(plot_data, building_data, forest_data)
 
@@ -49,11 +52,5 @@ def main():
     print("Buildings rendered")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
-
-
-
-
-
-
