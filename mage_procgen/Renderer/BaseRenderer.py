@@ -4,6 +4,8 @@ from bpy import data as D, context as C, ops as O
 import bmesh
 from shapely.geometry import mapping
 from tqdm import tqdm
+import math
+from collections import deque
 
 
 class BaseRenderer:
@@ -43,9 +45,14 @@ class BaseRenderer:
         for polygon in tqdm(polygons):
             # Kind of hack because Polygon.coords is not implemented
             polygon_geometry = mapping(polygon)["coordinates"]
-            points_coords = [
-                (x[0], x[1], 0) for x in polygon_geometry[0]
-            ]
+            points_coords = [(x[0], x[1], 0) for x in polygon_geometry[0]]
+
+            if len(polygon_geometry) > 1:
+                # If there are holes
+                for hole in polygon_geometry[1:]:
+                    points_coords_hole = [(x[0], x[1], 0) for x in hole]
+
+                    points_coords = self.insert_hole(points_coords, points_coords_hole)
 
             face = mesh.faces.new(mesh.verts.new(x) for x in points_coords)
 
@@ -65,3 +72,43 @@ class BaseRenderer:
 
         m = mesh_obj.modifiers.new("", "NODES")
         m.node_group = D.node_groups[self._GNSetup]
+
+    def insert_hole(self, points_coords, points_coords_hole):
+        min_dist = math.inf
+        closest_pt_poly = None
+        closest_pt_hole = None
+
+        # Last point is always repeated to close the polygon/hole
+        unique_points_coords = points_coords[:-1]
+        unique_points_coords_hole = points_coords_hole[:-1]
+
+        # Finding the closest distance between the poly and the hole, and associated points
+        for pt_poly in unique_points_coords:
+            for pt_hole in unique_points_coords_hole:
+                distance = math.dist(pt_poly, pt_hole)
+                if distance < min_dist:
+                    min_dist = distance
+                    closest_pt_poly = pt_poly
+                    closest_pt_hole = pt_hole
+
+        # Making the closest point of the hole the first in the list
+        rotation_index = -unique_points_coords_hole.index(closest_pt_hole)
+        deq = deque(unique_points_coords_hole)
+        deq.rotate(rotation_index)
+        rotated_hole = list(deq)
+
+        # Splitting the orignal polygon at the correct index
+        insertion_index = unique_points_coords.index(closest_pt_poly) + 1
+        poly_first_part = unique_points_coords[:insertion_index]
+        poly_second_part = unique_points_coords[insertion_index:]
+
+        # Fusing the polygon with the hole
+        toreturn = []
+        toreturn.extend(poly_first_part)
+        toreturn.extend(rotated_hole)
+        toreturn.append(closest_pt_hole)
+        toreturn.append(closest_pt_poly)
+        toreturn.extend(poly_second_part)
+        toreturn.append(poly_first_part[0])
+
+        return toreturn

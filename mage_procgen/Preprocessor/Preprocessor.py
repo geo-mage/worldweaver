@@ -51,7 +51,13 @@ class Preprocessor:
 
         # Second pass: processing
         print("Processing")
-        # TODO: need to take into account polygons with holes
+        # TODO: need to take into account polygons with holes. 2 possibilities:
+        #   - Holes are faces, we extrude them and bool with the base face
+        #   - We find the closest segment between the hole and the hull, and we use it to insert the hole here
+        #   like in https://blender.stackexchange.com/a/33325
+        #   => tried a first version with the "closest segment" approach.
+        #   Need to be vigilant to artifacts that might appear in certain cases (holes added in the "wrong" order)
+
         # TODO For now just pass the lists of geom, tagging will be handled later
 
         # Forests can intersect buildings, which we don't want
@@ -70,6 +76,7 @@ class Preprocessor:
         )
         gardens = new_plots.query("IDU in @plot_building_inters.IDU.values")
         fields = non_forest_plots.query("IDU not in @plot_building_inters.IDU.values")
+
         fields_geom = Preprocessor.extract_geom(fields.geometry)
         gardens_geom = Preprocessor.extract_geom(gardens.geometry)
 
