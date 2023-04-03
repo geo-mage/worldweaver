@@ -35,13 +35,17 @@ def main():
 
     print("Starting rendering")
 
-    fields_renderer = PlotRenderer.FieldsRenderer()
+    fields_renderer = PlotRenderer.FieldRenderer()
     fields_renderer.render(rendering_data.fields, geo_center)
     print("Fields rendered")
 
     gardens_renderer = PlotRenderer.GardenRenderer()
     gardens_renderer.render(rendering_data.gardens, geo_center)
     print("Gardens rendered")
+
+    fences_renderer = PlotRenderer.FenceRenderer()
+    fences_renderer.render(rendering_data.fences, geo_center)
+    print("Fences rendered")
 
     forest_renderer = ForestRenderer.ForestRenderer()
     forest_renderer.render(rendering_data.forests, geo_center)

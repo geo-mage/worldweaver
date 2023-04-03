@@ -51,6 +51,7 @@ class RenderingData:
     fields: list
     forests: list
     gardens: list
+    fences: list
     buildings: list
 
 
