@@ -77,7 +77,11 @@ class Preprocessor:
         fields = non_forest_plots.query("IDU not in @plot_building_inters.IDU.values")
 
         plots_with_building = new_plots.query("IDU in @plot_building_inters.IDU.values")
-        gardens = plots_with_building.overlay(new_forests, how="difference", keep_geom_type=True)
+        gardens = plots_with_building.overlay(
+            new_forests, how="difference", keep_geom_type=True
+        ).overlay(
+            new_buildings, how="difference", keep_geom_type=True
+        )
         fences = plots_with_building
 
         fields_geom = Preprocessor.extract_geom(fields.geometry)
