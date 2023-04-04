@@ -54,7 +54,8 @@ class BaseRenderer:
 
                     points_coords = self.insert_hole(points_coords, points_coords_hole)
 
-            face = mesh.faces.new(mesh.verts.new(x) for x in points_coords)
+            # Need to remove the last point so that it's not repeated and creates a segment of 0 length
+            face = mesh.faces.new(mesh.verts.new(x) for x in points_coords[:-1])
 
         mesh_name = self._mesh_name
         mesh_data = D.meshes.new(mesh_name)
