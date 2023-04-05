@@ -9,6 +9,7 @@ from shapely.geometry import MultiPolygon
 class Preprocessor:
     _window_threshold = 1e-2
     _minimal_size = 20
+    _building_inter_threshold = 1
 
     def __init__(self, geo_data, geowindow, crs):
         self.geo_data = geo_data
@@ -64,7 +65,6 @@ class Preprocessor:
         cleaned_forests = new_forests.overlay(
             new_buildings, how="difference", keep_geom_type=True
         )
-        forests_geom = Preprocessor.extract_geom(cleaned_forests.geometry)
 
         # Plots can either be forests, gardens or fields. We need to eliminate the forests, and distinguish between gardens and fields
         # TODO: add road distinction. add case for "field inside residential", which should be more or less a garden
@@ -74,14 +74,31 @@ class Preprocessor:
         plot_building_inters = new_plots.overlay(
             new_buildings, how="intersection", keep_geom_type=True
         )
-        fields = non_forest_plots.query("IDU not in @plot_building_inters.IDU.values")
 
-        plots_with_building = new_plots.query("IDU in @plot_building_inters.IDU.values")
-        gardens = plots_with_building.overlay(
-            new_forests, how="difference", keep_geom_type=True
-        ).overlay(new_buildings, how="difference", keep_geom_type=True)
+        # Removing rounding errors (builinds that sometimes very slightly clip inside a plot
+        plot_building_inters_area = plot_building_inters.assign(
+            inter_area=lambda x: x.geometry.area
+        )
+        plot_building_inters_area_selected = plot_building_inters_area.query(
+            "inter_area > @self._building_inter_threshold"
+        )
+        plots_with_building = new_plots.query(
+            "IDU in @plot_building_inters_area_selected.IDU.values"
+        )
+
+        # From the plots that contains buildings, need to remove the geometry of forests and buildings
+        gardens_w_builings = plots_with_building.overlay(
+            cleaned_forests, how="difference", keep_geom_type=True
+        )
+        gardens = gardens_w_builings.overlay(
+            new_buildings, how="difference", keep_geom_type=True
+        )
+
         fences = plots_with_building
 
+        fields = non_forest_plots.query("IDU not in @plots_with_building.IDU.values")
+
+        forests_geom = Preprocessor.extract_geom(cleaned_forests.geometry)
         fields_geom = Preprocessor.extract_geom(fields.geometry)
         gardens_geom = Preprocessor.extract_geom(gardens.geometry)
         fences_geom = Preprocessor.extract_geom(fences.geometry)
