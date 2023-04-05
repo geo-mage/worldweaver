@@ -54,8 +54,15 @@ class BaseRenderer:
 
                     points_coords = self.insert_hole(points_coords, points_coords_hole)
 
+            # Centering the coordinates so that Blender's internal precision is less impactful
+            centered_points_coords = [
+                (x[0] - geo_center[0], x[1] - geo_center[1], x[2] - geo_center[2])
+                for x in points_coords
+            ]
             # Need to remove the last point so that it's not repeated and creates a segment of 0 length
-            face = mesh.faces.new(mesh.verts.new(x) for x in points_coords[:-1])
+            face = mesh.faces.new(
+                mesh.verts.new(x) for x in centered_points_coords[:-1]
+            )
 
         mesh_name = self._mesh_name
         mesh_data = D.meshes.new(mesh_name)
@@ -63,13 +70,6 @@ class BaseRenderer:
         mesh.free()
         mesh_obj = D.objects.new(mesh_data.name, mesh_data)
         C.collection.objects.link(mesh_obj)
-
-        mesh_obj.select_set(True)
-        mesh_obj.location[0] = -geo_center[0]
-        mesh_obj.location[1] = -geo_center[1]
-        mesh_obj.location[2] = -geo_center[2]
-        O.object.transform_apply(location=True)
-        mesh_obj.select_set(False)
 
         m = mesh_obj.modifiers.new("", "NODES")
         m.node_group = D.node_groups[self._GNSetup]
