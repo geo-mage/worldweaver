@@ -44,10 +44,12 @@ class Preprocessor:
         # TODO
 
         # Roads
-        # TODO
+        new_roads = self.geo_data.roads.overlay(
+            self.window, how="intersection", keep_geom_type=True
+        )
 
         # TODO: find if needed. would prob be useful to split this function
-        new_geo_data = GeoData(new_plots, new_buildings, new_forests)
+        #new_geo_data = GeoData(new_plots, new_buildings, new_forests)
         print("Selection done")
 
         # Second pass: processing
@@ -96,7 +98,10 @@ class Preprocessor:
 
         fences = plots_with_building
 
-        fields = non_forest_plots.query("IDU not in @plots_with_building.IDU.values")
+        fields_tmp = non_forest_plots.query("IDU not in @plots_with_building.IDU.values")
+
+        road_plots = new_roads.overlay(fields_tmp, how="intersection")
+        fields = fields_tmp.query("IDU not in @road_plots.IDU.values")
 
         forests_geom = Preprocessor.extract_geom(cleaned_forests.geometry)
         fields_geom = Preprocessor.extract_geom(fields.geometry)

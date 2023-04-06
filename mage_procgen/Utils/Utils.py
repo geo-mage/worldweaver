@@ -42,7 +42,7 @@ class GeoData:
     buildings: g.GeoDataFrame
     forests: g.GeoDataFrame
     # residentials: g.GeoDataFrame
-    # roads: g.GeoDataFrame
+    roads: g.GeoDataFrame
     # water: g.GeoDataFrame
 
 

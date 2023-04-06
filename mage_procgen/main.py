@@ -1,7 +1,7 @@
 from mage_procgen.Renderer import BuildingRenderer, ForestRenderer, PlotRenderer
 from mage_procgen.Utils.Utils import GeoWindow, GeoData
 from mage_procgen.Preprocessor.Preprocessor import Preprocessor
-from mage_procgen.Parser.ShapeFileParser import ShapeFileParser
+from mage_procgen.Parser.ShapeFileParser import ShapeFileParser, RoadShapeFileParser
 
 
 def main():
@@ -19,7 +19,11 @@ def main():
         "/home/verstraa/Work/maps/BDTOPO/BDTOPO/1_DONNEES_LIVRAISON_2022-12-00159/BDT_3-3_SHP_LAMB93_D077-ED2022-12-15/OCCUPATION_DU_SOL/ZONE_DE_VEGETATION.shp"
     )
 
-    geo_data = GeoData(plot_data, building_data, forest_data)
+    road_data = RoadShapeFileParser.load(
+        "/home/verstraa/Work/maps/BDTOPO/BDTOPO/1_DONNEES_LIVRAISON_2022-12-00159/BDT_3-3_SHP_LAMB93_D077-ED2022-12-15/TRANSPORT/TRONCON_DE_ROUTE.shp"
+    )
+
+    geo_data = GeoData(plot_data, building_data, forest_data, road_data)
 
     print("shp files loaded")
 
