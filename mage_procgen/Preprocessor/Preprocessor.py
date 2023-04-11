@@ -13,40 +13,45 @@ class Preprocessor:
 
     def __init__(self, geo_data, geowindow, crs):
         self.geo_data = geo_data
-        self.window = geowindow.to_dataframe()  # .to_crs(crs)
+        self.window = geowindow.dataframe  # .to_crs(crs)
         self.crs = crs
 
     def process(self):
         # First pass: selection
         print("Selecting regions")
-        # Plots
-        new_plots = self.geo_data.plots.overlay(
-            self.window, how="intersection", keep_geom_type=True
-        )
-        print("Plots selected")
-
-        # Buildings
-        new_buildings = self.geo_data.buildings.overlay(
-            self.window, how="intersection", keep_geom_type=True
-        )
-        print("Buildings selected")
-
-        # Forests
-        new_forests = self.geo_data.forests.overlay(
-            self.window, how="intersection", keep_geom_type=True
-        )
-        print("Forests selected")
-
-        # Residential Areas
-        # TODO
-
-        # Water
-        # TODO
-
-        # Roads
-        new_roads = self.geo_data.roads.overlay(
-            self.window, how="intersection", keep_geom_type=True
-        )
+        ## Plots
+        #new_plots = self.geo_data.plots.overlay(
+        #    self.window, how="intersection", keep_geom_type=True
+        #)
+        #print("Plots selected")
+#
+        ## Buildings
+        #new_buildings = self.geo_data.buildings.overlay(
+        #    self.window, how="intersection", keep_geom_type=True
+        #)
+        #print("Buildings selected")
+#
+        ## Forests
+        #new_forests = self.geo_data.forests.overlay(
+        #    self.window, how="intersection", keep_geom_type=True
+        #)
+        #print("Forests selected")
+#
+        ## Residential Areas
+        ## TODO
+#
+        ## Water
+        ## TODO
+#
+        ## Roads
+        #new_roads = self.geo_data.roads.overlay(
+        #    self.window, how="intersection", keep_geom_type=True
+        #)
+#
+        new_plots = self.geo_data.plots
+        new_buildings = self.geo_data.buildings
+        new_forests = self.geo_data.forests
+        new_roads = self.geo_data.roads
 
         # TODO: find if needed. would prob be useful to split this function
         # new_geo_data = GeoData(new_plots, new_buildings, new_forests)
@@ -110,9 +115,10 @@ class Preprocessor:
         gardens_geom = Preprocessor.extract_geom(gardens.geometry)
         fences_geom = Preprocessor.extract_geom(fences.geometry)
         buildings_geom = Preprocessor.extract_geom(new_buildings.geometry)
+        roads_geom = Preprocessor.extract_line_geom(new_roads.geometry)
 
         rendering_data = RenderingData(
-            fields_geom, forests_geom, gardens_geom, fences_geom, buildings_geom
+            fields_geom, forests_geom, gardens_geom, fences_geom, buildings_geom, roads_geom
         )
 
         return rendering_data
@@ -129,3 +135,7 @@ class Preprocessor:
                 to_return.append(x)
 
         return to_return
+
+    @staticmethod
+    def extract_line_geom(geometry_list):
+        return [x for x in geometry_list]

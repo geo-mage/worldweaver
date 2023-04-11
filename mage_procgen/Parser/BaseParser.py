@@ -1,4 +1,4 @@
 class BaseParser:
     @staticmethod
-    def load(file_path):
+    def load(file_path, bbox):
         raise NotImplementedError
