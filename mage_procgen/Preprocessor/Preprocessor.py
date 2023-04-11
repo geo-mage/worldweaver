@@ -20,34 +20,34 @@ class Preprocessor:
         # First pass: selection
         print("Selecting regions")
         ## Plots
-        #new_plots = self.geo_data.plots.overlay(
+        # new_plots = self.geo_data.plots.overlay(
         #    self.window, how="intersection", keep_geom_type=True
-        #)
-        #print("Plots selected")
-#
+        # )
+        # print("Plots selected")
+        #
         ## Buildings
-        #new_buildings = self.geo_data.buildings.overlay(
+        # new_buildings = self.geo_data.buildings.overlay(
         #    self.window, how="intersection", keep_geom_type=True
-        #)
-        #print("Buildings selected")
-#
+        # )
+        # print("Buildings selected")
+        #
         ## Forests
-        #new_forests = self.geo_data.forests.overlay(
+        # new_forests = self.geo_data.forests.overlay(
         #    self.window, how="intersection", keep_geom_type=True
-        #)
-        #print("Forests selected")
-#
+        # )
+        # print("Forests selected")
+        #
         ## Residential Areas
         ## TODO
-#
+        #
         ## Water
         ## TODO
-#
+        #
         ## Roads
-        #new_roads = self.geo_data.roads.overlay(
+        # new_roads = self.geo_data.roads.overlay(
         #    self.window, how="intersection", keep_geom_type=True
-        #)
-#
+        # )
+        #
         new_plots = self.geo_data.plots
         new_buildings = self.geo_data.buildings
         new_forests = self.geo_data.forests
@@ -118,7 +118,12 @@ class Preprocessor:
         roads_geom = Preprocessor.extract_line_geom(new_roads.geometry)
 
         rendering_data = RenderingData(
-            fields_geom, forests_geom, gardens_geom, fences_geom, buildings_geom, roads_geom
+            fields_geom,
+            forests_geom,
+            gardens_geom,
+            fences_geom,
+            buildings_geom,
+            roads_geom,
         )
 
         return rendering_data

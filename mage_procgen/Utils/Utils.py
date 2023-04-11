@@ -4,13 +4,14 @@ from shapely.geometry import Polygon, mapping
 
 from dataclasses import dataclass
 
+
 class GeoWindow:
-    #x_min: float
-    #x_max: float
-    #y_min: float
-    #y_max: float
-    #from_crs: int
-    #to_crs: int
+    # x_min: float
+    # x_max: float
+    # y_min: float
+    # y_max: float
+    # from_crs: int
+    # to_crs: int
 
     def __init__(self, x_min, x_max, y_min, y_max, from_crs, to_crs):
         window_s = g.GeoSeries(
@@ -34,9 +35,7 @@ class GeoWindow:
 
         self.bounds = self.dataframe.geometry[0].bounds
 
-
-
-    #def to_dataframe(self):
+    # def to_dataframe(self):
     #    window_s = g.GeoSeries(
     #        [
     #            Polygon(

@@ -25,6 +25,8 @@ class RoadShapeFileParser(ShapeFileParser):
             i for i in file_fields if i not in RoadShapeFileParser._invalid_columns
         ]
 
-        file_data = read_dataframe(file_path, force_2d=True, columns=valid_columns, bbox=bbox)
+        file_data = read_dataframe(
+            file_path, force_2d=True, columns=valid_columns, bbox=bbox
+        )
 
         return file_data

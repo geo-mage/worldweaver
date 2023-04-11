@@ -1,4 +1,9 @@
-from mage_procgen.Renderer import BuildingRenderer, ForestRenderer, PlotRenderer, RoadRenderer
+from mage_procgen.Renderer import (
+    BuildingRenderer,
+    ForestRenderer,
+    PlotRenderer,
+    RoadRenderer,
+)
 from mage_procgen.Utils.Utils import GeoWindow, GeoData, CRS_fr, CRS_degrees
 from mage_procgen.Preprocessor.Preprocessor import Preprocessor
 from mage_procgen.Parser.ShapeFileParser import ShapeFileParser, RoadShapeFileParser
@@ -18,20 +23,20 @@ def main():
 
     plot_data = parser.load(
         "/home/verstraa/Work/maps/PARCELLAIRE_EXPRESS/PARCELLAIRE_EXPRESS/1_DONNEES_LIVRAISON_2022-11-00045/PEPCI_1-1_SHP_LAMB93_D077/PARCELLE.SHP",
-        bbox
+        bbox,
     )
     building_data = parser.load(
         "/home/verstraa/Work/maps/PARCELLAIRE_EXPRESS/PARCELLAIRE_EXPRESS/1_DONNEES_LIVRAISON_2022-11-00045/PEPCI_1-1_SHP_LAMB93_D077/BATIMENT.SHP",
-        bbox
+        bbox,
     )
     forest_data = parser.load(
         "/home/verstraa/Work/maps/BDTOPO/BDTOPO/1_DONNEES_LIVRAISON_2022-12-00159/BDT_3-3_SHP_LAMB93_D077-ED2022-12-15/OCCUPATION_DU_SOL/ZONE_DE_VEGETATION.shp",
-        bbox
+        bbox,
     )
 
     road_data = RoadShapeFileParser.load(
         "/home/verstraa/Work/maps/BDTOPO/BDTOPO/1_DONNEES_LIVRAISON_2022-12-00159/BDT_3-3_SHP_LAMB93_D077-ED2022-12-15/TRANSPORT/TRONCON_DE_ROUTE.shp",
-        bbox
+        bbox,
     )
 
     geo_data = GeoData(plot_data, building_data, forest_data, road_data)
