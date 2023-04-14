@@ -19,39 +19,12 @@ class Preprocessor:
     def process(self):
         # First pass: selection
         print("Selecting regions")
-        ## Plots
-        # new_plots = self.geo_data.plots.overlay(
-        #    self.window, how="intersection", keep_geom_type=True
-        # )
-        # print("Plots selected")
-        #
-        ## Buildings
-        # new_buildings = self.geo_data.buildings.overlay(
-        #    self.window, how="intersection", keep_geom_type=True
-        # )
-        # print("Buildings selected")
-        #
-        ## Forests
-        # new_forests = self.geo_data.forests.overlay(
-        #    self.window, how="intersection", keep_geom_type=True
-        # )
-        # print("Forests selected")
-        #
-        ## Residential Areas
-        ## TODO
-        #
-        ## Water
-        ## TODO
-        #
-        ## Roads
-        # new_roads = self.geo_data.roads.overlay(
-        #    self.window, how="intersection", keep_geom_type=True
-        # )
-        #
+
         new_plots = self.geo_data.plots
         new_buildings = self.geo_data.buildings
         new_forests = self.geo_data.forests
         new_roads = self.geo_data.roads
+        new_water = self.geo_data.water
 
         # TODO: find if needed. would prob be useful to split this function
         # new_geo_data = GeoData(new_plots, new_buildings, new_forests)
@@ -103,12 +76,18 @@ class Preprocessor:
 
         fences = plots_with_building
 
-        fields_tmp = non_forest_plots.query(
+        # Allowing roads inside fields for the time being (too many false positives)
+        #fields_tmp = non_forest_plots.query(
+        #    "IDU not in @plots_with_building.IDU.values"
+        #)
+        #
+        #road_plots = new_roads.overlay(fields_tmp, how="intersection")
+        #fields = fields_tmp.query("IDU not in @road_plots.IDU.values")
+        fields = non_forest_plots.query(
             "IDU not in @plots_with_building.IDU.values"
         )
 
-        road_plots = new_roads.overlay(fields_tmp, how="intersection")
-        fields = fields_tmp.query("IDU not in @road_plots.IDU.values")
+
 
         forests_geom = Preprocessor.extract_geom(cleaned_forests.geometry)
         fields_geom = Preprocessor.extract_geom(fields.geometry)
@@ -116,6 +95,7 @@ class Preprocessor:
         fences_geom = Preprocessor.extract_geom(fences.geometry)
         buildings_geom = Preprocessor.extract_geom(new_buildings.geometry)
         roads_geom = Preprocessor.extract_line_geom(new_roads.geometry)
+        water_geom = Preprocessor.extract_geom(new_water.geometry)
 
         rendering_data = RenderingData(
             fields_geom,
@@ -124,6 +104,7 @@ class Preprocessor:
             fences_geom,
             buildings_geom,
             roads_geom,
+            water_geom
         )
 
         return rendering_data

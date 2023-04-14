@@ -61,7 +61,7 @@ class GeoData:
     forests: g.GeoDataFrame
     # residentials: g.GeoDataFrame
     roads: g.GeoDataFrame
-    # water: g.GeoDataFrame
+    water: g.GeoDataFrame
 
 
 @dataclass
@@ -72,6 +72,7 @@ class RenderingData:
     fences: list
     buildings: list
     roads: list
+    water: list
 
 
 CRS_degrees = 4326

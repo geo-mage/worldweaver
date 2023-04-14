@@ -4,8 +4,8 @@ from pyogrio import read_dataframe, read_info
 
 class ShapeFileParser(BaseParser):
     @staticmethod
-    def load(file_path, bbox):
-        file_data = read_dataframe(file_path, bbox=bbox)
+    def load(file_path, bbox, force_2d=False):
+        file_data = read_dataframe(file_path, bbox=bbox, force_2d=force_2d)
 
         return file_data
 
