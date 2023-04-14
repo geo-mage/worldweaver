@@ -47,65 +47,76 @@ class RoadRenderer:
         line_index = 1
 
         for line in tqdm(lines):
-            # mesh = bmesh.new()
             line_geometry = line.coords
             points_coords = [[x[0], x[1], 0] for x in line_geometry]
 
             # Centering the coordinates so that Blender's internal precision is less impactful
-            # centered_points_coords = [
-            #    [x[0] - geo_center[0], x[1] - geo_center[1], x[2] - geo_center[2]]
-            #    for x in points_coords
-            # ]
+            centered_points_coords = [
+               [x[0] - geo_center[0], x[1] - geo_center[1], x[2] - geo_center[2]]
+               for x in points_coords
+            ]
 
-            ## Need to remove the last point so that it's not repeated and creates a segment of 0 length
-            # face = mesh.faces.new(
-            #    mesh.verts.new(x) for x in centered_points_coords[:-1]
-            # )
+            road_curve_mesh = bmesh.new()
 
-            # make a new curve
-            crv = D.curves.new("crv" + str(line_index), "CURVE")
-            crv.dimensions = "3D"
+            # Constructing a mesh consisting of a series of edges
+            prev_point = None
+            is_first = True
+            for pt in centered_points_coords:
+                current_point = road_curve_mesh.verts.new((pt[0], pt[1], pt[2]))
+                if is_first:
+                    is_first = False
+                else:
+                    road_curve_mesh.edges.new((prev_point, current_point))
+                prev_point = current_point
 
-            # make a new spline in that curve
-            spline = crv.splines.new(type="NURBS")
+            road_curve_mesh_name = "RoadCurve_" + str(line_index)
+            road_curve_mesh_data = D.meshes.new(road_curve_mesh_name)
+            road_curve_mesh.to_mesh(road_curve_mesh_data)
+            road_curve_mesh.free()
+            road_curve_mesh_obj = D.objects.new(road_curve_mesh_data.name, road_curve_mesh_data)
+            C.collection.objects.link(road_curve_mesh_obj)
 
-            # a spline point for each point
-            spline.points.add(
-                len(points_coords) - 1
-            )  # theres already one point by default
+            # Transforming the mesh into a curve (requires context override)
+            area = [area for area in C.screen.areas if area.type == "VIEW_3D"][0]
+            with C.temp_override(area=area):
+                road_curve_mesh_obj.select_set(True)
+                C.view_layer.objects.active = road_curve_mesh_obj
+                O.object.convert(target="CURVE")
+                road_curve_mesh_obj.select_set(False)
 
-            # assign the point coordinates to the spline points
-            for p, new_co in zip(spline.points, points_coords):
-                p.co = new_co + [1.0]  # (add nurbs weight)
+            curve_to_fit = D.objects[road_curve_mesh_name]
 
-            # make a new object with the curve
-            curve_to_fit = D.objects.new("curve_road" + str(line_index), crv)
-            road_collection.objects.link(curve_to_fit)
+            # Duplicating the road template
+            road_object = src_obj.copy()
+            road_object.data = src_obj.data.copy()
+            road_object.name = src_obj.name + "_copy_" + str(line_index)
+            road_collection.objects.link(road_object)
 
-            new_obj = src_obj.copy()
-            new_obj.data = src_obj.data.copy()
-            new_obj.name = src_obj.name + "_copy_" + str(line_index)
-            road_collection.objects.link(new_obj)
+            # Adding the array and curve modifiers
+            road_array_mod = road_object.modifiers.new("", "ARRAY")
+            road_array_mod.name = "roadarraymod"
+            road_array_mod.fit_type = "FIT_CURVE"
+            road_array_mod.curve = curve_to_fit
 
-            m = new_obj.modifiers.new("", "ARRAY")
-            m.name = "roadarraymod"
-            m.fit_type = "FIT_CURVE"
-            m.curve = curve_to_fit
+            road_curve_mod = road_object.modifiers.new("", "CURVE")
+            road_curve_mod.name = "roadcurvemod"
+            road_curve_mod.object = curve_to_fit
 
-            m2 = new_obj.modifiers.new("", "CURVE")
-            m2.name = "curvearraymod"
-            m2.object = curve_to_fit
+            # Applying all the modifiers (requires context override)
+            area = [area for area in C.screen.areas if area.type == "VIEW_3D"][0]
+            with C.temp_override(area=area):
+                for mod in road_object.modifiers:
+                    road_object.select_set(True)
+                    C.view_layer.objects.active = road_object
+                    O.object.modifier_apply(modifier=mod.name)
+                    road_object.select_set(False)
+
+            # Removing objects that are no longer needed since modifers have been applied
+            O.object.select_all(action='DESELECT')
+            road_curve_mesh_obj.select_set(True)
+            O.object.delete()
+            D.curves.remove(D.curves[road_curve_mesh_name])
+            D.meshes.remove(D.meshes[road_curve_mesh_name])
 
             line_index += 1
 
-        # mesh_name = self._mesh_name
-        # mesh_data = D.meshes.new(mesh_name)
-        # mesh.to_mesh(mesh_data)
-        # mesh.free()
-        # mesh_obj = D.objects.new(mesh_data.name, mesh_data)
-        # C.collection.objects.link(mesh_obj)
-
-
-#
-# m = mesh_obj.modifiers.new("", "NODES")
-# m.node_group = D.node_groups[self._GNSetup]
