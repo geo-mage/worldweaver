@@ -49,6 +49,17 @@ class Preprocessor:
             for x in new_roads[["geometry", "LARGEUR"]].to_numpy().tolist()
         ]
 
+        # Removing roads from plots
+        new_plots = new_plots.overlay(new_roads, how="difference", keep_geom_type=True)
+        # Removing water from plots
+        new_plots = new_plots.overlay(new_water, how="difference", keep_geom_type=True)
+
+        # TODO: check this. otherwise, just remove roads from forests
+        # Forests should be restricted to plots
+        new_forests = new_forests.overlay(
+            new_plots, how="intersection", keep_geom_type=True
+        )
+
         # Forests can intersect buildings, which we don't want
         cleaned_forests = new_forests.overlay(
             new_buildings, how="difference", keep_geom_type=True
