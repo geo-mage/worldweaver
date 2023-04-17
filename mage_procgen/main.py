@@ -1,4 +1,5 @@
 import sys
+
 sys.path.append("/usr/lib/python3/dist-packages/")
 
 from mage_procgen.Renderer import (
@@ -6,7 +7,7 @@ from mage_procgen.Renderer import (
     ForestRenderer,
     PlotRenderer,
     RoadRenderer,
-    WaterRenderer
+    WaterRenderer,
 )
 from mage_procgen.Utils.Utils import GeoWindow, GeoData, CRS_fr, CRS_degrees
 from mage_procgen.Preprocessor.Preprocessor import Preprocessor
@@ -16,8 +17,8 @@ from mage_procgen.Parser.ShapeFileParser import ShapeFileParser, RoadShapeFilePa
 def main():
     parser = ShapeFileParser
 
-    #geo_window = GeoWindow(2.93, 2.945, 48.9350, 48.94, CRS_degrees, CRS_fr)
-    geo_window = GeoWindow(2.9, 2.95, 48.925, 48.95, CRS_degrees, CRS_fr)
+    geo_window = GeoWindow(2.93, 2.945, 48.9350, 48.94, CRS_degrees, CRS_fr)
+    # geo_window = GeoWindow(2.9, 2.95, 48.925, 48.95, CRS_degrees, CRS_fr)
 
     geo_center = geo_window.center
 
@@ -46,7 +47,7 @@ def main():
     water_data = parser.load(
         "/home/verstraa/Work/maps/BDTOPO/BDTOPO/1_DONNEES_LIVRAISON_2022-12-00159/BDT_3-3_SHP_LAMB93_D077-ED2022-12-15/HYDROGRAPHIE/SURFACE_HYDROGRAPHIQUE.shp",
         bbox,
-        force_2d=True
+        force_2d=True,
     )
 
     geo_data = GeoData(plot_data, building_data, forest_data, road_data, water_data)

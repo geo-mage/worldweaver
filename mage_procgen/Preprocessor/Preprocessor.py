@@ -1,6 +1,8 @@
 import geopandas as g
 from mage_procgen.Utils.Utils import RenderingData, GeoData
+from mage_procgen.Utils.Geometry import polygonise
 from shapely.geometry import MultiPolygon
+
 
 # Maybe this souldn't have like 10 subtypes, but it should take raw data and conf as input, and output a set of sorted, cleaned up and tagged data
 # So it has to hold literally everything, and cross-check if plot x touches object y to caracterise it.
@@ -41,6 +43,12 @@ class Preprocessor:
 
         # TODO For now just pass the lists of geom, tagging will be handled later
 
+        # Transform the Polylines into polygons to allow geometry operations with other dataframes
+        new_roads["geometry"] = [
+            polygonise(x[0], x[1])
+            for x in new_roads[["geometry", "LARGEUR"]].to_numpy().tolist()
+        ]
+
         # Forests can intersect buildings, which we don't want
         cleaned_forests = new_forests.overlay(
             new_buildings, how="difference", keep_geom_type=True
@@ -77,24 +85,23 @@ class Preprocessor:
         fences = plots_with_building
 
         # Allowing roads inside fields for the time being (too many false positives)
-        #fields_tmp = non_forest_plots.query(
+        # fields_tmp = non_forest_plots.query(
         #    "IDU not in @plots_with_building.IDU.values"
-        #)
+        # )
         #
-        #road_plots = new_roads.overlay(fields_tmp, how="intersection")
-        #fields = fields_tmp.query("IDU not in @road_plots.IDU.values")
-        fields = non_forest_plots.query(
+        # road_plots = new_roads.overlay(fields_tmp, how="intersection")
+        # fields = fields_tmp.query("IDU not in @road_plots.IDU.values")
+        fields_tmp = non_forest_plots.query(
             "IDU not in @plots_with_building.IDU.values"
         )
-
-
+        fields = fields_tmp.overlay(new_roads, how="difference", keep_geom_type=True)
 
         forests_geom = Preprocessor.extract_geom(cleaned_forests.geometry)
         fields_geom = Preprocessor.extract_geom(fields.geometry)
         gardens_geom = Preprocessor.extract_geom(gardens.geometry)
         fences_geom = Preprocessor.extract_geom(fences.geometry)
         buildings_geom = Preprocessor.extract_geom(new_buildings.geometry)
-        roads_geom = Preprocessor.extract_line_geom(new_roads.geometry)
+        roads_geom = Preprocessor.extract_geom(new_roads.geometry)
         water_geom = Preprocessor.extract_geom(new_water.geometry)
 
         rendering_data = RenderingData(
@@ -104,7 +111,7 @@ class Preprocessor:
             fences_geom,
             buildings_geom,
             roads_geom,
-            water_geom
+            water_geom,
         )
 
         return rendering_data
