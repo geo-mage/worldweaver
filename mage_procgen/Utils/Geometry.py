@@ -123,11 +123,18 @@ def line_intersection(line1, line2):
 
     div = det(xdiff, ydiff)
     if div == 0:
-        # TODO: Better treatment of this: idealy should detect that the two lines are the same, and return something
-        print("line_intersection: ERROR: lines do not intersect: ")
-        print(str(line1))
-        print(str(line2))
-        return 0, 0
+        # Most times it's when lines are aligned and share a point.
+        # In that case, returning the common point is completly valid.
+        if line1[0] == line2[0] or line1[0] == line2[1]:
+            return line1[0]
+        elif line1[1] == line2[0] or line1[1] == line2[1]:
+            return line1[1]
+        else:
+            # TODO: Better treatment of this: idealy should detect that the two lines are the same, and return something
+            print("line_intersection: ERROR: lines do not intersect: ")
+            print(str(line1))
+            print(str(line2))
+            return 0, 0
 
     d = (det(*line1), det(*line2))
     x = det(d, xdiff) / div
