@@ -17,8 +17,8 @@ from mage_procgen.Parser.ShapeFileParser import ShapeFileParser, RoadShapeFilePa
 def main():
     parser = ShapeFileParser
 
-    geo_window = GeoWindow(2.93, 2.945, 48.9350, 48.94, CRS_degrees, CRS_fr)
-    # geo_window = GeoWindow(2.9, 2.95, 48.925, 48.95, CRS_degrees, CRS_fr)
+    # geo_window = GeoWindow(2.93, 2.945, 48.9350, 48.94, CRS_degrees, CRS_fr)
+    geo_window = GeoWindow(2.9, 2.955, 48.93, 48.945, CRS_degrees, CRS_fr)
 
     geo_center = geo_window.center
 

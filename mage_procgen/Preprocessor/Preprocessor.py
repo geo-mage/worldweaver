@@ -1,7 +1,7 @@
 import geopandas as g
 from mage_procgen.Utils.Utils import RenderingData, GeoData
 from mage_procgen.Utils.Geometry import polygonise
-from shapely.geometry import MultiPolygon
+from shapely.geometry import MultiPolygon, Polygon, mapping
 
 
 # Maybe this souldn't have like 10 subtypes, but it should take raw data and conf as input, and output a set of sorted, cleaned up and tagged data
@@ -49,6 +49,12 @@ class Preprocessor:
             for x in new_roads[["geometry", "LARGEUR"]].to_numpy().tolist()
         ]
 
+        # Disabling flag to speed up other tests
+        remove_landlocked = True
+        if remove_landlocked:
+            # Removing plots that are contained inside other plots
+            new_plots = Preprocessor.remove_landlocked_plots(new_plots)
+
         # Removing roads from plots
         new_plots = new_plots.overlay(new_roads, how="difference", keep_geom_type=True)
         # Removing water from plots
@@ -94,7 +100,6 @@ class Preprocessor:
         )
 
         fences = plots_with_building
-
         # Allowing roads inside fields for the time being (too many false positives)
         # fields_tmp = non_forest_plots.query(
         #    "IDU not in @plots_with_building.IDU.values"
@@ -143,3 +148,65 @@ class Preprocessor:
     @staticmethod
     def extract_line_geom(geometry_list):
         return [x for x in geometry_list]
+
+    @staticmethod
+    def remove_landlocked_plots(plots):
+
+        # First, finding plots that are contained inside another
+        landlocked_plots_IDU = {}
+        for plot_IDU in plots.IDU:
+            plot_df = plots.query("IDU == @plot_IDU")
+            plot_intersection = plot_df.overlay(
+                plots, how="intersection", keep_geom_type=False
+            )
+
+            if plot_intersection.shape[0] == 2:
+                # One line will be the plot itself. If there is only one other line, it means the plot is contained
+                # inside another one.
+                # There are edge cases near some roads that are not plots, but this is handled later.
+                # TODO : maybe it could be handled here, by checking that the geometry of the intersection is closed ?
+                containing_plot_IDU = None
+                for IDU in plot_intersection.IDU_2:
+                    if IDU is not plot_IDU:
+                        containing_plot_IDU = IDU
+
+                landlocked_plots_IDU[plot_IDU] = containing_plot_IDU
+
+        # Then, remove the corresponding hole
+        for plot_IDU, containing_plot_IDU in landlocked_plots_IDU.items():
+            containing_plot = plots.query("IDU == @containing_plot_IDU")
+            containing_plot_index = containing_plot.index[0]
+            containing_plot_geometry = containing_plot.geometry[containing_plot_index]
+
+            landlocked_plot = plots.query("IDU == @plot_IDU")
+            landlocked_plot_index = landlocked_plot.index[0]
+            landlocked_plot_geometry = landlocked_plot.geometry[landlocked_plot_index]
+
+            # TODO: find out if there are nested landlocked plots and if there is a need to adress them specifically
+            landlocked_plot_geometry_points = [
+                x for x in mapping(landlocked_plot_geometry)["coordinates"][0]
+            ]
+            # Holes and shapes are written in opposite directions
+            landlocked_plot_geometry_points.reverse()
+
+            # First element of mapping coordinates is the base shape, the rest are holes
+            base_shape = mapping(containing_plot_geometry)["coordinates"][0]
+            holes = [x for x in mapping(containing_plot_geometry)["coordinates"]][1:]
+
+            hole_index = 0
+            hole_found = False
+            for hole in holes:
+                hole_list = [x for x in hole]
+                if hole_list == landlocked_plot_geometry_points:
+                    hole_found = True
+                    break
+                hole_index += 1
+
+            if hole_found:
+                # This if condition is here to ensure that we don't fall into the edge case where a plot only has 1 neighbor
+                # but is not contained inside it.
+                del holes[hole_index]
+                plots.geometry[containing_plot_index] = Polygon(base_shape, holes=holes)
+                plots = plots.drop(landlocked_plot_index)
+
+        return plots
