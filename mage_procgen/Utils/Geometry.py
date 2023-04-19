@@ -2,6 +2,7 @@ import math
 from shapely import Polygon
 
 default_thickness = 4
+max_point_distance = 1000
 
 
 def polygonise(poly_line, thickness):
@@ -73,6 +74,22 @@ def polygonise(poly_line, thickness):
                 inters2 = line_intersection(
                     (previous_quadri[2], previous_quadri[3]), (p3, p4)
                 )
+
+                # In some edge cases, almost straight segments create very far points.
+                # In those cases, using the points of the new poly is a very fair approximation.
+                inters1_distance = math.sqrt(
+                    (inters1[0] - p1[0]) * (inters1[0] - p1[0])
+                    + (inters1[1] - p1[1]) * (inters1[1] - p1[1])
+                )
+                if inters1_distance > max_point_distance:
+                    inters1 = p1
+
+                inters2_distance = math.sqrt(
+                    (inters2[0] - p4[0]) * (inters2[0] - p4[0])
+                    + (inters2[1] - p4[1]) * (inters2[1] - p4[1])
+                )
+                if inters2_distance > max_point_distance:
+                    inters2 = p4
 
                 # Merging
                 middle_index = len(poly_points) // 2
