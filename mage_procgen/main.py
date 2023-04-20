@@ -8,6 +8,7 @@ from mage_procgen.Renderer import (
     PlotRenderer,
     RoadRenderer,
     WaterRenderer,
+    BackgroundRenderer,
 )
 from mage_procgen.Utils.Utils import GeoWindow, GeoData, CRS_fr, CRS_degrees
 from mage_procgen.Preprocessor.Preprocessor import Preprocessor
@@ -88,6 +89,10 @@ def main():
     water_renderer = WaterRenderer.WaterRenderer()
     water_renderer.render(rendering_data.water, geo_center)
     print("Water rendered")
+
+    background_renderer = BackgroundRenderer.BackgroundRenderer()
+    background_renderer.render(rendering_data.background, geo_center)
+    print("Background rendered")
 
 
 if __name__ == "__main__":

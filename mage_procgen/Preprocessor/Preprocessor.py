@@ -15,25 +15,40 @@ class Preprocessor:
 
     def __init__(self, geo_data, geowindow, crs):
         self.geo_data = geo_data
-        self.window = geowindow.dataframe  # .to_crs(crs)
+        self.window = geowindow.dataframe
         self.crs = crs
 
     def process(self):
-        # First pass: selection
-        print("Selecting regions")
 
-        new_plots = self.geo_data.plots
-        new_buildings = self.geo_data.buildings
-        new_forests = self.geo_data.forests
-        new_roads = self.geo_data.roads
-        new_water = self.geo_data.water
-
-        # TODO: find if needed. would prob be useful to split this function
-        # new_geo_data = GeoData(new_plots, new_buildings, new_forests)
-        print("Selection done")
-
-        # Second pass: processing
         print("Processing")
+        new_plots = self.geo_data.plots.overlay(
+            self.window, how="intersection", keep_geom_type=True
+        )
+        new_buildings = self.geo_data.buildings.overlay(
+            self.window, how="intersection", keep_geom_type=True
+        )
+        new_forests = self.geo_data.forests.overlay(
+            self.window, how="intersection", keep_geom_type=True
+        )
+        new_water = self.geo_data.water.overlay(
+            self.window, how="intersection", keep_geom_type=True
+        )
+        # Windowing the roads before polygonising them leads to errors
+        # Related thread: https://github.com/geopandas/geopandas/issues/1724
+        new_roads = self.geo_data.roads
+        background = self.window.copy()
+
+        # Background should be the whole area minus every other object
+        background = background.overlay(
+            new_plots, how="difference", keep_geom_type=True
+        )
+        background = background.overlay(
+            new_buildings, how="difference", keep_geom_type=True
+        )
+        background = background.overlay(
+            new_water, how="difference", keep_geom_type=True
+        )
+
         # TODO: need to take into account polygons with holes. 2 possibilities:
         #   - Holes are faces, we extrude them and bool with the base face
         #   - We find the closest segment between the hole and the hull, and we use it to insert the hole here
@@ -49,16 +64,21 @@ class Preprocessor:
             for x in new_roads[["geometry", "LARGEUR"]].to_numpy().tolist()
         ]
 
+        # Now that roads are polygons, we can apply the window on them and remove them from the background
+        new_roads = new_roads.overlay(
+            self.window, how="intersection", keep_geom_type=True
+        )
+        background = background.overlay(
+            new_roads, how="difference", keep_geom_type=True
+        )
+
         # Disabling flag to speed up other tests
         remove_landlocked = True
         if remove_landlocked:
             # Removing plots that are contained inside other plots
             new_plots = Preprocessor.remove_landlocked_plots(new_plots)
 
-        # Removing roads from plots
         new_plots = new_plots.overlay(new_roads, how="difference", keep_geom_type=True)
-        # Removing water from plots
-        new_plots = new_plots.overlay(new_water, how="difference", keep_geom_type=True)
 
         # TODO: check this. otherwise, just remove roads from forests
         # Forests should be restricted to plots
@@ -71,6 +91,11 @@ class Preprocessor:
             new_buildings, how="difference", keep_geom_type=True
         )
 
+        # Removing water from forests
+        cleaned_forests = cleaned_forests.overlay(
+            new_water, how="difference", keep_geom_type=True
+        )
+
         # Plots can either be forests, gardens or fields. We need to eliminate the forests, and distinguish between gardens and fields
         # TODO: add road distinction. add case for "field inside residential", which should be more or less a garden
         non_forest_plots = new_plots.overlay(
@@ -80,7 +105,7 @@ class Preprocessor:
             new_buildings, how="intersection", keep_geom_type=True
         )
 
-        # Removing rounding errors (builinds that sometimes very slightly clip inside a plot
+        # Removing rounding errors (buildings that sometimes very slightly clip inside a plot
         plot_building_inters_area = plot_building_inters.assign(
             inter_area=lambda x: x.geometry.area
         )
@@ -99,18 +124,18 @@ class Preprocessor:
             new_buildings, how="difference", keep_geom_type=True
         )
 
+        # Removing water from gardens
+        gardens = gardens.overlay(new_water, how="difference", keep_geom_type=True)
+
         fences = plots_with_building
-        # Allowing roads inside fields for the time being (too many false positives)
-        # fields_tmp = non_forest_plots.query(
-        #    "IDU not in @plots_with_building.IDU.values"
-        # )
-        #
-        # road_plots = new_roads.overlay(fields_tmp, how="intersection")
-        # fields = fields_tmp.query("IDU not in @road_plots.IDU.values")
+
         fields_tmp = non_forest_plots.query(
             "IDU not in @plots_with_building.IDU.values"
         )
         fields = fields_tmp.overlay(new_roads, how="difference", keep_geom_type=True)
+
+        # Removing water from fields
+        fields = fields.overlay(new_water, how="difference", keep_geom_type=True)
 
         forests_geom = Preprocessor.extract_geom(cleaned_forests.geometry)
         fields_geom = Preprocessor.extract_geom(fields.geometry)
@@ -119,6 +144,7 @@ class Preprocessor:
         buildings_geom = Preprocessor.extract_geom(new_buildings.geometry)
         roads_geom = Preprocessor.extract_geom(new_roads.geometry)
         water_geom = Preprocessor.extract_geom(new_water.geometry)
+        background_geom = Preprocessor.extract_geom(background.geometry)
 
         rendering_data = RenderingData(
             fields_geom,
@@ -128,6 +154,7 @@ class Preprocessor:
             buildings_geom,
             roads_geom,
             water_geom,
+            background_geom,
         )
 
         return rendering_data
@@ -183,11 +210,9 @@ class Preprocessor:
             landlocked_plot_geometry = landlocked_plot.geometry[landlocked_plot_index]
 
             # TODO: find out if there are nested landlocked plots and if there is a need to adress them specifically
-            landlocked_plot_geometry_points = [
-                x for x in mapping(landlocked_plot_geometry)["coordinates"][0]
-            ]
-            # Holes and shapes are written in opposite directions
-            landlocked_plot_geometry_points.reverse()
+            landlocked_plot_geometry_points = mapping(landlocked_plot_geometry)[
+                "coordinates"
+            ][0]
 
             # First element of mapping coordinates is the base shape, the rest are holes
             base_shape = mapping(containing_plot_geometry)["coordinates"][0]
@@ -196,8 +221,9 @@ class Preprocessor:
             hole_index = 0
             hole_found = False
             for hole in holes:
-                hole_list = [x for x in hole]
-                if hole_list == landlocked_plot_geometry_points:
+                # TODO: This test is not failproof, but sometimes geometries can be rotated and this set test works for that.
+                # Find out if it needs to be improved.
+                if set(hole) == set(landlocked_plot_geometry_points):
                     hole_found = True
                     break
                 hole_index += 1
@@ -208,5 +234,6 @@ class Preprocessor:
                 del holes[hole_index]
                 plots.geometry[containing_plot_index] = Polygon(base_shape, holes=holes)
                 plots = plots.drop(landlocked_plot_index)
+                print("Removing hole at index: " + str(landlocked_plot_index))
 
         return plots

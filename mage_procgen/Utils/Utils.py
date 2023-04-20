@@ -73,6 +73,7 @@ class RenderingData:
     buildings: list
     roads: list
     water: list
+    background: list
 
 
 CRS_degrees = 4326
