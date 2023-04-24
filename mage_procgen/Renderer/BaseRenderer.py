@@ -6,6 +6,7 @@ from shapely.geometry import mapping
 from tqdm import tqdm
 import math
 from collections import deque
+from mage_procgen.Utils.Utils import PolygonList, Point
 
 
 class BaseRenderer:
@@ -39,7 +40,7 @@ class BaseRenderer:
         # That's why following line
         self.gnSetup2d = data_to.node_groups[0].name
 
-    def render(self, polygons, geo_center):
+    def render(self, polygons: PolygonList, geo_center: tuple[float, float, float]):
         mesh = bmesh.new()
 
         for polygon in tqdm(polygons):
@@ -74,7 +75,9 @@ class BaseRenderer:
         m = mesh_obj.modifiers.new("", "NODES")
         m.node_group = D.node_groups[self._GNSetup]
 
-    def insert_hole(self, points_coords, points_coords_hole):
+    def insert_hole(
+        self, points_coords: list[Point], points_coords_hole: list[Point]
+    ) -> list[Point]:
         min_dist = math.inf
         closest_pt_poly = None
         closest_pt_hole = None

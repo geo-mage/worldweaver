@@ -1,5 +1,5 @@
 import geopandas as g
-from mage_procgen.Utils.Utils import RenderingData, GeoData
+from mage_procgen.Utils.Utils import RenderingData, GeoData, GeoWindow, PolygonList
 from mage_procgen.Utils.Geometry import polygonise
 from shapely.geometry import MultiPolygon, Polygon, mapping
 
@@ -13,12 +13,12 @@ class Preprocessor:
     _minimal_size = 20
     _building_inter_threshold = 1
 
-    def __init__(self, geo_data, geowindow, crs):
+    def __init__(self, geo_data: g.GeoDataFrame, geowindow: GeoWindow, crs: int):
         self.geo_data = geo_data
         self.window = geowindow.dataframe
         self.crs = crs
 
-    def process(self):
+    def process(self) -> RenderingData:
 
         print("Processing")
         new_plots = self.geo_data.plots.overlay(
@@ -160,7 +160,7 @@ class Preprocessor:
         return rendering_data
 
     @staticmethod
-    def extract_geom(geometry_list):
+    def extract_geom(geometry_list: g.GeoSeries) -> PolygonList:
         to_return = []
         for x in geometry_list:
             # If it's a multipolygon, it has multiple polygons inside of it that we need to separate for later
@@ -173,11 +173,7 @@ class Preprocessor:
         return to_return
 
     @staticmethod
-    def extract_line_geom(geometry_list):
-        return [x for x in geometry_list]
-
-    @staticmethod
-    def remove_landlocked_plots(plots):
+    def remove_landlocked_plots(plots: g.GeoDataFrame) -> g.GeoDataFrame:
 
         # First, finding plots that are contained inside another
         landlocked_plots_IDU = {}
@@ -234,6 +230,5 @@ class Preprocessor:
                 del holes[hole_index]
                 plots.geometry[containing_plot_index] = Polygon(base_shape, holes=holes)
                 plots = plots.drop(landlocked_plot_index)
-                print("Removing hole at index: " + str(landlocked_plot_index))
 
         return plots

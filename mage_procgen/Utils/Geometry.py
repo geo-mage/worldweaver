@@ -1,11 +1,11 @@
 import math
-from shapely import Polygon
+from shapely.geometry import Polygon, LineString
 
 default_thickness = 4
 max_point_distance = 1000
 
 
-def polygonise(poly_line, thickness):
+def polygonise(poly_line: LineString, thickness: float) -> Polygon:
 
     translation_module = (
         (thickness / 2) if not math.isnan(thickness) else (default_thickness / 2)
@@ -112,15 +112,17 @@ def polygonise(poly_line, thickness):
     return Polygon(poly_points)
 
 
-def normal(vector):
+def normal(
+    line: tuple[tuple[float, float], tuple[float, float]]
+) -> tuple[float, float]:
     """
-    Calculates the normalized normal to the vector
-    :param vector:  the vector you want to normal of
+    Calculates the normalized normal to the line
+    :param line:  the line you want to normal of
     :return: the normalized normal of the vector
     """
 
-    dx = vector[1][0] - vector[0][0]
-    dy = vector[1][1] - vector[0][1]
+    dx = line[1][0] - line[0][0]
+    dy = line[1][1] - line[0][1]
 
     normal_vector = (-dy, dx)
 
@@ -131,7 +133,10 @@ def normal(vector):
     return (normal_vector[0] / normal_norm, normal_vector[1] / normal_norm)
 
 
-def line_intersection(line1, line2):
+def line_intersection(
+    line1: tuple[tuple[float, float], tuple[float, float]],
+    line2: tuple[tuple[float, float], tuple[float, float]],
+) -> tuple[float, float]:
     xdiff = (line1[0][0] - line1[1][0], line2[0][0] - line2[1][0])
     ydiff = (line1[0][1] - line1[1][1], line2[0][1] - line2[1][1])
 

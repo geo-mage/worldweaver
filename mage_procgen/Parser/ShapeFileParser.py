@@ -1,10 +1,13 @@
 from mage_procgen.Parser.BaseParser import BaseParser
 from pyogrio import read_dataframe, read_info
+import geopandas as g
 
 
 class ShapeFileParser(BaseParser):
     @staticmethod
-    def load(file_path, bbox, force_2d=False):
+    def load(
+        file_path: str, bbox: tuple[float, float, float, float], force_2d=False
+    ) -> g.GeoDataFrame:
         file_data = read_dataframe(file_path, bbox=bbox, force_2d=force_2d)
 
         return file_data
@@ -16,7 +19,7 @@ class RoadShapeFileParser(ShapeFileParser):
     _invalid_columns = ["DATE_SERV", "DATE_CONF", "DATE_APP"]
 
     @staticmethod
-    def load(file_path, bbox):
+    def load(file_path: str, bbox: tuple[float, float, float, float]) -> g.GeoDataFrame:
         file_info = read_info(file_path)
 
         file_fields = file_info[RoadShapeFileParser._fields]
