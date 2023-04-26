@@ -1,4 +1,5 @@
 import geopandas as g
+import pandas as p
 import math
 from shapely.geometry import Polygon, mapping
 
@@ -37,6 +38,7 @@ class GeoWindow:
         centroid = self.dataframe.geometry[0].centroid
         self.center = (centroid.coords[0][0], centroid.coords[0][1], 0.0)
 
+        # Order is Xmin, Ymin, Xmax, Ymax
         self.bounds = self.dataframe.geometry[0].bounds
 
 
@@ -60,6 +62,19 @@ class RenderingData:
     roads: PolygonList
     water: PolygonList
     background: PolygonList
+
+
+@dataclass
+class TerrainData:
+    x_min: float
+    y_min: float
+    x_max: float
+    y_max: float
+    resolution: float
+    nbcol: int
+    nbrow: int
+    no_data: float
+    data: p.DataFrame
 
 
 CRS_degrees = 4326
