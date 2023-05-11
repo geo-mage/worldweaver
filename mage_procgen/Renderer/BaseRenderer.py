@@ -15,7 +15,7 @@ class BaseRenderer:
     _AssetsFolder = "Assets"
     _mesh_name = ""
 
-    def __init__(self):
+    def __init__(self, terrain_data):
         _location = os.path.realpath(
             os.path.join(os.getcwd(), os.path.dirname(__file__))
         )
@@ -40,26 +40,31 @@ class BaseRenderer:
         # That's why following line
         self.gnSetup2d = data_to.node_groups[0].name
 
+        self._terrain_data = terrain_data
+
     def render(self, polygons: PolygonList, geo_center: tuple[float, float, float]):
         mesh = bmesh.new()
 
         for polygon in tqdm(polygons):
             # Kind of hack because Polygon.coords is not implemented
             polygon_geometry = mapping(polygon)["coordinates"]
-            points_coords = [(x[0], x[1], 0) for x in polygon_geometry[0]]
+            points_coords = [
+                (x[0], x[1], self.interpolate_z(x[0], x[1]))
+                for x in polygon_geometry[0]
+            ]
 
             if len(polygon_geometry) > 1:
                 # If there are holes
                 for hole in polygon_geometry[1:]:
-                    points_coords_hole = [(x[0], x[1], 0) for x in hole]
+                    points_coords_hole = [
+                        (x[0], x[1], self.interpolate_z(x[0], x[1])) for x in hole
+                    ]
 
                     points_coords = self.insert_hole(points_coords, points_coords_hole)
 
-            # Centering the coordinates so that Blender's internal precision is less impactful
-            centered_points_coords = [
-                (x[0] - geo_center[0], x[1] - geo_center[1], x[2] - geo_center[2])
-                for x in points_coords
-            ]
+            # Adapting the coordinates for rendering purposes
+            centered_points_coords = self.adapt_coords(points_coords, geo_center)
+
             # Need to remove the last point so that it's not repeated and creates a segment of 0 length
             face = mesh.faces.new(
                 mesh.verts.new(x) for x in centered_points_coords[:-1]
@@ -116,3 +121,51 @@ class BaseRenderer:
         toreturn.append(poly_first_part[0])
 
         return toreturn
+
+    def interpolate_z(self, x, y):
+        """
+        Finds the z coordinate corresponding to the (x,y) point in the input.
+        Warning: Currently, it only returns the z coordinate of the point that is the lower left corner of the cell the input point is in.
+        Since the terrain data has a 1m resolution, it is acceptable to do this instead of doing a bilinear interpolation.
+        :param x: the x coordinate of the point
+        :param y: the y coordinate of the point
+        :return: the corresponding z coordinate of the point
+        """
+
+        current_terrain = None
+
+        for terrain in self._terrain_data:
+            is_point_in_terrain = True
+            is_point_in_terrain &= x >= terrain.x_min
+            is_point_in_terrain &= x < terrain.x_max
+            is_point_in_terrain &= y >= terrain.y_min
+            is_point_in_terrain &= y < terrain.y_max
+
+            if is_point_in_terrain:
+                current_terrain = terrain
+                break
+
+        if current_terrain is None:
+            raise ValueError(
+                "Point is outside of terrain: x=" + str(x) + ", y=" + str(y)
+            )
+
+        point_offset_x = x - current_terrain.x_min
+        point_offset_y = y - current_terrain.y_min
+
+        current_point_index_x = int(point_offset_x / current_terrain.resolution)
+        current_point_index_y = 999 - int(point_offset_y / current_terrain.resolution)
+
+        z = current_terrain.data.values[current_point_index_y][current_point_index_x]
+
+        return z
+
+    def adapt_coords(self, points_coords, geo_center):
+
+        # Centering the coordinates so that Blender's internal precision is less impactful
+        centered_points_coords = [
+            (x[0] - geo_center[0], x[1] - geo_center[1], x[2] - geo_center[2])
+            for x in points_coords
+        ]
+
+        return centered_points_coords

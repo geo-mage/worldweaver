@@ -13,6 +13,7 @@ from mage_procgen.Renderer import (
     TerrainRenderer,
 )
 from mage_procgen.Utils.Utils import GeoWindow, GeoData, CRS_fr, CRS_degrees
+from mage_procgen.Utils.Rendering import configure_render
 from mage_procgen.Preprocessor.Preprocessor import Preprocessor
 from mage_procgen.Parser.ShapeFileParser import ShapeFileParser, RoadShapeFileParser
 from mage_procgen.Parser.TerrainParser import TerrainParser
@@ -25,13 +26,6 @@ def main():
     geo_center = geo_window.center
 
     bbox = geo_window.bounds
-
-    # print("Box: " +
-    #       str(bbox[0] / 1000) + " " +
-    #       str(bbox[1] / 1000) + " " +
-    #       str(bbox[2] / 1000) + " " +
-    #       str(bbox[3] / 1000)
-    #       )
 
     print("Loading shp files")
 
@@ -78,42 +72,43 @@ def main():
     print("Preprocessing done")
 
     print("Starting rendering")
+    configure_render()
 
-    fields_renderer = PlotRenderer.FieldRenderer()
+    fields_renderer = PlotRenderer.FieldRenderer(terrain_data)
     fields_renderer.render(rendering_data.fields, geo_center)
     print("Fields rendered")
 
-    gardens_renderer = PlotRenderer.GardenRenderer()
+    gardens_renderer = PlotRenderer.GardenRenderer(terrain_data)
     gardens_renderer.render(rendering_data.gardens, geo_center)
     print("Gardens rendered")
 
-    fences_renderer = PlotRenderer.FenceRenderer()
+    fences_renderer = PlotRenderer.FenceRenderer(terrain_data)
     fences_renderer.render(rendering_data.fences, geo_center)
     print("Fences rendered")
 
-    forest_renderer = ForestRenderer.ForestRenderer()
+    forest_renderer = ForestRenderer.ForestRenderer(terrain_data)
     forest_renderer.render(rendering_data.forests, geo_center)
     print("Forests rendered")
 
-    building_renderer = BuildingRenderer.BuildingRenderer()
+    building_renderer = BuildingRenderer.BuildingRenderer(terrain_data)
     building_renderer.render(rendering_data.buildings, geo_center)
     print("Buildings rendered")
 
-    road_renderer = RoadRenderer.RoadRenderer()
+    road_renderer = RoadRenderer.RoadRenderer(terrain_data)
     road_renderer.render(rendering_data.roads, geo_center)
     print("Roads rendered")
 
-    water_renderer = WaterRenderer.WaterRenderer()
+    water_renderer = WaterRenderer.WaterRenderer(terrain_data)
     water_renderer.render(rendering_data.water, geo_center)
     print("Water rendered")
 
-    background_renderer = BackgroundRenderer.BackgroundRenderer()
+    background_renderer = BackgroundRenderer.BackgroundRenderer(terrain_data)
     background_renderer.render(rendering_data.background, geo_center)
     print("Background rendered")
 
-    terrain_renderer = TerrainRenderer.TerrainRenderer(5, 1)
-    terrain_renderer.render(terrain_data, geo_window)
-    print("Terrain rendered")
+    # terrain_renderer = TerrainRenderer.TerrainRenderer(5, 1)
+    # terrain_renderer.render(terrain_data, geo_window)
+    # print("Terrain rendered")
 
 
 if __name__ == "__main__":
