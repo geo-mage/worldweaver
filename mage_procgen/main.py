@@ -13,56 +13,30 @@ from mage_procgen.Renderer import (
     TerrainRenderer,
 )
 from mage_procgen.Utils.Utils import GeoWindow, GeoData, CRS_fr, CRS_degrees
-from mage_procgen.Utils.Rendering import configure_render
+from mage_procgen.Loader.Loader import Loader
 from mage_procgen.Preprocessor.Preprocessor import Preprocessor
-from mage_procgen.Parser.ShapeFileParser import ShapeFileParser, RoadShapeFileParser
-from mage_procgen.Parser.TerrainParser import TerrainParser
+
+
+from mage_procgen.Utils.Rendering import configure_render
 
 
 def main():
+
+    # Fublaines
     # geo_window = GeoWindow(2.93, 2.945, 48.9350, 48.94, CRS_degrees, CRS_fr)
-    geo_window = GeoWindow(2.9, 2.955, 48.93, 48.945, CRS_degrees, CRS_fr)
+    # geo_window = GeoWindow(2.9, 2.955, 48.93, 48.945, CRS_degrees, CRS_fr)
+    # current_departement = "077"
+
+    # La Chapelle-Villars
+    # geo_window = GeoWindow(4.6900, 4.7340, 45.4765, 45.4550, CRS_degrees, CRS_fr)
+    geo_window = GeoWindow(4.6900, 4.74, 45.4600, 45.493, CRS_degrees, CRS_fr)
+    # geo_window = GeoWindow(4.6900, 4.8000, 45.4400, 45.5000, CRS_degrees, CRS_fr)
 
     geo_center = geo_window.center
 
     bbox = geo_window.bounds
 
-    print("Loading shp files")
-
-    terrain_data = TerrainParser.load(
-        "/home/verstraa/Work/maps/RGEALTI/RGEALTI/1_DONNEES_LIVRAISON_2021-03-00041/RGEALTI_MNT_1M_ASC_LAMB93_IGN69_D077_20210303",
-        bbox,
-        1,
-        1000,
-        1000,
-    )
-    print("Terrain loaded: " + str(len(terrain_data)) + " chunks in total")
-
-    plot_data = ShapeFileParser.load(
-        "/home/verstraa/Work/maps/PARCELLAIRE_EXPRESS/PARCELLAIRE_EXPRESS/1_DONNEES_LIVRAISON_2022-11-00045/PEPCI_1-1_SHP_LAMB93_D077/PARCELLE.SHP",
-        bbox,
-    )
-    building_data = ShapeFileParser.load(
-        "/home/verstraa/Work/maps/PARCELLAIRE_EXPRESS/PARCELLAIRE_EXPRESS/1_DONNEES_LIVRAISON_2022-11-00045/PEPCI_1-1_SHP_LAMB93_D077/BATIMENT.SHP",
-        bbox,
-    )
-    forest_data = ShapeFileParser.load(
-        "/home/verstraa/Work/maps/BDTOPO/BDTOPO/1_DONNEES_LIVRAISON_2022-12-00159/BDT_3-3_SHP_LAMB93_D077-ED2022-12-15/OCCUPATION_DU_SOL/ZONE_DE_VEGETATION.shp",
-        bbox,
-    )
-
-    road_data = RoadShapeFileParser.load(
-        "/home/verstraa/Work/maps/BDTOPO/BDTOPO/1_DONNEES_LIVRAISON_2022-12-00159/BDT_3-3_SHP_LAMB93_D077-ED2022-12-15/TRANSPORT/TRONCON_DE_ROUTE.shp",
-        bbox,
-    )
-
-    water_data = ShapeFileParser.load(
-        "/home/verstraa/Work/maps/BDTOPO/BDTOPO/1_DONNEES_LIVRAISON_2022-12-00159/BDT_3-3_SHP_LAMB93_D077-ED2022-12-15/HYDROGRAPHIE/SURFACE_HYDROGRAPHIQUE.shp",
-        bbox,
-        force_2d=True,
-    )
-
-    geo_data = GeoData(plot_data, building_data, forest_data, road_data, water_data)
+    geo_data = Loader.load(bbox)
 
     print("shp files loaded")
 
@@ -74,40 +48,40 @@ def main():
     print("Starting rendering")
     configure_render()
 
-    fields_renderer = PlotRenderer.FieldRenderer(terrain_data)
+    fields_renderer = PlotRenderer.FieldRenderer(geo_data.terrain)
     fields_renderer.render(rendering_data.fields, geo_center)
     print("Fields rendered")
 
-    gardens_renderer = PlotRenderer.GardenRenderer(terrain_data)
+    gardens_renderer = PlotRenderer.GardenRenderer(geo_data.terrain)
     gardens_renderer.render(rendering_data.gardens, geo_center)
     print("Gardens rendered")
 
-    fences_renderer = PlotRenderer.FenceRenderer(terrain_data)
+    fences_renderer = PlotRenderer.FenceRenderer(geo_data.terrain)
     fences_renderer.render(rendering_data.fences, geo_center)
     print("Fences rendered")
 
-    forest_renderer = ForestRenderer.ForestRenderer(terrain_data)
+    forest_renderer = ForestRenderer.ForestRenderer(geo_data.terrain)
     forest_renderer.render(rendering_data.forests, geo_center)
     print("Forests rendered")
 
-    building_renderer = BuildingRenderer.BuildingRenderer(terrain_data)
+    building_renderer = BuildingRenderer.BuildingRenderer(geo_data.terrain)
     building_renderer.render(rendering_data.buildings, geo_center)
     print("Buildings rendered")
 
-    road_renderer = RoadRenderer.RoadRenderer(terrain_data)
+    road_renderer = RoadRenderer.RoadRenderer(geo_data.terrain)
     road_renderer.render(rendering_data.roads, geo_center)
     print("Roads rendered")
 
-    water_renderer = WaterRenderer.WaterRenderer(terrain_data)
+    water_renderer = WaterRenderer.WaterRenderer(geo_data.terrain)
     water_renderer.render(rendering_data.water, geo_center)
     print("Water rendered")
 
-    background_renderer = BackgroundRenderer.BackgroundRenderer(terrain_data)
+    background_renderer = BackgroundRenderer.BackgroundRenderer(geo_data.terrain)
     background_renderer.render(rendering_data.background, geo_center)
     print("Background rendered")
 
     # terrain_renderer = TerrainRenderer.TerrainRenderer(5, 1)
-    # terrain_renderer.render(terrain_data, geo_window)
+    # terrain_renderer.render(geo_data.terrain, geo_window)
     # print("Terrain rendered")
 
 

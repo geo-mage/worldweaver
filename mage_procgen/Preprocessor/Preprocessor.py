@@ -4,10 +4,6 @@ from mage_procgen.Utils.Geometry import polygonise
 from shapely.geometry import MultiPolygon, Polygon, mapping
 
 
-# Maybe this souldn't have like 10 subtypes, but it should take raw data and conf as input, and output a set of sorted, cleaned up and tagged data
-# So it has to hold literally everything, and cross-check if plot x touches object y to caracterise it.
-
-
 class Preprocessor:
     _window_threshold = 1e-2
     _minimal_size = 20
@@ -21,6 +17,19 @@ class Preprocessor:
     def process(self) -> RenderingData:
 
         print("Processing")
+
+        # Background should be the whole area minus every other object
+        background = self.window.copy()
+        background = background.overlay(
+            self.geo_data.plots, how="difference", keep_geom_type=True
+        )
+        background = background.overlay(
+            self.geo_data.buildings, how="difference", keep_geom_type=True
+        )
+        background = background.overlay(
+            self.geo_data.water, how="difference", keep_geom_type=True
+        )
+
         new_plots = self.geo_data.plots.overlay(
             self.window, how="intersection", keep_geom_type=True
         )
@@ -36,25 +45,6 @@ class Preprocessor:
         # Windowing the roads before polygonising them leads to errors
         # Related thread: https://github.com/geopandas/geopandas/issues/1724
         new_roads = self.geo_data.roads
-        background = self.window.copy()
-
-        # Background should be the whole area minus every other object
-        background = background.overlay(
-            new_plots, how="difference", keep_geom_type=True
-        )
-        background = background.overlay(
-            new_buildings, how="difference", keep_geom_type=True
-        )
-        background = background.overlay(
-            new_water, how="difference", keep_geom_type=True
-        )
-
-        # TODO: need to take into account polygons with holes. 2 possibilities:
-        #   - Holes are faces, we extrude them and bool with the base face
-        #   - We find the closest segment between the hole and the hull, and we use it to insert the hole here
-        #   like in https://blender.stackexchange.com/a/33325
-        #   => tried a first version with the "closest segment" approach.
-        #   Need to be vigilant to artifacts that might appear in certain cases (holes added in the "wrong" order)
 
         # TODO For now just pass the lists of geom, tagging will be handled later
 

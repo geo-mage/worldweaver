@@ -5,8 +5,11 @@ from shapely.geometry import Polygon, mapping
 
 from dataclasses import dataclass
 
-PolygonList = list[Polygon]
 Point = tuple[float, float, float]
+PolygonList = list[Polygon]
+
+CRS_degrees = 4326
+CRS_fr = 2154
 
 
 class GeoWindow:
@@ -43,16 +46,6 @@ class GeoWindow:
 
 
 @dataclass
-class GeoData:
-    plots: g.GeoDataFrame
-    buildings: g.GeoDataFrame
-    forests: g.GeoDataFrame
-    # residentials: g.GeoDataFrame
-    roads: g.GeoDataFrame
-    water: g.GeoDataFrame
-
-
-@dataclass
 class RenderingData:
     fields: PolygonList
     forests: PolygonList
@@ -77,5 +70,15 @@ class TerrainData:
     data: p.DataFrame
 
 
-CRS_degrees = 4326
-CRS_fr = 2154
+TerrainDataList = list[TerrainData]
+
+
+@dataclass
+class GeoData:
+    plots: g.GeoDataFrame
+    buildings: g.GeoDataFrame
+    forests: g.GeoDataFrame
+    # residentials: g.GeoDataFrame
+    roads: g.GeoDataFrame
+    water: g.GeoDataFrame
+    terrain: TerrainDataList

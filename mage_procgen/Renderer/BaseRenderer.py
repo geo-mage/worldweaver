@@ -146,9 +146,10 @@ class BaseRenderer:
                 break
 
         if current_terrain is None:
-            raise ValueError(
-                "Point is outside of terrain: x=" + str(x) + ", y=" + str(y)
-            )
+            return 0
+            # raise ValueError(
+            #    "Point is outside of terrain: x=" + str(x) + ", y=" + str(y)
+            # )
 
         point_offset_x = x - current_terrain.x_min
         point_offset_y = y - current_terrain.y_min
