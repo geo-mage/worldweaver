@@ -6,7 +6,7 @@ from shapely.geometry import mapping
 from tqdm import tqdm
 import math
 from collections import deque
-from mage_procgen.Utils.Utils import PolygonList, Point
+from mage_procgen.Utils.Utils import PolygonList, Point, TerrainData
 
 
 class BaseRenderer:
@@ -15,7 +15,7 @@ class BaseRenderer:
     _AssetsFolder = "Assets"
     _mesh_name = ""
 
-    def __init__(self, terrain_data):
+    def __init__(self, terrain_data: list[TerrainData]):
         _location = os.path.realpath(
             os.path.join(os.getcwd(), os.path.dirname(__file__))
         )
@@ -161,7 +161,9 @@ class BaseRenderer:
 
         return z
 
-    def adapt_coords(self, points_coords, geo_center):
+    def adapt_coords(
+        self, points_coords: list[Point], geo_center: Point
+    ) -> list[Point]:
 
         # Centering the coordinates so that Blender's internal precision is less impactful
         centered_points_coords = [

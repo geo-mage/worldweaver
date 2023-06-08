@@ -4,7 +4,7 @@ import pandas as p
 from mage_procgen.Utils.Utils import TerrainData
 
 
-class TerrainParser:
+class ASCParser:
     @staticmethod
     def load(
         file_folder: str,
@@ -19,6 +19,10 @@ class TerrainParser:
         loaded_files = []
 
         for file in os.listdir(file_folder):
+
+            if os.path.splitext(file)[1] != ".asc":
+                continue
+
             file_name_parts = file.split("_")
             # File name contains xmin and ymax, but in km. we just need to convert it
             file_x_min = float(file_name_parts[2]) * 1000
@@ -37,6 +41,7 @@ class TerrainParser:
                 (file_y_max - file_y_range) <= bbox[3]
             )
 
+            # TODO: instead of doing this, we can use the dalles.shp file which link each file with a corresponding geodf line
             add_file = False
             add_file |= x_min_in and (y_min_in or y_max_in)
             add_file |= x_max_in and (y_min_in or y_max_in)

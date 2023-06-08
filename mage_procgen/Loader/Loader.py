@@ -3,7 +3,7 @@ import os
 import pandas as p
 
 from mage_procgen.Parser.ShapeFileParser import ShapeFileParser, RoadShapeFileParser
-from mage_procgen.Parser.TerrainParser import TerrainParser
+from mage_procgen.Parser.ASCParser import ASCParser
 
 from mage_procgen.Utils.Utils import GeoWindow, GeoData, CRS_fr, CRS_degrees
 
@@ -47,7 +47,7 @@ class Loader:
 
             print("Loading data for departement " + current_departement)
 
-            current_terrain_data = TerrainParser.load(
+            current_terrain_data = ASCParser.load(
                 os.path.join(base_folder, current_departement, terrain_folder),
                 bbox,
                 1,
@@ -55,7 +55,6 @@ class Loader:
                 1000,
             )
             terrain_data.extend(current_terrain_data)
-            # print("Terrain loaded: " + str(len(terrain_data)) + " chunks in total")
 
             current_plot_data = ShapeFileParser.load(
                 os.path.join(

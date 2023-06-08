@@ -1,4 +1,5 @@
 from mage_procgen.Renderer.BaseRenderer import BaseRenderer
+from mage_procgen.Utils.Utils import Point
 
 
 class BuildingRenderer(BaseRenderer):
@@ -6,7 +7,9 @@ class BuildingRenderer(BaseRenderer):
     _GNFile = "Buildings.blend"
     _mesh_name = "Buildings"
 
-    def adapt_coords(self, points_coords, geo_center):
+    def adapt_coords(
+        self, points_coords: list[Point], geo_center: Point
+    ) -> list[Point]:
 
         # Centering the coordinates so that Blender's internal precision is less impactful
         # Also, building rendering requires the base polygon to have constant z, so we fix every point's z to be the lowest in the set.
