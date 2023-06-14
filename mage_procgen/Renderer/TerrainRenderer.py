@@ -7,6 +7,7 @@ from tqdm import tqdm
 import math
 from collections import deque
 from mage_procgen.Utils.Utils import PolygonList, Point, GeoWindow
+from mage_procgen.Loader import Loader
 
 
 class TerrainRenderer:
@@ -17,7 +18,8 @@ class TerrainRenderer:
     _MaterialFile = "Terrain.blend"
     _AssetsFolder = "Assets"
 
-    def __init__(self, render_resolution: float, file_resolution: float):
+    def __init__(
+        self, render_resolution: float, file_resolution: float):
 
         self.render_resolution = render_resolution
         self.file_resolution = file_resolution
@@ -45,6 +47,9 @@ class TerrainRenderer:
 
     def render(self, terrain_data, geo_window: GeoWindow, use_sat_img: bool = False):
 
+        terrain_collection = bpy.data.collections.new("Terrain")
+        C.scene.collection.children.link(terrain_collection)
+
         center = geo_window.center
 
         box = geo_window.bounds
@@ -53,7 +58,7 @@ class TerrainRenderer:
         terrain_index = 0
         previous_point_terrain_index = 0
 
-        meshes = {x: bmesh.new() for x in range(len(terrain_data))}
+        meshes = {x: TerrainMeshInfo(bmesh.new()) for x in range(len(terrain_data))}
 
         global_x_min = min([x.x_min for x in terrain_data])
         global_x_max = max([x.x_max for x in terrain_data])
@@ -133,25 +138,35 @@ class TerrainRenderer:
                     current_point_z,
                 ]
 
-                current_point_centered_coords = [
-                    current_point_coords[0] - center[0],
-                    current_point_coords[1] - center[1],
-                    current_point_coords[2] - center[2],
-                ]
-
-                current_terrain_line.append(current_point_centered_coords)
+                current_terrain_line.append(current_point_coords)
 
                 if previous_terrain_line is not None and x > 0:
 
                     new_face_verts = [
-                        current_terrain_line[x],
-                        current_terrain_line[x - 1],
-                        previous_terrain_line[x - 1],
-                        previous_terrain_line[x],
+                        TerrainRenderer.__center(current_terrain_line[x], center),
+                        TerrainRenderer.__center(current_terrain_line[x - 1], center),
+                        TerrainRenderer.__center(previous_terrain_line[x - 1], center),
+                        TerrainRenderer.__center(previous_terrain_line[x], center),
                     ]
 
-                    face = meshes[previous_point_terrain_index].faces.new(
-                        meshes[previous_point_terrain_index].verts.new(pt)
+                    # Some checks will be superfluous, but better be safe than sorry
+                    TerrainRenderer.__check_boundaries(
+                        current_terrain_line[x], meshes[previous_point_terrain_index]
+                    )
+                    TerrainRenderer.__check_boundaries(
+                        current_terrain_line[x - 1],
+                        meshes[previous_point_terrain_index],
+                    )
+                    TerrainRenderer.__check_boundaries(
+                        previous_terrain_line[x - 1],
+                        meshes[previous_point_terrain_index],
+                    )
+                    TerrainRenderer.__check_boundaries(
+                        previous_terrain_line[x], meshes[previous_point_terrain_index]
+                    )
+
+                    face = meshes[previous_point_terrain_index].mesh.faces.new(
+                        meshes[previous_point_terrain_index].mesh.verts.new(pt)
                         for pt in new_face_verts
                     )
 
@@ -159,27 +174,36 @@ class TerrainRenderer:
 
             previous_terrain_line = current_terrain_line
 
-        i = 0
-        for index, mesh in meshes.items():
+        for index, mesh_info in meshes.items():
 
             pts_number_x = int(
-                (terrain_data[index].x_max - terrain_data[index].x_min)
-                / self.render_resolution
+                (mesh_info.x_max - mesh_info.x_min) / self.render_resolution
             )
             pts_number_y = int(
-                (terrain_data[index].y_max - terrain_data[index].y_min)
-                / self.render_resolution
+                (mesh_info.y_max - mesh_info.y_min) / self.render_resolution
             )
 
-            mesh_name = self._mesh_name + "_" + str(i)
+            mesh_name = self._mesh_name + "_" + str(index)
             mesh_data = D.meshes.new(mesh_name)
 
-            mesh.to_mesh(mesh_data)
-            mesh.free()
+            mesh_info.mesh.to_mesh(mesh_data)
+            mesh_info.mesh.free()
             mesh_obj = D.objects.new(mesh_data.name, mesh_data)
-            mesh_data.materials.append(D.materials[self._BaseMaterialName])
+            mesh_material = D.materials[self._BaseMaterialName].copy()
 
-            C.collection.objects.link(mesh_obj)
+            if use_sat_img:
+
+                texture_file_path = Loader.Loader.load_texture((mesh_info.x_min, mesh_info.y_min, mesh_info.x_max, mesh_info.y_max))
+
+                D.images.load(texture_file_path)
+
+                mesh_material.node_tree.nodes["Image Texture"].image = D.images[
+                    os.path.basename(texture_file_path)
+                ]
+
+            mesh_data.materials.append(mesh_material)
+
+            terrain_collection.objects.link(mesh_obj)
 
             uv_coords = [
                 (1 / (pts_number_x), 1 / (pts_number_y)),
@@ -199,27 +223,6 @@ class TerrainRenderer:
                     1 / pts_number_y * (face.loop_start // (pts_number_x * 4))
                 )
 
-                if terrain_data[index].x_max == global_x_max:
-                    start_coord_x = (
-                        1 / pts_number_x * ((face.loop_start // 4) % (pts_number_x - 1))
-                    )
-                    start_coord_y = (
-                        1 / pts_number_y * (face.loop_start // ((pts_number_x - 1) * 4))
-                    )
-                    if terrain_data[index].y_min == global_y_min:
-                        start_coord_y = (
-                            1
-                            / pts_number_y
-                            * ((face.loop_start // ((pts_number_x - 1) * 4)) + 1)
-                        )
-                else:
-                    if terrain_data[index].y_min == global_y_min:
-                        start_coord_y = (
-                            1
-                            / pts_number_y
-                            * ((face.loop_start // (pts_number_x * 4)) + 1)
-                        )
-
                 start_coord = (start_coord_x, start_coord_y)
                 for loop_idx in face.loop_indices:
                     cur_coord = uv_coords[loop_idx % 4]
@@ -228,4 +231,29 @@ class TerrainRenderer:
                         start_coord[1] + cur_coord[1],
                     )
 
-            i += 1
+    @staticmethod
+    def __center(point, center):
+
+        return (point[0] - center[0], point[1] - center[1], point[2] - center[2])
+
+    @staticmethod
+    def __check_boundaries(point, terrain_mesh_info):
+
+        if point[0] < terrain_mesh_info.x_min:
+            terrain_mesh_info.x_min = point[0]
+        if point[0] > terrain_mesh_info.x_max:
+            terrain_mesh_info.x_max = point[0]
+        if point[1] < terrain_mesh_info.y_min:
+            terrain_mesh_info.y_min = point[1]
+        if point[1] > terrain_mesh_info.y_max:
+            terrain_mesh_info.y_max = point[1]
+
+
+class TerrainMeshInfo:
+    def __init__(self, mesh):
+
+        self.mesh = mesh
+        self.x_min = math.inf
+        self.x_max = -math.inf
+        self.y_min = math.inf
+        self.y_max = -math.inf

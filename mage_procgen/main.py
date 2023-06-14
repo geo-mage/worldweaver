@@ -24,16 +24,16 @@ def main():
 
     # Fublaines
     geo_window = GeoWindow(2.93, 2.945, 48.9350, 48.94, CRS_degrees, CRS_fr)
-    # geo_window = GeoWindow(2.9, 2.955, 48.93, 48.945, CRS_degrees, CRS_fr)
+    #geo_window = GeoWindow(2.9, 2.955, 48.93, 48.945, CRS_degrees, CRS_fr)
 
     # La Chapelle-Villars
     # geo_window = GeoWindow(4.6900, 4.7340, 45.4765, 45.4550, CRS_degrees, CRS_fr)
     # geo_window = GeoWindow(4.6900, 4.74, 45.4600, 45.493, CRS_degrees, CRS_fr)
     # geo_window = GeoWindow(4.6900, 4.8000, 45.4400, 45.5000, CRS_degrees, CRS_fr)
 
-    render_objects = False
+    render_objects = True
     render_terrain = True
-    use_sat_img = False
+    use_sat_img = True
     terrain_resolution = 20
 
     geo_center = geo_window.center
@@ -87,7 +87,7 @@ def main():
 
     if render_terrain:
         terrain_renderer = TerrainRenderer.TerrainRenderer(terrain_resolution, 1)
-        terrain_renderer.render(geo_data.terrain, geo_window)
+        terrain_renderer.render(geo_data.terrain, geo_window, use_sat_img)
         print("Terrain rendered")
 
 

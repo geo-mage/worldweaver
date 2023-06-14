@@ -61,8 +61,12 @@ class ASCParser:
             # Number of columns must be read in dataframe.columns, the rest is in the rows ...
             nbcols = int(file_data.columns[0].split(" ")[-1])
             nbrows = int(file_data.values[0][0].split(" ")[-1])
-            x_min = float(file_data.values[1][0].split(" ")[-1])
-            y_min = float(file_data.values[2][0].split(" ")[-1])
+
+            # The x_min and y_min indicated are those of the enveloppe of the raster,
+            # while we're concerned abt the center pixel which is (0.5,0.5) away.
+            x_min = float(file_data.values[1][0].split(" ")[-1]) + 0.5
+            y_min = float(file_data.values[2][0].split(" ")[-1]) + 0.5
+
             resolution = float(file_data.values[3][0].split(" ")[-1])
             no_data = float(file_data.values[4][0].split(" ")[-1])
             x_max = x_min + resolution * nbcols
