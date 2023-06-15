@@ -130,7 +130,19 @@ class JP2Parser:
                 bottom_part = np.concatenate((bottom_left, bottom_right), axis=1)
                 img_full = np.concatenate((top_part, bottom_part), axis=0)
 
-        img_full_data = Image.fromarray(img_full, "RGB")
+        # Switching back to channel first and changing type to be able to write the image
+        img_full = np.rollaxis(img_full, axis=2).astype(rasterio.uint8)
 
-        # TODO: evaluate other formats (tif), compression ...
-        img_full_data.save(texture_file_path, "PNG")
+        # TODO: currently YCBCR requires jpeg compression. Evaluate if there is a better way
+        with rasterio.open(
+            texture_file_path,
+            "w",
+            driver="GTiff",
+            width=img_full.shape[1],
+            height=img_full.shape[2],
+            count=3,
+            dtype=rasterio.uint8,
+            compress="JPEG",
+            photometric="YCBCR",
+        ) as dst:
+            dst.write(img_full)

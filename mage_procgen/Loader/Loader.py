@@ -174,7 +174,7 @@ class Loader:
             + "_"
             + str(int(mesh_box[3]))
             + "_"
-            + ".png"
+            + ".tif"
         )
 
         texture_full_path = os.path.join(current_texture_folder, texture_file_name)

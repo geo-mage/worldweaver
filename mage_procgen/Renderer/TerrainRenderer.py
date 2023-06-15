@@ -18,8 +18,7 @@ class TerrainRenderer:
     _MaterialFile = "Terrain.blend"
     _AssetsFolder = "Assets"
 
-    def __init__(
-        self, render_resolution: float, file_resolution: float):
+    def __init__(self, render_resolution: float, file_resolution: float):
 
         self.render_resolution = render_resolution
         self.file_resolution = file_resolution
@@ -193,7 +192,9 @@ class TerrainRenderer:
 
             if use_sat_img:
 
-                texture_file_path = Loader.Loader.load_texture((mesh_info.x_min, mesh_info.y_min, mesh_info.x_max, mesh_info.y_max))
+                texture_file_path = Loader.Loader.load_texture(
+                    (mesh_info.x_min, mesh_info.y_min, mesh_info.x_max, mesh_info.y_max)
+                )
 
                 D.images.load(texture_file_path)
 
@@ -216,6 +217,7 @@ class TerrainRenderer:
 
             for face in mesh_obj.data.polygons:
 
+                # Each face has 4 loops (sides), and starts in the lower left corner (xmin, ymin)
                 start_coord_x = (
                     1 / pts_number_x * ((face.loop_start // 4) % pts_number_x)
                 )

@@ -14,7 +14,11 @@ class ASCParser:
         file_points_number_y,
     ):
         # TODO: resolution, pts number etc could be read from the first file instead of being passed as argument.
-        # Assuming ofc that it's constant in a region.
+        # Assuming ofc that it's constant in a region. (or even better use the "dalles.shp" instead of filename to select)
+
+        # TODO: could extract the region we really want and not the whole slab. Only issue would be with the rendering
+        # resolution because it's much better if it divides the points number. Maybe it needs to be passed here, and
+        # we get the smallest sub-slab that fits "pts_number is a multiple of render resolution"
 
         loaded_files = []
 
