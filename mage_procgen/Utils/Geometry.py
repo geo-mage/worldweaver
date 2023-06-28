@@ -162,3 +162,8 @@ def line_intersection(
     x = det(d, xdiff) / div
     y = det(d, ydiff) / div
     return x, y
+
+
+def center_point(point: tuple[float, float, float], center: tuple[float, float, float]):
+
+    return (point[0] - center[0], point[1] - center[1], point[2] - center[2])

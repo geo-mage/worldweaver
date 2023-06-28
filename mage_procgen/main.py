@@ -11,10 +11,12 @@ from mage_procgen.Renderer import (
     WaterRenderer,
     BackgroundRenderer,
     TerrainRenderer,
+    FloodRenderer,
 )
-from mage_procgen.Utils.Utils import GeoWindow, GeoData, CRS_fr, CRS_degrees
+from mage_procgen.Utils.Utils import GeoWindow, CRS_fr, CRS_degrees
 from mage_procgen.Loader.Loader import Loader
-from mage_procgen.Preprocessor.Preprocessor import Preprocessor
+from mage_procgen.Processor.Preprocessor import Preprocessor
+from mage_procgen.Processor.FloodProcessor import FloodProcessor
 
 
 from mage_procgen.Utils.Rendering import configure_render
@@ -23,7 +25,8 @@ from mage_procgen.Utils.Rendering import configure_render
 def main():
 
     # Fublaines
-    geo_window = GeoWindow(2.93, 2.945, 48.9350, 48.94, CRS_degrees, CRS_fr)
+    geo_window = GeoWindow(2.9185, 2.9314, 48.9396, 48.9466, CRS_degrees, CRS_fr)
+    # geo_window = GeoWindow(2.93, 2.945, 48.9350, 48.94, CRS_degrees, CRS_fr)
     # geo_window = GeoWindow(2.9, 2.955, 48.93, 48.945, CRS_degrees, CRS_fr)
 
     # La Chapelle-Villars
@@ -32,15 +35,20 @@ def main():
     # geo_window = GeoWindow(4.6900, 4.8000, 45.4400, 45.5000, CRS_degrees, CRS_fr)
 
     render_objects = True
+
     render_terrain = True
+    terrain_resolution = 1
+
     use_sat_img = True
-    terrain_resolution = 20
+
+    flood = True
+    flood_height = 5
 
     geo_center = geo_window.center
 
     bbox = geo_window.bounds
 
-    geo_data = Loader.load(bbox)
+    geo_data = Loader.load(geo_window)
 
     print("Files loaded")
 
@@ -89,6 +97,13 @@ def main():
         terrain_renderer = TerrainRenderer.TerrainRenderer(terrain_resolution, 1)
         terrain_renderer.render(geo_data.terrain, geo_window, use_sat_img)
         print("Terrain rendered")
+
+    if flood:
+        # for i in range(7):
+        #    FloodProcessor.flood(geo_window, i)
+        flood_data = FloodProcessor.flood(geo_window, flood_height)
+        flood_render = FloodRenderer.FloodRenderer()
+        flood_render.render(flood_data)
 
 
 if __name__ == "__main__":

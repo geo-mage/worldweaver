@@ -16,6 +16,7 @@ class Loader:
     regions_file = "ARRONDISSEMENT/ARRONDISSEMENT.shp"
 
     terrain_folder = "RGEALTI/1_DONNEES_LIVRAISON/MNT"
+    terrain_slab_file = "RGEALTI/3_SUPPLEMENTS_LIVRAISON/dalles.shp"
 
     parcellaire_folder = "PARCELLAIRE_EXPRESS/1_DONNEES_LIVRAISON"
     plot_file = "PARCELLE.SHP"
@@ -31,7 +32,9 @@ class Loader:
     texture_image_slab_file = "BDORTHO/3_SUPPLEMENTS_LIVRAISON/dalles.shp"
 
     @staticmethod
-    def load(bbox: tuple[float, float, float, float]) -> GeoData:
+    def load(geo_window: GeoWindow) -> GeoData:
+
+        bbox = geo_window.bounds
 
         print("Loading shp files")
 
@@ -57,10 +60,10 @@ class Loader:
                 os.path.join(
                     Loader.base_folder, current_departement, Loader.terrain_folder
                 ),
-                bbox,
-                1,
-                1000,
-                1000,
+                geo_window,
+                os.path.join(
+                    Loader.base_folder, current_departement, Loader.terrain_slab_file
+                ),
             )
 
             terrain_data.extend(current_terrain_data)

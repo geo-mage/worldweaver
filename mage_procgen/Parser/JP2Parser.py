@@ -3,9 +3,8 @@ import os
 import numpy as np
 import rasterio
 from rasterio.windows import Window
-from PIL import Image
 
-from mage_procgen.Utils.Utils import GeoWindow, GeoData, CRS_fr, CRS_degrees
+from mage_procgen.Utils.Utils import GeoWindow
 from mage_procgen.Parser.ShapeFileParser import ShapeFileParser
 
 

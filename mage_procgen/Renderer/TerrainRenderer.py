@@ -7,6 +7,7 @@ from tqdm import tqdm
 import math
 from collections import deque
 from mage_procgen.Utils.Utils import PolygonList, Point, GeoWindow
+from mage_procgen.Utils.Geometry import center_point
 from mage_procgen.Loader import Loader
 
 
@@ -46,7 +47,7 @@ class TerrainRenderer:
 
     def render(self, terrain_data, geo_window: GeoWindow, use_sat_img: bool = False):
 
-        terrain_collection = bpy.data.collections.new("Terrain")
+        terrain_collection = bpy.data.collections.new(self._mesh_name)
         C.scene.collection.children.link(terrain_collection)
 
         center = geo_window.center
@@ -142,10 +143,10 @@ class TerrainRenderer:
                 if previous_terrain_line is not None and x > 0:
 
                     new_face_verts = [
-                        TerrainRenderer.__center(current_terrain_line[x], center),
-                        TerrainRenderer.__center(current_terrain_line[x - 1], center),
-                        TerrainRenderer.__center(previous_terrain_line[x - 1], center),
-                        TerrainRenderer.__center(previous_terrain_line[x], center),
+                        center_point(current_terrain_line[x], center),
+                        center_point(current_terrain_line[x - 1], center),
+                        center_point(previous_terrain_line[x - 1], center),
+                        center_point(previous_terrain_line[x], center),
                     ]
 
                     # Some checks will be superfluous, but better be safe than sorry
@@ -232,11 +233,6 @@ class TerrainRenderer:
                         start_coord[0] + cur_coord[0],
                         start_coord[1] + cur_coord[1],
                     )
-
-    @staticmethod
-    def __center(point, center):
-
-        return (point[0] - center[0], point[1] - center[1], point[2] - center[2])
 
     @staticmethod
     def __check_boundaries(point, terrain_mesh_info):

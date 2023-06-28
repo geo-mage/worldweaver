@@ -2,19 +2,23 @@ import os
 
 import pandas as p
 from mage_procgen.Utils.Utils import TerrainData
+from mage_procgen.Utils.Utils import GeoWindow
+from mage_procgen.Parser.ShapeFileParser import ShapeFileParser
 
 
 class ASCParser:
     @staticmethod
     def load(
         file_folder: str,
-        bbox: tuple[float, float, float, float],
-        terrain_resolution,
-        file_points_number_x,
-        file_points_number_y,
+        geo_window: GeoWindow,
+        slab_file: str,
     ):
-        # TODO: resolution, pts number etc could be read from the first file instead of being passed as argument.
-        # Assuming ofc that it's constant in a region. (or even better use the "dalles.shp" instead of filename to select)
+
+        bbox = geo_window.bounds
+        slabs = ShapeFileParser.load(slab_file, bbox)
+        slab_parts = slabs.overlay(
+            geo_window.dataframe, how="intersection", keep_geom_type=True
+        )
 
         # TODO: could extract the region we really want and not the whole slab. Only issue would be with the rendering
         # resolution because it's much better if it divides the points number. Maybe it needs to be passed here, and
@@ -22,45 +26,10 @@ class ASCParser:
 
         loaded_files = []
 
-        for file in os.listdir(file_folder):
+        for index, row in slab_parts.iterrows():
+            file_name = os.path.basename(row["NOM_DALLE"]) + ".asc"
 
-            if os.path.splitext(file)[1] != ".asc":
-                continue
-
-            file_name_parts = file.split("_")
-            # File name contains xmin and ymax, but in km. we just need to convert it
-            file_x_min = float(file_name_parts[2]) * 1000
-            file_y_max = float(file_name_parts[3]) * 1000
-
-            file_x_range = terrain_resolution * file_points_number_x
-            file_y_range = terrain_resolution * file_points_number_y
-
-            # If one of the corners of the file is in the bbox, load the file
-            x_min_in = (file_x_min >= bbox[0]) and (file_x_min <= bbox[2])
-            x_max_in = ((file_x_min + file_x_range) >= bbox[0]) and (
-                (file_x_min + file_x_range) <= bbox[2]
-            )
-            y_max_in = (file_y_max >= bbox[1]) and (file_y_max <= bbox[3])
-            y_min_in = ((file_y_max - file_y_range) >= bbox[1]) and (
-                (file_y_max - file_y_range) <= bbox[3]
-            )
-
-            # TODO: instead of doing this, we can use the dalles.shp file which link each file with a corresponding geodf line
-            add_file = False
-            add_file |= x_min_in and (y_min_in or y_max_in)
-            add_file |= x_max_in and (y_min_in or y_max_in)
-            # Also, if xmin is below and xmax is above (and similiarly for y)
-            add_file |= (file_x_min <= bbox[0]) and (
-                (file_x_min + file_x_range) >= bbox[2]
-            )
-            add_file |= ((file_y_max - file_y_range) <= bbox[1]) and (
-                file_y_max >= bbox[3]
-            )
-
-            if not add_file:
-                continue
-
-            file_data = p.read_csv(os.path.join(file_folder, file))
+            file_data = p.read_csv(os.path.join(file_folder, file_name))
 
             # Number of columns must be read in dataframe.columns, the rest is in the rows ...
             nbcols = int(file_data.columns[0].split(" ")[-1])
