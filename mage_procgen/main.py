@@ -26,8 +26,8 @@ def main():
 
     # Fublaines
     geo_window = GeoWindow(2.9185, 2.9314, 48.9396, 48.9466, CRS_degrees, CRS_fr)
-    # geo_window = GeoWindow(2.93, 2.945, 48.9350, 48.94, CRS_degrees, CRS_fr)
-    # geo_window = GeoWindow(2.9, 2.955, 48.93, 48.945, CRS_degrees, CRS_fr)
+    #geo_window = GeoWindow(2.93, 2.945, 48.9350, 48.94, CRS_degrees, CRS_fr)
+    #geo_window = GeoWindow(2.9, 2.955, 48.93, 48.945, CRS_degrees, CRS_fr)
 
     # La Chapelle-Villars
     # geo_window = GeoWindow(4.6900, 4.7340, 45.4765, 45.4550, CRS_degrees, CRS_fr)
@@ -45,8 +45,6 @@ def main():
     flood_height = 5
 
     geo_center = geo_window.center
-
-    bbox = geo_window.bounds
 
     geo_data = Loader.load(geo_window)
 

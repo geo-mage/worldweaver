@@ -1,3 +1,5 @@
+import math
+
 from bpy import data as D
 from skimage.segmentation import flood, flood_fill
 from skimage.morphology import closing
@@ -27,19 +29,45 @@ class FloodProcessor:
         rounded_ll = (ceil(centered_ll[0]), ceil(centered_ll[1]), 0)
         rounded_ur = (floor(centered_ur[0]), floor(centered_ur[1]), 0)
 
-        # TODO: find a way to calculate those so they fit every case
-        comp_plane_z = 250
-        max_distance = 300
         disk_size = 2
+        cellsize = 1
+
+        max_z = -math.inf
+        min_z = math.inf
+
+        # Calculating the maximum height of the scene, using terrain and buildings
+        terrain_collection = D.collections["Terrain"].objects
+        for terrain in terrain_collection:
+            vertices = terrain.data.vertices
+            z_coords = [v.co[2] for v in vertices]
+            cur_z_max = max(z_coords)
+            cur_z_min = min(z_coords)
+            if cur_z_max > max_z:
+                max_z = cur_z_max
+            if cur_z_min < min_z:
+                min_z = cur_z_min
+        building_vertices = D.objects["Buildings"].data.vertices
+        building_z_coords = [v.co[2] for v in building_vertices]
+        cur_z_max = max(building_z_coords)
+        cur_z_min = min(building_z_coords)
+        if cur_z_max > max_z:
+            max_z = cur_z_max
+        if cur_z_min < min_z:
+            min_z = cur_z_min
+
+        # Plane from which the rays shoot need to be above the scene. Margin on 50m is taken to be sure.
+        comp_plane_z = max_z + 50
+        max_distance = (comp_plane_z - min_z) + 50
 
         # This holds every coordinate from which rays will be fired towards the terrain to get the height
+        # Step on Y in negative because y axis is north pointing
         comp_plane = np.array(
             [
                 [
                     Vector([x, y, comp_plane_z])
-                    for x in range(rounded_ll[0], rounded_ur[0])
+                    for x in np.arange(rounded_ll[0], rounded_ur[0], cellsize)
                 ]
-                for y in range(rounded_ur[1], rounded_ll[1], -1)
+                for y in np.arange(rounded_ur[1], rounded_ll[1], -cellsize)
             ]
         )
 
@@ -66,7 +94,7 @@ class FloodProcessor:
         footprint = disk(disk_size)
         closed = closing(flooded, footprint)
 
-        return (closed, min_height + flood_height, rounded_ll, rounded_ur)
+        return (closed, min_height + flood_height, rounded_ll, rounded_ur, cellsize)
 
     @staticmethod
     def __find_elevation(point, max_distance, ray_direction):

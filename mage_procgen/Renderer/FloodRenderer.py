@@ -7,8 +7,8 @@ import bmesh
 class FloodRenderer:
 
     _mesh_name = "Flood"
-    _GNFile = "Water.blend"
-    _GNSetup = "Water"
+    _GNFile = "Flood.blend"
+    _GNSetup = "Flood"
     _AssetsFolder = "Assets"
 
     def __init__(self):
@@ -43,25 +43,28 @@ class FloodRenderer:
         flood_plan_z = flood_data[1]
         lower_left = flood_data[2]
         upper_right = flood_data[3]
+        cellsize = flood_data[4]
 
         mesh = bmesh.new()
 
+        corner_coord = cellsize/2
+
         cell_coords = [
-            (0, 0),
-            (0, -1),
-            (1, -1),
-            (1, 0),
+            (-corner_coord, corner_coord),
+            (-corner_coord, -corner_coord),
+            (corner_coord, -corner_coord),
+            (corner_coord, corner_coord),
         ]
 
         for y in range(len(flood_pixels)):
 
-            current_point_y = upper_right[1] - y
+            current_point_y = upper_right[1] - y * cellsize
 
             for x in range(len(flood_pixels[y])):
 
                 if flood_pixels[y][x]:
 
-                    current_point_x = lower_left[0] + x
+                    current_point_x = lower_left[0] + x * cellsize
 
                     current_point_coords = [
                         current_point_x,
