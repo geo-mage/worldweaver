@@ -47,7 +47,7 @@ class FloodRenderer:
 
         mesh = bmesh.new()
 
-        corner_coord = cellsize/2
+        corner_coord = cellsize / 2
 
         cell_coords = [
             (-corner_coord, corner_coord),

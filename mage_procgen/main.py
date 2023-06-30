@@ -24,25 +24,44 @@ from mage_procgen.Utils.Rendering import configure_render
 
 def main():
 
+    # 77
     # Fublaines
-    geo_window = GeoWindow(2.9185, 2.9314, 48.9396, 48.9466, CRS_degrees, CRS_fr)
-    #geo_window = GeoWindow(2.93, 2.945, 48.9350, 48.94, CRS_degrees, CRS_fr)
-    #geo_window = GeoWindow(2.9, 2.955, 48.93, 48.945, CRS_degrees, CRS_fr)
+    # geo_window = GeoWindow(2.9185, 2.9314, 48.9396, 48.9466, CRS_degrees, CRS_fr)
+    # geo_window = GeoWindow(2.93, 2.945, 48.9350, 48.94, CRS_degrees, CRS_fr)
+    # geo_window = GeoWindow(2.9, 2.955, 48.93, 48.945, CRS_degrees, CRS_fr)
 
+    # Choisy-en-Brie
+    # geo_window = GeoWindow(3.2050, 3.2350, 48.7545, 48.7650, CRS_degrees, CRS_fr)
+
+    # Meaux
+    # TODO: ne marche pas a cause de pb sur les opérations d'overlay sur les geodf
+    # geo_window = GeoWindow(2.8733, 2.9249, 48.9459, 48.9633, CRS_degrees, CRS_fr)
+
+    # geo_window = GeoWindow(2.8675, 2.8893, 48.9469, 48.9612, CRS_degrees, CRS_fr)
+    geo_window = GeoWindow(2.8977, 2.9083, 48.9459, 48.9501, CRS_degrees, CRS_fr)
+
+    # La Ferté-sous-Jouarre
+    # TODO: ne marchent pas a cause de pb sur les opérations d'overlay sur les geodf
+    # geo_window = GeoWindow(3.1, 3.16, 48.93, 48.97, CRS_degrees, CRS_fr)
+    # geo_window = GeoWindow(3.11, 3.15, 48.933, 48.964, CRS_degrees, CRS_fr)
+
+    # 42 38 69
     # La Chapelle-Villars
     # geo_window = GeoWindow(4.6900, 4.7340, 45.4765, 45.4550, CRS_degrees, CRS_fr)
     # geo_window = GeoWindow(4.6900, 4.74, 45.4600, 45.493, CRS_degrees, CRS_fr)
     # geo_window = GeoWindow(4.6900, 4.8000, 45.4400, 45.5000, CRS_degrees, CRS_fr)
 
     render_objects = True
+    remove_landlocked_plots = False
 
     render_terrain = True
-    terrain_resolution = 1
+    terrain_resolution = 5
 
     use_sat_img = True
 
     flood = True
-    flood_height = 5
+    flood_height = 8
+    flood_cell_size = 5
 
     geo_center = geo_window.center
 
@@ -52,7 +71,7 @@ def main():
 
     print("Starting preprocessing")
     processor = Preprocessor(geo_data, geo_window, CRS_fr)
-    rendering_data = processor.process()
+    rendering_data = processor.process(remove_landlocked_plots)
     print("Preprocessing done")
 
     print("Starting rendering")
@@ -99,7 +118,7 @@ def main():
     if flood:
         # for i in range(7):
         #    FloodProcessor.flood(geo_window, i)
-        flood_data = FloodProcessor.flood(geo_window, flood_height)
+        flood_data = FloodProcessor.flood(geo_window, flood_height, flood_cell_size)
         flood_render = FloodRenderer.FloodRenderer()
         flood_render.render(flood_data)
 

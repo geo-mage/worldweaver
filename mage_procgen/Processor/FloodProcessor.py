@@ -16,7 +16,7 @@ from math import floor, ceil
 
 class FloodProcessor:
     @staticmethod
-    def flood(geo_window: GeoWindow, flood_height: float):
+    def flood(geo_window: GeoWindow, flood_height: float, flood_cell_size: float):
 
         bounds = geo_window.bounds
         center = geo_window.center
@@ -29,13 +29,14 @@ class FloodProcessor:
         rounded_ll = (ceil(centered_ll[0]), ceil(centered_ll[1]), 0)
         rounded_ur = (floor(centered_ur[0]), floor(centered_ur[1]), 0)
 
+        # TODO: check this value
         disk_size = 2
-        cellsize = 1
 
         max_z = -math.inf
         min_z = math.inf
 
         # Calculating the maximum height of the scene, using terrain and buildings
+        # TODO: check if there are edge cases where this does not hold
         terrain_collection = D.collections["Terrain"].objects
         for terrain in terrain_collection:
             vertices = terrain.data.vertices
@@ -65,9 +66,9 @@ class FloodProcessor:
             [
                 [
                     Vector([x, y, comp_plane_z])
-                    for x in np.arange(rounded_ll[0], rounded_ur[0], cellsize)
+                    for x in np.arange(rounded_ll[0], rounded_ur[0], flood_cell_size)
                 ]
-                for y in np.arange(rounded_ur[1], rounded_ll[1], -cellsize)
+                for y in np.arange(rounded_ur[1], rounded_ll[1], -flood_cell_size)
             ]
         )
 
@@ -94,7 +95,13 @@ class FloodProcessor:
         footprint = disk(disk_size)
         closed = closing(flooded, footprint)
 
-        return (closed, min_height + flood_height, rounded_ll, rounded_ur, cellsize)
+        return (
+            closed,
+            min_height + flood_height,
+            rounded_ll,
+            rounded_ur,
+            flood_cell_size,
+        )
 
     @staticmethod
     def __find_elevation(point, max_distance, ray_direction):

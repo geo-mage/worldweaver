@@ -14,7 +14,7 @@ class Preprocessor:
         self.window = geowindow.dataframe
         self.crs = crs
 
-    def process(self) -> RenderingData:
+    def process(self, remove_landlocked: bool) -> RenderingData:
 
         print("Processing")
 
@@ -62,8 +62,6 @@ class Preprocessor:
             new_roads, how="difference", keep_geom_type=True
         )
 
-        # Disabling flag to speed up other tests
-        remove_landlocked = True
         if remove_landlocked:
             # Removing plots that are contained inside other plots
             new_plots = Preprocessor.remove_landlocked_plots(new_plots)
