@@ -19,16 +19,16 @@ from mage_procgen.Processor.Preprocessor import Preprocessor
 from mage_procgen.Processor.FloodProcessor import FloodProcessor
 
 
-from mage_procgen.Utils.Rendering import configure_render
+from mage_procgen.Utils.Rendering import configure_render, export_rendered_img, setup_img
 
 
 def main():
 
     # 77
     # Fublaines
-    # geo_window = GeoWindow(2.9185, 2.9314, 48.9396, 48.9466, CRS_degrees, CRS_fr)
+    geo_window = GeoWindow(2.9185, 2.9314, 48.9396, 48.9466, CRS_degrees, CRS_fr)
     # geo_window = GeoWindow(2.93, 2.945, 48.9350, 48.94, CRS_degrees, CRS_fr)
-    # geo_window = GeoWindow(2.9, 2.955, 48.93, 48.945, CRS_degrees, CRS_fr)
+    #geo_window = GeoWindow(2.9, 2.955, 48.93, 48.945, CRS_degrees, CRS_fr)
 
     # Choisy-en-Brie
     # geo_window = GeoWindow(3.2050, 3.2350, 48.7545, 48.7650, CRS_degrees, CRS_fr)
@@ -38,7 +38,7 @@ def main():
     # geo_window = GeoWindow(2.8733, 2.9249, 48.9459, 48.9633, CRS_degrees, CRS_fr)
 
     # geo_window = GeoWindow(2.8675, 2.8893, 48.9469, 48.9612, CRS_degrees, CRS_fr)
-    geo_window = GeoWindow(2.8977, 2.9083, 48.9459, 48.9501, CRS_degrees, CRS_fr)
+    #geo_window = GeoWindow(2.8977, 2.9083, 48.9459, 48.9501, CRS_degrees, CRS_fr)
 
     # La Ferté-sous-Jouarre
     # TODO: ne marchent pas a cause de pb sur les opérations d'overlay sur les geodf
@@ -52,16 +52,18 @@ def main():
     # geo_window = GeoWindow(4.6900, 4.8000, 45.4400, 45.5000, CRS_degrees, CRS_fr)
 
     render_objects = True
-    remove_landlocked_plots = False
+    remove_landlocked_plots = True
 
     render_terrain = True
-    terrain_resolution = 5
+    terrain_resolution = 1
 
     use_sat_img = True
 
     flood = True
-    flood_height = 8
-    flood_cell_size = 5
+    flood_height = 5
+    flood_cell_size = 1
+
+    export_img = True
 
     geo_center = geo_window.center
 
@@ -75,7 +77,7 @@ def main():
     print("Preprocessing done")
 
     print("Starting rendering")
-    configure_render()
+    configure_render(geo_window.center_deg)
 
     if render_objects:
         fields_renderer = PlotRenderer.FieldRenderer(geo_data.terrain)
@@ -122,6 +124,9 @@ def main():
         flood_render = FloodRenderer.FloodRenderer()
         flood_render.render(flood_data)
 
+    if export_img:
+        setup_img(512, 0.2, (250,250,0))
+        export_rendered_img()
 
 if __name__ == "__main__":
     main()

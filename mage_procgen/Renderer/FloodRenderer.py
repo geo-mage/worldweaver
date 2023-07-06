@@ -7,7 +7,7 @@ import bmesh
 class FloodRenderer:
 
     _mesh_name = "Flood"
-    _GNFile = "Flood.blend"
+    _GNFile = "Flood2.blend"
     _GNSetup = "Flood"
     _AssetsFolder = "Assets"
 

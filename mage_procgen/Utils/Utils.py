@@ -39,7 +39,12 @@ class GeoWindow:
         ).to_crs(to_crs)
 
         centroid = self.dataframe.geometry[0].centroid
+        # Used to geometrically center all the objects in render
         self.center = (centroid.coords[0][0], centroid.coords[0][1], 0.0)
+
+        centroid_deg = self.dataframe.to_crs(CRS_degrees).geometry[0].centroid
+        # Used to configure the sun object in render
+        self.center_deg = (centroid_deg.coords[0][0], centroid_deg.coords[0][1], 0.0)
 
         # Order is Xmin, Ymin, Xmax, Ymax
         self.bounds = self.dataframe.geometry[0].bounds
