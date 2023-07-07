@@ -15,20 +15,33 @@ from mage_procgen.Renderer import (
 )
 from mage_procgen.Utils.Utils import GeoWindow, CRS_fr, CRS_degrees
 from mage_procgen.Loader.Loader import Loader
+from mage_procgen.Loader.ConfigLoader import ConfigLoader
 from mage_procgen.Processor.Preprocessor import Preprocessor
 from mage_procgen.Processor.FloodProcessor import FloodProcessor
-
-
-from mage_procgen.Utils.Rendering import configure_render, export_rendered_img, setup_img
+from mage_procgen.Utils.Rendering import (
+    configure_render,
+    export_rendered_img,
+    setup_img,
+)
 
 
 def main():
+
+    config = ConfigLoader.load("/home/verstraa/Work/maps/config.json")
+
+    geo_window = GeoWindow(
+        config.x_min,
+        config.x_max,
+        config.y_min,
+        config.y_max,
+        config.crs_from,
+        config.crs_to)
 
     # 77
     # Fublaines
     geo_window = GeoWindow(2.9185, 2.9314, 48.9396, 48.9466, CRS_degrees, CRS_fr)
     # geo_window = GeoWindow(2.93, 2.945, 48.9350, 48.94, CRS_degrees, CRS_fr)
-    #geo_window = GeoWindow(2.9, 2.955, 48.93, 48.945, CRS_degrees, CRS_fr)
+    # geo_window = GeoWindow(2.9, 2.955, 48.93, 48.945, CRS_degrees, CRS_fr)
 
     # Choisy-en-Brie
     # geo_window = GeoWindow(3.2050, 3.2350, 48.7545, 48.7650, CRS_degrees, CRS_fr)
@@ -38,7 +51,7 @@ def main():
     # geo_window = GeoWindow(2.8733, 2.9249, 48.9459, 48.9633, CRS_degrees, CRS_fr)
 
     # geo_window = GeoWindow(2.8675, 2.8893, 48.9469, 48.9612, CRS_degrees, CRS_fr)
-    #geo_window = GeoWindow(2.8977, 2.9083, 48.9459, 48.9501, CRS_degrees, CRS_fr)
+    # geo_window = GeoWindow(2.8977, 2.9083, 48.9459, 48.9501, CRS_degrees, CRS_fr)
 
     # La Ferté-sous-Jouarre
     # TODO: ne marchent pas a cause de pb sur les opérations d'overlay sur les geodf
@@ -51,20 +64,6 @@ def main():
     # geo_window = GeoWindow(4.6900, 4.74, 45.4600, 45.493, CRS_degrees, CRS_fr)
     # geo_window = GeoWindow(4.6900, 4.8000, 45.4400, 45.5000, CRS_degrees, CRS_fr)
 
-    render_objects = True
-    remove_landlocked_plots = True
-
-    render_terrain = True
-    terrain_resolution = 1
-
-    use_sat_img = True
-
-    flood = True
-    flood_height = 5
-    flood_cell_size = 1
-
-    export_img = True
-
     geo_center = geo_window.center
 
     geo_data = Loader.load(geo_window)
@@ -73,13 +72,13 @@ def main():
 
     print("Starting preprocessing")
     processor = Preprocessor(geo_data, geo_window, CRS_fr)
-    rendering_data = processor.process(remove_landlocked_plots)
+    rendering_data = processor.process(config.remove_landlocked_plots)
     print("Preprocessing done")
 
     print("Starting rendering")
     configure_render(geo_window.center_deg)
 
-    if render_objects:
+    if config.render_objects:
         fields_renderer = PlotRenderer.FieldRenderer(geo_data.terrain)
         fields_renderer.render(rendering_data.fields, geo_center)
         print("Fields rendered")
@@ -112,21 +111,20 @@ def main():
         background_renderer.render(rendering_data.background, geo_center)
         print("Background rendered")
 
-    if render_terrain:
-        terrain_renderer = TerrainRenderer.TerrainRenderer(terrain_resolution, 1)
-        terrain_renderer.render(geo_data.terrain, geo_window, use_sat_img)
+    if config.render_terrain:
+        terrain_renderer = TerrainRenderer.TerrainRenderer(config.terrain_resolution, 1)
+        terrain_renderer.render(geo_data.terrain, geo_window, config.use_sat_img)
         print("Terrain rendered")
 
-    if flood:
-        # for i in range(7):
-        #    FloodProcessor.flood(geo_window, i)
-        flood_data = FloodProcessor.flood(geo_window, flood_height, flood_cell_size)
+    if config.flood:
+        flood_data = FloodProcessor.flood(geo_window, config.flood_height, config.flood_cell_size)
         flood_render = FloodRenderer.FloodRenderer()
         flood_render.render(flood_data)
 
-    if export_img:
-        setup_img(512, 0.2, (250,250,0))
+    if config.export_img:
+        setup_img(config.out_img_resolution, config.out_img_pixel_size, (250, 250, 0))
         export_rendered_img()
+
 
 if __name__ == "__main__":
     main()

@@ -2,6 +2,8 @@ import os
 import math
 from bpy import context as C, data as D, ops as O
 from datetime import datetime
+
+
 def configure_render(geo_center_deg):
     for a in C.screen.areas:
         if a.type == "VIEW_3D":
@@ -27,8 +29,8 @@ def configure_render(geo_center_deg):
 
     # Camera
     camera = D.objects["Camera"]
-    camera.location = (0,0,1100)
-    camera.rotation_euler = (0,0,0)
+    camera.location = (0, 0, 1100)
+    camera.rotation_euler = (0, 0, 0)
     camera.data.clip_end = 100000
     camera.data.lens_unit = "FOV"
     camera.data.angle = 10 * math.pi / 180
@@ -38,11 +40,10 @@ def configure_render(geo_center_deg):
     sc.cycles.device = "GPU"
     sc.cycles.samples = 50
 
+
 # TODO: move out of here when we know better what it should do
 def export_rendered_img():
     sc = C.scene
-    sc.render.resolution_x = 2048
-    sc.render.resolution_y = 2048
 
     now = datetime.now()
     now_str = now.strftime("%Y_%m_%d:%H:%M:%S:%f")
@@ -53,6 +54,7 @@ def export_rendered_img():
 
     O.render.render("INVOKE_DEFAULT", write_still=True)
 
+
 def setup_img(resolution, pixel_size, center):
 
     sc = C.scene
@@ -62,6 +64,6 @@ def setup_img(resolution, pixel_size, center):
     camera = D.objects["Camera"]
 
     img_size = resolution * pixel_size
-    camera_elevation = img_size / (2 * math.tan(camera.data.angle/ 2))
+    camera_elevation = img_size / (2 * math.tan(camera.data.angle / 2))
 
     camera.location = (center[0], center[1], camera_elevation)
