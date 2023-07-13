@@ -1,5 +1,11 @@
 import geopandas as g
-from mage_procgen.Utils.Utils import RenderingData, GeoData, GeoWindow, PolygonList
+from mage_procgen.Utils.Utils import (
+    RenderingData,
+    TaggingData,
+    GeoData,
+    GeoWindow,
+    PolygonList,
+)
 from mage_procgen.Utils.Geometry import polygonise
 from shapely.geometry import MultiPolygon, Polygon, mapping
 
@@ -145,7 +151,22 @@ class Preprocessor:
             background_geom,
         )
 
-        return rendering_data
+        background_tagging = background.overlay(
+            gardens, how="union", keep_geom_type=True
+        )
+        background_tagging = background_tagging.overlay(
+            fields, how="union", keep_geom_type=True
+        )
+        background_tagging = background_tagging.overlay(
+            cleaned_forests, how="union", keep_geom_type=True
+        )
+        background_tagging_geom = Preprocessor.extract_geom(background_tagging.geometry)
+
+        tagging_data = TaggingData(
+            background_tagging_geom, buildings_geom, roads_geom, water_geom
+        )
+
+        return rendering_data, tagging_data
 
     @staticmethod
     def extract_geom(geometry_list: g.GeoSeries) -> PolygonList:

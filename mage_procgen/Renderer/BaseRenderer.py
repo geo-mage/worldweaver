@@ -28,18 +28,15 @@ class BaseRenderer:
                 data_to.node_groups = [self.config.geometry_node_name]
         except Exception as _:
             raise Exception(
-                'Unable to load the Geometry Nodes setup with tha name "'
+                'Unable to load the Geometry Nodes setup with the name "'
                 + self.config.geometry_node_name
                 + '"'
                 + "from the file "
                 + filepath
             )
 
-        # TODO: Understand following comment:
-
-        # A Geometry Nodes setup with name <self.gnSetup2d> may alredy exist.
-        # That's why following line
-        self.gnSetup2d = data_to.node_groups[0].name
+        # A Geometry Nodes setup with name object_config.geometry_node_name may alredy exist.
+        self.geometry_node_name = data_to.node_groups[0].name
 
         self._terrain_data = terrain_data
 
@@ -84,7 +81,7 @@ class BaseRenderer:
         D.collections[parent_collection_name].objects.link(mesh_obj)
 
         m = mesh_obj.modifiers.new("", "NODES")
-        m.node_group = D.node_groups[self.config.geometry_node_name]
+        m.node_group = D.node_groups[self.geometry_node_name]
 
     def insert_hole(
         self, points_coords: list[Point], points_coords_hole: list[Point]

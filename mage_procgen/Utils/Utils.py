@@ -63,6 +63,14 @@ class RenderingData:
 
 
 @dataclass
+class TaggingData:
+    tagging_background: PolygonList
+    buildings: PolygonList
+    roads: PolygonList
+    water: PolygonList
+
+
+@dataclass
 class TerrainData:
     x_min: float
     y_min: float

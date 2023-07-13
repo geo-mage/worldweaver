@@ -3,8 +3,6 @@ from mage_procgen.Utils.Utils import Point
 
 
 class BuildingRenderer(BaseRenderer):
-    _GNSetup = "Buildings"
-    _GNFile = "Buildings.blend"
     _mesh_name = "Buildings"
 
     def adapt_coords(

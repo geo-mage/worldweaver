@@ -2,6 +2,8 @@ import os
 import bpy
 from bpy import data as D, context as C
 import bmesh
+from mage_procgen.Utils.Config import RenderObjectConfig
+from mage_procgen.Utils.Rendering import hex_color_to_tuple
 
 
 class FloodRenderer:
@@ -9,11 +11,13 @@ class FloodRenderer:
     _mesh_name = "Flood"
     _AssetsFolder = "Assets"
 
-    def __init__(self, object_config):
+    def __init__(self, object_config, color_code):
         self.config = object_config
         _location = os.path.realpath(
             os.path.join(os.getcwd(), os.path.dirname(__file__))
         )
+
+        # Render
         filepath = os.path.realpath(
             os.path.join(
                 _location, "..", self._AssetsFolder, self.config.geometry_node_file
@@ -24,18 +28,54 @@ class FloodRenderer:
                 data_to.node_groups = [self.config.geometry_node_name]
         except Exception as _:
             raise Exception(
-                'Unable to load the Geometry Nodes setup with tha name "'
+                'Unable to load the Geometry Nodes setup with the name "'
                 + self.config.geometry_node_name
                 + '"'
                 + "from the file "
                 + filepath
             )
 
-        # TODO: Understand following comment:
+        # A Geometry Nodes setup with name object_config.geometry_node_name may already exist.
+        self.geometry_node_name = data_to.node_groups[0].name
 
-        # A Geometry Nodes setup with name <self.gnSetup2d> may alredy exist.
-        # That's why following line
-        self.gnSetup2d = data_to.node_groups[0].name
+        # Tagging
+        tagging_object_config = RenderObjectConfig(
+            geometry_node_file="Tagging.blend", geometry_node_name="Tagging"
+        )
+        filepath_tagging = os.path.realpath(
+            os.path.join(
+                _location,
+                "..",
+                self._AssetsFolder,
+                tagging_object_config.geometry_node_file,
+            )
+        )
+        try:
+            with bpy.data.libraries.load(filepath_tagging) as (data_from, data_to):
+                data_to.node_groups = [tagging_object_config.geometry_node_name]
+        except Exception as _:
+            raise Exception(
+                'Unable to load the Geometry Nodes setup with the name "'
+                + tagging_object_config.geometry_node_name
+                + '"'
+                + "from the file "
+                + filepath
+            )
+
+        # A Geometry Nodes setup with name object_config.geometry_node_name may already exist.
+        self.tagging_geometry_node_name = data_to.node_groups[0].name
+
+        color_tuple = hex_color_to_tuple(color_code)
+
+        tagging_material = (
+            D.node_groups[self.tagging_geometry_node_name]
+            .nodes["Set Material"]
+            .inputs[2]
+            .default_value
+        )
+        tagging_material.node_tree.nodes["Principled BSDF"].inputs[
+            0
+        ].default_value = color_tuple
 
     def render(self, flood_data, parent_collection_name):
 
@@ -90,5 +130,15 @@ class FloodRenderer:
         mesh_obj = D.objects.new(mesh_data.name, mesh_data)
         D.collections[parent_collection_name].objects.link(mesh_obj)
 
+        self.set_mode(True)
+
+    def set_mode(self, is_render):
+
+        mesh_obj = D.objects[self._mesh_name]
+        mesh_obj.modifiers.clear()
         m = mesh_obj.modifiers.new("", "NODES")
-        m.node_group = D.node_groups[self.config.geometry_node_name]
+
+        if is_render:
+            m.node_group = D.node_groups[self.geometry_node_name]
+        else:
+            m.node_group = D.node_groups[self.tagging_geometry_node_name]

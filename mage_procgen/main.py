@@ -12,7 +12,9 @@ from mage_procgen.Renderer import (
     BackgroundRenderer,
     TerrainRenderer,
     FloodRenderer,
+    TaggingRenderer,
 )
+
 from mage_procgen.Utils.Utils import GeoWindow, CRS_fr, CRS_degrees
 from mage_procgen.Loader.Loader import Loader
 from mage_procgen.Loader.ConfigLoader import ConfigLoader
@@ -24,6 +26,8 @@ from mage_procgen.Utils.Rendering import (
     setup_img,
     tagging_collection_name,
     rendering_collection_name,
+    base_collection_name,
+    set_mode,
 )
 
 
@@ -75,7 +79,7 @@ def main():
 
     print("Starting preprocessing")
     processor = Preprocessor(geo_data, geo_window, CRS_fr)
-    rendering_data = processor.process(config.remove_landlocked_plots)
+    rendering_data, tagging_data = processor.process(config.remove_landlocked_plots)
     print("Preprocessing done")
 
     print("Starting rendering")
@@ -157,12 +161,60 @@ def main():
         flood_data = FloodProcessor.flood(
             geo_window, config.flood_height, config.flood_cell_size
         )
-        flood_render = FloodRenderer.FloodRenderer(config.flood_render_config)
-        flood_render.render(flood_data, rendering_collection_name)
+        flood_renderer = FloodRenderer.FloodRenderer(
+            config.flood_render_config, config.water_tag_color
+        )
+        flood_renderer.render(flood_data, base_collection_name)
+
+    if config.render_objects:
+        tagging_background_renderer = TaggingRenderer.TaggingBackgroundRenderer(
+            geo_data.terrain, config.background_tag_color
+        )
+        tagging_background_renderer.render(
+            tagging_data.tagging_background, geo_center, tagging_collection_name
+        )
+        print("Tagging background rendered")
+
+        tagging_building_renderer = TaggingRenderer.TaggingBuildingRenderer(
+            geo_data.terrain, config.buildings_tag_color
+        )
+        tagging_building_renderer.render(
+            tagging_data.buildings, geo_center, tagging_collection_name
+        )
+        print("Tagging buildings rendered")
+
+        tagging_road_renderer = TaggingRenderer.TaggingRoadsRenderer(
+            geo_data.terrain, config.road_tag_color
+        )
+        tagging_road_renderer.render(
+            tagging_data.roads, geo_center, tagging_collection_name
+        )
+        print("Tagging roads rendered")
+
+        tagging_water_renderer = TaggingRenderer.TaggingWaterRenderer(
+            geo_data.terrain, config.water_tag_color
+        )
+        tagging_water_renderer.render(
+            tagging_data.water, geo_center, tagging_collection_name
+        )
+        print("Tagging Water rendered")
 
     if config.export_img:
+        set_mode(True)
+        if config.flood:
+            flood_renderer.set_mode(True)
+
         setup_img(config.out_img_resolution, config.out_img_pixel_size, (250, 250, 0))
         export_rendered_img()
+
+        # set_mode(False)
+        # if config.flood:
+        #    flood_renderer.set_mode(False)
+
+
+#
+# setup_img(config.out_img_resolution, config.out_img_pixel_size, (250, 250, 0))
+# export_rendered_img()
 
 
 if __name__ == "__main__":

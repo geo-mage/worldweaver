@@ -4,6 +4,8 @@ from bpy import context as C, data as D, ops as O
 from datetime import datetime
 import re
 
+import random
+
 hex_color_regex = re.compile("^#[0-9a-fA-F]{6}$")
 hex_color_split_regex = re.compile("..")
 
@@ -64,7 +66,9 @@ def export_rendered_img():
 
     base_path = "/home/verstraa/Work/maps/rendering/77/"
 
-    sc.render.filepath = os.path.join(base_path, now_str + ".png")
+    sc.render.filepath = os.path.join(
+        base_path, now_str + "_" + str(random.randint(0, 10000)) + ".png"
+    )
 
     O.render.render("INVOKE_DEFAULT", write_still=True)
 
@@ -95,3 +99,10 @@ def hex_color_to_tuple(hex_code):
         return (colors[0], colors[1], colors[2], 1.0)
     else:
         raise ValueError("Invalid hex string: " + hex_code)
+
+
+def set_mode(is_render):
+    D.collections[rendering_collection_name].hide_viewport = not is_render
+    D.collections[rendering_collection_name].hide_render = not is_render
+    D.collections[tagging_collection_name].hide_viewport = is_render
+    D.collections[tagging_collection_name].hide_render = is_render
