@@ -10,25 +10,26 @@ from mage_procgen.Utils.Utils import PolygonList, Point, TerrainData
 
 
 class BaseRenderer:
-    _GNSetup = ""
-    _GNFile = ""
     _AssetsFolder = "Assets"
     _mesh_name = ""
 
-    def __init__(self, terrain_data: list[TerrainData]):
+    def __init__(self, terrain_data: list[TerrainData], object_config):
+        self.config = object_config
         _location = os.path.realpath(
             os.path.join(os.getcwd(), os.path.dirname(__file__))
         )
         filepath = os.path.realpath(
-            os.path.join(_location, "..", self._AssetsFolder, self._GNFile)
+            os.path.join(
+                _location, "..", self._AssetsFolder, self.config.geometry_node_file
+            )
         )
         try:
             with bpy.data.libraries.load(filepath) as (data_from, data_to):
-                data_to.node_groups = [self._GNSetup]
+                data_to.node_groups = [self.config.geometry_node_name]
         except Exception as _:
             raise Exception(
                 'Unable to load the Geometry Nodes setup with tha name "'
-                + self._GNSetup
+                + self.config.geometry_node_name
                 + '"'
                 + "from the file "
                 + filepath
@@ -42,7 +43,12 @@ class BaseRenderer:
 
         self._terrain_data = terrain_data
 
-    def render(self, polygons: PolygonList, geo_center: tuple[float, float, float]):
+    def render(
+        self,
+        polygons: PolygonList,
+        geo_center: tuple[float, float, float],
+        parent_collection_name,
+    ):
         mesh = bmesh.new()
 
         for polygon in tqdm(polygons):
@@ -75,10 +81,10 @@ class BaseRenderer:
         mesh.to_mesh(mesh_data)
         mesh.free()
         mesh_obj = D.objects.new(mesh_data.name, mesh_data)
-        C.collection.objects.link(mesh_obj)
+        D.collections[parent_collection_name].objects.link(mesh_obj)
 
         m = mesh_obj.modifiers.new("", "NODES")
-        m.node_group = D.node_groups[self._GNSetup]
+        m.node_group = D.node_groups[self.config.geometry_node_name]
 
     def insert_hole(
         self, points_coords: list[Point], points_coords_hole: list[Point]

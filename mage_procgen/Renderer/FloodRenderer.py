@@ -7,25 +7,25 @@ import bmesh
 class FloodRenderer:
 
     _mesh_name = "Flood"
-    _GNFile = "Flood2.blend"
-    _GNSetup = "Flood"
     _AssetsFolder = "Assets"
 
-    def __init__(self):
-
+    def __init__(self, object_config):
+        self.config = object_config
         _location = os.path.realpath(
             os.path.join(os.getcwd(), os.path.dirname(__file__))
         )
         filepath = os.path.realpath(
-            os.path.join(_location, "..", self._AssetsFolder, self._GNFile)
+            os.path.join(
+                _location, "..", self._AssetsFolder, self.config.geometry_node_file
+            )
         )
         try:
             with bpy.data.libraries.load(filepath) as (data_from, data_to):
-                data_to.node_groups = [self._GNSetup]
+                data_to.node_groups = [self.config.geometry_node_name]
         except Exception as _:
             raise Exception(
                 'Unable to load the Geometry Nodes setup with tha name "'
-                + self._GNSetup
+                + self.config.geometry_node_name
                 + '"'
                 + "from the file "
                 + filepath
@@ -37,7 +37,7 @@ class FloodRenderer:
         # That's why following line
         self.gnSetup2d = data_to.node_groups[0].name
 
-    def render(self, flood_data):
+    def render(self, flood_data, parent_collection_name):
 
         flood_pixels = flood_data[0]
         flood_plan_z = flood_data[1]
@@ -88,7 +88,7 @@ class FloodRenderer:
         mesh.to_mesh(mesh_data)
         mesh.free()
         mesh_obj = D.objects.new(mesh_data.name, mesh_data)
-        C.collection.objects.link(mesh_obj)
+        D.collections[parent_collection_name].objects.link(mesh_obj)
 
         m = mesh_obj.modifiers.new("", "NODES")
-        m.node_group = D.node_groups[self._GNSetup]
+        m.node_group = D.node_groups[self.config.geometry_node_name]

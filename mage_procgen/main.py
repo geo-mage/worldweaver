@@ -22,6 +22,8 @@ from mage_procgen.Utils.Rendering import (
     configure_render,
     export_rendered_img,
     setup_img,
+    tagging_collection_name,
+    rendering_collection_name,
 )
 
 
@@ -30,12 +32,13 @@ def main():
     config = ConfigLoader.load("/home/verstraa/Work/maps/config.json")
 
     geo_window = GeoWindow(
-        config.x_min,
-        config.x_max,
-        config.y_min,
-        config.y_max,
-        config.crs_from,
-        config.crs_to)
+        config.geo_window.x_min,
+        config.geo_window.x_max,
+        config.geo_window.y_min,
+        config.geo_window.y_max,
+        config.geo_window.crs_from,
+        config.geo_window.crs_to,
+    )
 
     # 77
     # Fublaines
@@ -79,47 +82,83 @@ def main():
     configure_render(geo_window.center_deg)
 
     if config.render_objects:
-        fields_renderer = PlotRenderer.FieldRenderer(geo_data.terrain)
-        fields_renderer.render(rendering_data.fields, geo_center)
+        fields_renderer = PlotRenderer.FieldRenderer(
+            geo_data.terrain, config.field_render_config
+        )
+        fields_renderer.render(
+            rendering_data.fields, geo_center, rendering_collection_name
+        )
         print("Fields rendered")
 
-        gardens_renderer = PlotRenderer.GardenRenderer(geo_data.terrain)
-        gardens_renderer.render(rendering_data.gardens, geo_center)
+        gardens_renderer = PlotRenderer.GardenRenderer(
+            geo_data.terrain, config.garden_render_config
+        )
+        gardens_renderer.render(
+            rendering_data.gardens, geo_center, rendering_collection_name
+        )
         print("Gardens rendered")
 
-        fences_renderer = PlotRenderer.FenceRenderer(geo_data.terrain)
-        fences_renderer.render(rendering_data.fences, geo_center)
+        fences_renderer = PlotRenderer.FenceRenderer(
+            geo_data.terrain, config.fence_render_config
+        )
+        fences_renderer.render(
+            rendering_data.fences, geo_center, rendering_collection_name
+        )
         print("Fences rendered")
 
-        forest_renderer = ForestRenderer.ForestRenderer(geo_data.terrain)
-        forest_renderer.render(rendering_data.forests, geo_center)
+        forest_renderer = ForestRenderer.ForestRenderer(
+            geo_data.terrain, config.forest_render_config
+        )
+        forest_renderer.render(
+            rendering_data.forests, geo_center, rendering_collection_name
+        )
         print("Forests rendered")
 
-        building_renderer = BuildingRenderer.BuildingRenderer(geo_data.terrain)
-        building_renderer.render(rendering_data.buildings, geo_center)
+        building_renderer = BuildingRenderer.BuildingRenderer(
+            geo_data.terrain, config.building_render_config
+        )
+        building_renderer.render(
+            rendering_data.buildings, geo_center, rendering_collection_name
+        )
         print("Buildings rendered")
 
-        road_renderer = RoadRenderer.RoadRenderer(geo_data.terrain)
-        road_renderer.render(rendering_data.roads, geo_center)
+        road_renderer = RoadRenderer.RoadRenderer(
+            geo_data.terrain, config.road_render_config
+        )
+        road_renderer.render(
+            rendering_data.roads, geo_center, rendering_collection_name
+        )
         print("Roads rendered")
 
-        water_renderer = WaterRenderer.WaterRenderer(geo_data.terrain)
-        water_renderer.render(rendering_data.water, geo_center)
+        water_renderer = WaterRenderer.WaterRenderer(
+            geo_data.terrain, config.road_render_config
+        )
+        water_renderer.render(
+            rendering_data.water, geo_center, rendering_collection_name
+        )
         print("Water rendered")
 
-        background_renderer = BackgroundRenderer.BackgroundRenderer(geo_data.terrain)
-        background_renderer.render(rendering_data.background, geo_center)
+        background_renderer = BackgroundRenderer.BackgroundRenderer(
+            geo_data.terrain, config.background_render_config
+        )
+        background_renderer.render(
+            rendering_data.background, geo_center, rendering_collection_name
+        )
         print("Background rendered")
 
     if config.render_terrain:
         terrain_renderer = TerrainRenderer.TerrainRenderer(config.terrain_resolution, 1)
-        terrain_renderer.render(geo_data.terrain, geo_window, config.use_sat_img)
+        terrain_renderer.render(
+            geo_data.terrain, geo_window, rendering_collection_name, config.use_sat_img
+        )
         print("Terrain rendered")
 
     if config.flood:
-        flood_data = FloodProcessor.flood(geo_window, config.flood_height, config.flood_cell_size)
-        flood_render = FloodRenderer.FloodRenderer()
-        flood_render.render(flood_data)
+        flood_data = FloodProcessor.flood(
+            geo_window, config.flood_height, config.flood_cell_size
+        )
+        flood_render = FloodRenderer.FloodRenderer(config.flood_render_config)
+        flood_render.render(flood_data, rendering_collection_name)
 
     if config.export_img:
         setup_img(config.out_img_resolution, config.out_img_pixel_size, (250, 250, 0))

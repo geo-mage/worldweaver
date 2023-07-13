@@ -45,10 +45,16 @@ class TerrainRenderer:
 
         self._base_material = data_to.materials[0]
 
-    def render(self, terrain_data, geo_window: GeoWindow, use_sat_img: bool = False):
+    def render(
+        self,
+        terrain_data,
+        geo_window: GeoWindow,
+        parent_collection_name,
+        use_sat_img: bool = False,
+    ):
 
         terrain_collection = bpy.data.collections.new(self._mesh_name)
-        C.scene.collection.children.link(terrain_collection)
+        D.collections[parent_collection_name].children.link(terrain_collection)
 
         center = geo_window.center
 

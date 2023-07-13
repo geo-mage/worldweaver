@@ -2,10 +2,9 @@ import jsonpickle
 
 
 class ConfigLoader:
-
     @staticmethod
     def save(config, filepath):
-        json_dump = jsonpickle.encode(config)
+        json_dump = jsonpickle.encode(config, indent=1)
         with open(filepath, "w") as f:
             f.write(json_dump)
 

@@ -2,6 +2,14 @@ import os
 import math
 from bpy import context as C, data as D, ops as O
 from datetime import datetime
+import re
+
+hex_color_regex = re.compile("^#[0-9a-fA-F]{6}$")
+hex_color_split_regex = re.compile("..")
+
+tagging_collection_name = "Tagging"
+rendering_collection_name = "Rendering"
+base_collection_name = "Collection"
 
 
 def configure_render(geo_center_deg):
@@ -40,6 +48,12 @@ def configure_render(geo_center_deg):
     sc.cycles.device = "GPU"
     sc.cycles.samples = 50
 
+    # Preparing collections
+    rendering_collection = D.collections.new(rendering_collection_name)
+    D.collections[base_collection_name].children.link(rendering_collection)
+    tagging_collection = D.collections.new(tagging_collection_name)
+    D.collections[base_collection_name].children.link(tagging_collection)
+
 
 # TODO: move out of here when we know better what it should do
 def export_rendered_img():
@@ -67,3 +81,17 @@ def setup_img(resolution, pixel_size, center):
     camera_elevation = img_size / (2 * math.tan(camera.data.angle / 2))
 
     camera.location = (center[0], center[1], camera_elevation)
+
+
+def hex_color_to_tuple(hex_code):
+    # Checking if it's a valid hex code with RGB values
+    match = hex_color_regex.match(hex_code)
+    if match:
+        # Extracting the 3 values R, G and B
+        colors_hex = hex_color_split_regex.findall(hex_code.strip("#"))
+        # Convert hex to int, then divide by 255 because blender takes a 0 to 1 float
+        colors = [int(c, 16) / 255 for c in colors_hex]
+        # Adding a 1. because blender takes RGBA in its tuple for color
+        return (colors[0], colors[1], colors[2], 1.0)
+    else:
+        raise ValueError("Invalid hex string: " + hex_code)
