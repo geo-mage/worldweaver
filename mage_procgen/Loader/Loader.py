@@ -16,7 +16,7 @@ class Loader:
     regions_file = "ARRONDISSEMENT/ARRONDISSEMENT.shp"
 
     terrain_folder = "RGEALTI/1_DONNEES_LIVRAISON/MNT"
-    terrain_slab_file = "RGEALTI/3_SUPPLEMENTS_LIVRAISON/dalles.shp"
+    terrain_slab_file = "RGEALTI/3_SUPPLEMENTS_LIVRAISON/MNT/dalles.shp"
 
     parcellaire_folder = "PARCELLAIRE_EXPRESS/1_DONNEES_LIVRAISON"
     plot_file = "PARCELLE.SHP"
@@ -29,7 +29,7 @@ class Loader:
 
     texture_folder = "Textures"
     texture_image_folder = "BDORTHO/1_DONNEES_LIVRAISON/OHR_RVB/"
-    texture_image_slab_file = "BDORTHO/3_SUPPLEMENTS_LIVRAISON/dalles.shp"
+    texture_image_slab_file = "BDORTHO/3_SUPPLEMENTS_LIVRAISON/OHR_RVB/dalles.shp"
 
     @staticmethod
     def load(geo_window: GeoWindow) -> GeoData:

@@ -9,7 +9,6 @@ import random
 hex_color_regex = re.compile("^#[0-9a-fA-F]{6}$")
 hex_color_split_regex = re.compile("..")
 
-tagging_collection_name = "Tagging"
 rendering_collection_name = "Rendering"
 base_collection_name = "Collection"
 
@@ -53,8 +52,6 @@ def configure_render(geo_center_deg):
     # Preparing collections
     rendering_collection = D.collections.new(rendering_collection_name)
     D.collections[base_collection_name].children.link(rendering_collection)
-    tagging_collection = D.collections.new(tagging_collection_name)
-    D.collections[base_collection_name].children.link(tagging_collection)
 
 
 # TODO: move out of here when we know better what it should do
@@ -66,11 +63,9 @@ def export_rendered_img():
 
     base_path = "/home/verstraa/Work/maps/rendering/77/"
 
-    sc.render.filepath = os.path.join(
-        base_path, now_str + "_" + str(random.randint(0, 10000)) + ".png"
-    )
+    sc.render.filepath = os.path.join(base_path, now_str + ".png")
 
-    O.render.render("INVOKE_DEFAULT", write_still=True)
+    O.render.render(write_still=True)
 
 
 def setup_img(resolution, pixel_size, center):
@@ -93,16 +88,8 @@ def hex_color_to_tuple(hex_code):
     if match:
         # Extracting the 3 values R, G and B
         colors_hex = hex_color_split_regex.findall(hex_code.strip("#"))
-        # Convert hex to int, then divide by 255 because blender takes a 0 to 1 float
-        colors = [int(c, 16) / 255 for c in colors_hex]
-        # Adding a 1. because blender takes RGBA in its tuple for color
-        return (colors[0], colors[1], colors[2], 1.0)
+        # Convert hex to int
+        colors = [int(c, 16) for c in colors_hex]
+        return (colors[0], colors[1], colors[2])
     else:
         raise ValueError("Invalid hex string: " + hex_code)
-
-
-def set_mode(is_render):
-    D.collections[rendering_collection_name].hide_viewport = not is_render
-    D.collections[rendering_collection_name].hide_render = not is_render
-    D.collections[tagging_collection_name].hide_viewport = is_render
-    D.collections[tagging_collection_name].hide_render = is_render

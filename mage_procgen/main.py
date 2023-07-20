@@ -3,6 +3,8 @@ import sys
 
 sys.path.append("/usr/lib/python3/dist-packages/")
 
+from numpy import arange
+
 from mage_procgen.Renderer import (
     BuildingRenderer,
     ForestRenderer,
@@ -12,7 +14,6 @@ from mage_procgen.Renderer import (
     BackgroundRenderer,
     TerrainRenderer,
     FloodRenderer,
-    TaggingRenderer,
 )
 
 from mage_procgen.Utils.Utils import GeoWindow, CRS_fr, CRS_degrees
@@ -20,14 +21,13 @@ from mage_procgen.Loader.Loader import Loader
 from mage_procgen.Loader.ConfigLoader import ConfigLoader
 from mage_procgen.Processor.Preprocessor import Preprocessor
 from mage_procgen.Processor.FloodProcessor import FloodProcessor
+from mage_procgen.Processor.TaggingRasterProcessor import TaggingRasterProcessor
 from mage_procgen.Utils.Rendering import (
     configure_render,
     export_rendered_img,
     setup_img,
-    tagging_collection_name,
     rendering_collection_name,
-    base_collection_name,
-    set_mode,
+    hex_color_to_tuple,
 )
 
 
@@ -71,6 +71,9 @@ def main():
     # geo_window = GeoWindow(4.6900, 4.74, 45.4600, 45.493, CRS_degrees, CRS_fr)
     # geo_window = GeoWindow(4.6900, 4.8000, 45.4400, 45.5000, CRS_degrees, CRS_fr)
 
+    # 06
+    # geo_window = GeoWindow(7.29116, 7.30800, 43.68439, 43.69156, CRS_degrees, CRS_fr)
+
     geo_center = geo_window.center
 
     geo_data = Loader.load(geo_window)
@@ -79,7 +82,7 @@ def main():
 
     print("Starting preprocessing")
     processor = Preprocessor(geo_data, geo_window, CRS_fr)
-    rendering_data, tagging_data = processor.process(config.remove_landlocked_plots)
+    rendering_data = processor.process(config.remove_landlocked_plots)
     print("Preprocessing done")
 
     print("Starting rendering")
@@ -135,7 +138,7 @@ def main():
         print("Roads rendered")
 
         water_renderer = WaterRenderer.WaterRenderer(
-            geo_data.terrain, config.road_render_config
+            geo_data.terrain, config.water_render_config
         )
         water_renderer.render(
             rendering_data.water, geo_center, rendering_collection_name
@@ -161,60 +164,41 @@ def main():
         flood_data = FloodProcessor.flood(
             geo_window, config.flood_height, config.flood_cell_size
         )
-        flood_renderer = FloodRenderer.FloodRenderer(
-            config.flood_render_config, config.water_tag_color
-        )
-        flood_renderer.render(flood_data, base_collection_name)
-
-    if config.render_objects:
-        tagging_background_renderer = TaggingRenderer.TaggingBackgroundRenderer(
-            geo_data.terrain, config.background_tag_color
-        )
-        tagging_background_renderer.render(
-            tagging_data.tagging_background, geo_center, tagging_collection_name
-        )
-        print("Tagging background rendered")
-
-        tagging_building_renderer = TaggingRenderer.TaggingBuildingRenderer(
-            geo_data.terrain, config.buildings_tag_color
-        )
-        tagging_building_renderer.render(
-            tagging_data.buildings, geo_center, tagging_collection_name
-        )
-        print("Tagging buildings rendered")
-
-        tagging_road_renderer = TaggingRenderer.TaggingRoadsRenderer(
-            geo_data.terrain, config.road_tag_color
-        )
-        tagging_road_renderer.render(
-            tagging_data.roads, geo_center, tagging_collection_name
-        )
-        print("Tagging roads rendered")
-
-        tagging_water_renderer = TaggingRenderer.TaggingWaterRenderer(
-            geo_data.terrain, config.water_tag_color
-        )
-        tagging_water_renderer.render(
-            tagging_data.water, geo_center, tagging_collection_name
-        )
-        print("Tagging Water rendered")
+        flood_renderer = FloodRenderer.FloodRenderer(config.flood_render_config)
+        flood_renderer.render(flood_data, rendering_collection_name)
 
     if config.export_img:
-        set_mode(True)
-        if config.flood:
-            flood_renderer.set_mode(True)
 
-        setup_img(config.out_img_resolution, config.out_img_pixel_size, (250, 250, 0))
-        export_rendered_img()
+        img_size = config.out_img_resolution * config.out_img_pixel_size
 
-        # set_mode(False)
-        # if config.flood:
-        #    flood_renderer.set_mode(False)
+        camera_step = img_size * 0.9
 
+        camera_x_min = flood_data[2][0] + img_size / 2
+        camera_x_max = flood_data[3][0] - img_size / 2
+        camera_y_min = flood_data[2][1] + img_size / 2
+        camera_y_max = flood_data[3][1] - img_size / 2
 
-#
-# setup_img(config.out_img_resolution, config.out_img_pixel_size, (250, 250, 0))
-# export_rendered_img()
+        tagging_colors = {
+            layer_name: hex_color_to_tuple(hex_code)
+            for layer_name, hex_code in config.tagging_config.items()
+        }
+
+        for camera_x in arange(camera_x_min, camera_x_max, camera_step):
+            for camera_y in arange(camera_y_min, camera_y_max, camera_step):
+                setup_img(
+                    config.out_img_resolution,
+                    config.out_img_pixel_size,
+                    (camera_x, camera_y, 0),
+                )
+
+                export_rendered_img()
+
+                lower_left = (camera_x - img_size / 2, camera_y - img_size / 2)
+                upper_right = (camera_x + img_size / 2, camera_y + img_size / 2)
+
+                TaggingRasterProcessor.compute(
+                    lower_left, upper_right, config.out_img_pixel_size, tagging_colors
+                )
 
 
 if __name__ == "__main__":

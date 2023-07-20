@@ -40,7 +40,4 @@ class Config:
     fence_render_config: RenderObjectConfig
     road_render_config: RenderObjectConfig
     water_render_config: RenderObjectConfig
-    background_tag_color: str
-    buildings_tag_color: str
-    water_tag_color: str
-    road_tag_color: str
+    tagging_config: dict

@@ -9,19 +9,22 @@ import bpy
 
 class ObjectMageProcgen(bpy.types.Operator):
     """Object Mage Procgen"""
+
     bl_idname = "object.mage_procgen"
     bl_label = "Mage Procgen"
-    bl_options = {'REGISTER', 'UNDO'}
+    bl_options = {"REGISTER", "UNDO"}
 
     def execute(self, context):
         from mage_procgen import main as mpm
+
         mpm.main()
 
-        return {'FINISHED'}
+        return {"FINISHED"}
 
 
 def menu_func(self, context):
     self.layout.operator(ObjectMageProcgen.bl_idname)
+
 
 # store keymaps here to access after registration
 addon_keymaps = []
@@ -37,9 +40,12 @@ def register():
     # so we have to check this to avoid nasty errors in background case.
     kc = wm.keyconfigs.addon
     if kc:
-        km = wm.keyconfigs.addon.keymaps.new(name='Object Mode', space_type='EMPTY')
-        kmi = km.keymap_items.new(ObjectMageProcgen.bl_idname, 'M', 'PRESS', ctrl=True, shift=True)
+        km = wm.keyconfigs.addon.keymaps.new(name="Object Mode", space_type="EMPTY")
+        kmi = km.keymap_items.new(
+            ObjectMageProcgen.bl_idname, "M", "PRESS", ctrl=True, shift=True
+        )
         addon_keymaps.append((km, kmi))
+
 
 def unregister():
     # Note: when unregistering, it's usually good practice to do it in reverse order you registered.
