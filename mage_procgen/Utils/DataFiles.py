@@ -38,6 +38,7 @@ assets_folder = "Assets"
 
 file_coords_regex = re.compile("_[0-9]{4}_[0-9]{4}_")
 
+
 def setup_bdtopo(departement, archive_file):
     """
     Extracts BDTOPO archive, and changes the folders to simplify it

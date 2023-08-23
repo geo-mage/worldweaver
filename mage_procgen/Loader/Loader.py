@@ -9,8 +9,8 @@ from mage_procgen.Parser.JP2Parser import JP2Parser
 from mage_procgen.Utils.Utils import GeoWindow, GeoData, CRS_fr, CRS_degrees
 import mage_procgen.Utils.DataFiles as df
 
-class Loader:
 
+class Loader:
     @staticmethod
     def load(geo_window: GeoWindow) -> GeoData:
 
@@ -38,11 +38,22 @@ class Loader:
 
             current_terrain_data = ASCParser.load(
                 os.path.join(
-                    df.base_folder, df.departements, current_departement, df.terrain_DB, df.delivery, df.terrain_data_folder
+                    df.base_folder,
+                    df.departements,
+                    current_departement,
+                    df.terrain_DB,
+                    df.delivery,
+                    df.terrain_data_folder,
                 ),
                 geo_window,
                 os.path.join(
-                    df.base_folder, df.departements, current_departement, df.terrain_DB, df.additional, df.terrain_data_folder, df.slab_file
+                    df.base_folder,
+                    df.departements,
+                    current_departement,
+                    df.terrain_DB,
+                    df.additional,
+                    df.terrain_data_folder,
+                    df.slab_file,
                 ),
             )
 
@@ -178,10 +189,21 @@ class Loader:
         texture_full_path = os.path.join(current_texture_folder, texture_file_name)
 
         current_texture_image_folder = os.path.join(
-            df.base_folder, df.departements, current_departement, df.texture_image_DB, df.delivery, df.texture_data_folder
+            df.base_folder,
+            df.departements,
+            current_departement,
+            df.texture_image_DB,
+            df.delivery,
+            df.texture_data_folder,
         )
         current_texture_image_slab_file = os.path.join(
-            df.base_folder, df.departements, current_departement, df.texture_image_DB, df.additional, df.texture_data_folder, df.slab_file
+            df.base_folder,
+            df.departements,
+            current_departement,
+            df.texture_image_DB,
+            df.additional,
+            df.texture_data_folder,
+            df.slab_file,
         )
 
         current_terrain_window = GeoWindow(

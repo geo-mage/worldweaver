@@ -130,16 +130,16 @@ class TerrainRenderer:
                     # Sometimes slabs are missing, when they're too far out to sea.
                     # This make the terrain render correctly but it attaches the points lying in the missing slab to another slab, which screws up the texture.
 
-                    #print("INVALID POINT INDEX: ")
-                    #print("x: " + str(current_point_x) + " y: " + str(current_point_y))
-                    #print(
+                    # print("INVALID POINT INDEX: ")
+                    # print("x: " + str(current_point_x) + " y: " + str(current_point_y))
+                    # print(
                     #    "i_x "
                     #    + str(current_point_index_x)
                     #    + " i_y: "
                     #    + str(current_point_index_y)
-                    #)
+                    # )
 
-                    #raise ValueError()
+                    # raise ValueError()
                     current_point_z = 0
                 else:
                     current_point_z = current_terrain.data.values[
