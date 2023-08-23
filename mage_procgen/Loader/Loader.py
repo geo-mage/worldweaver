@@ -7,29 +7,9 @@ from mage_procgen.Parser.ASCParser import ASCParser
 from mage_procgen.Parser.JP2Parser import JP2Parser
 
 from mage_procgen.Utils.Utils import GeoWindow, GeoData, CRS_fr, CRS_degrees
-
+import mage_procgen.Utils.DataFiles as df
 
 class Loader:
-
-    base_folder = "/home/verstraa/Work/maps/Departements/"
-
-    regions_file = "ARRONDISSEMENT/ARRONDISSEMENT.shp"
-
-    terrain_folder = "RGEALTI/1_DONNEES_LIVRAISON/MNT"
-    terrain_slab_file = "RGEALTI/3_SUPPLEMENTS_LIVRAISON/MNT/dalles.shp"
-
-    parcellaire_folder = "PARCELLAIRE_EXPRESS/1_DONNEES_LIVRAISON"
-    plot_file = "PARCELLE.SHP"
-    building_file = "BATIMENT.SHP"
-
-    bdtopo_folder = "BDTOPO/1_DONNEES_LIVRAISON"
-    forest_file = "OCCUPATION_DU_SOL/ZONE_DE_VEGETATION.shp"
-    road_file = "TRANSPORT/TRONCON_DE_ROUTE.shp"
-    water_file = "HYDROGRAPHIE/SURFACE_HYDROGRAPHIQUE.shp"
-
-    texture_folder = "Textures"
-    texture_image_folder = "BDORTHO/1_DONNEES_LIVRAISON/OHR_RVB/"
-    texture_image_slab_file = "BDORTHO/3_SUPPLEMENTS_LIVRAISON/OHR_RVB/dalles.shp"
 
     @staticmethod
     def load(geo_window: GeoWindow) -> GeoData:
@@ -39,7 +19,7 @@ class Loader:
         print("Loading shp files")
 
         arrondissements = ShapeFileParser.load(
-            os.path.join(Loader.base_folder, Loader.regions_file),
+            os.path.join(df.base_folder, df.departements, df.regions_file),
             bbox,
         )
 
@@ -58,11 +38,11 @@ class Loader:
 
             current_terrain_data = ASCParser.load(
                 os.path.join(
-                    Loader.base_folder, current_departement, Loader.terrain_folder
+                    df.base_folder, df.departements, current_departement, df.terrain_DB, df.delivery, df.terrain_data_folder
                 ),
                 geo_window,
                 os.path.join(
-                    Loader.base_folder, current_departement, Loader.terrain_slab_file
+                    df.base_folder, df.departements, current_departement, df.terrain_DB, df.additional, df.terrain_data_folder, df.slab_file
                 ),
             )
 
@@ -70,10 +50,13 @@ class Loader:
 
             current_plot_data = ShapeFileParser.load(
                 os.path.join(
-                    Loader.base_folder,
+                    df.base_folder,
+                    df.departements,
                     current_departement,
-                    Loader.parcellaire_folder,
-                    Loader.plot_file,
+                    df.parcellaire_DB,
+                    df.delivery,
+                    df.parcellaire_data_folder,
+                    df.plot_file,
                 ),
                 bbox,
             )
@@ -84,10 +67,13 @@ class Loader:
 
             current_building_data = ShapeFileParser.load(
                 os.path.join(
-                    Loader.base_folder,
+                    df.base_folder,
+                    df.departements,
                     current_departement,
-                    Loader.parcellaire_folder,
-                    Loader.building_file,
+                    df.parcellaire_DB,
+                    df.delivery,
+                    df.parcellaire_data_folder,
+                    df.building_file,
                 ),
                 bbox,
             )
@@ -98,10 +84,13 @@ class Loader:
 
             current_forest_data = ShapeFileParser.load(
                 os.path.join(
-                    Loader.base_folder,
+                    df.base_folder,
+                    df.departements,
                     current_departement,
-                    Loader.bdtopo_folder,
-                    Loader.forest_file,
+                    df.bdtopo_folder,
+                    df.delivery,
+                    df.forest_folder,
+                    df.forest_file,
                 ),
                 bbox,
             )
@@ -112,10 +101,13 @@ class Loader:
 
             current_road_data = RoadShapeFileParser.load(
                 os.path.join(
-                    Loader.base_folder,
+                    df.base_folder,
+                    df.departements,
                     current_departement,
-                    Loader.bdtopo_folder,
-                    Loader.road_file,
+                    df.bdtopo_folder,
+                    df.delivery,
+                    df.road_folder,
+                    df.road_file,
                 ),
                 bbox,
             )
@@ -126,10 +118,13 @@ class Loader:
 
             current_water_data = ShapeFileParser.load(
                 os.path.join(
-                    Loader.base_folder,
+                    df.base_folder,
+                    df.departements,
                     current_departement,
-                    Loader.bdtopo_folder,
-                    Loader.water_file,
+                    df.bdtopo_folder,
+                    df.delivery,
+                    df.water_folder,
+                    df.water_file,
                 ),
                 bbox,
                 force_2d=True,
@@ -149,7 +144,7 @@ class Loader:
     def load_texture(mesh_box: tuple[float, float, float, float]) -> str:
 
         arrondissements = ShapeFileParser.load(
-            os.path.join(Loader.base_folder, Loader.regions_file),
+            os.path.join(df.base_folder, df.departements, df.regions_file),
             mesh_box,
         )
 
@@ -161,11 +156,11 @@ class Loader:
         current_departement = departements[0]
 
         current_texture_folder = os.path.join(
-            Loader.base_folder, Loader.texture_folder, current_departement
+            df.base_folder, df.departements, df.texture_folder, current_departement
         )
 
         if not os.path.isdir(current_texture_folder):
-            os.mkdir(current_texture_folder)
+            os.makedirs(current_texture_folder)
 
         texture_file_name = (
             "Texture_"
@@ -183,10 +178,10 @@ class Loader:
         texture_full_path = os.path.join(current_texture_folder, texture_file_name)
 
         current_texture_image_folder = os.path.join(
-            Loader.base_folder, current_departement, Loader.texture_image_folder
+            df.base_folder, df.departements, current_departement, df.texture_image_DB, df.delivery, df.texture_data_folder
         )
         current_texture_image_slab_file = os.path.join(
-            Loader.base_folder, current_departement, Loader.texture_image_slab_file
+            df.base_folder, df.departements, current_departement, df.texture_image_DB, df.additional, df.texture_data_folder, df.slab_file
         )
 
         current_terrain_window = GeoWindow(

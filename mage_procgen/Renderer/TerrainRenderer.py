@@ -123,20 +123,28 @@ class TerrainRenderer:
                     or current_point_index_x > current_terrain.nbcol
                     or current_point_index_y != int(current_point_index_y)
                     or current_point_index_y > current_terrain.nbrow
+                    or current_point_index_x < 0
+                    or current_point_index_y < 0
                 ):
-                    print("INVALID POINT INDEX: ")
-                    print("x: " + str(current_point_x) + " y: " + str(current_point_y))
-                    print(
-                        "i_x "
-                        + str(current_point_index_x)
-                        + " i_y: "
-                        + str(current_point_index_y)
-                    )
-                    raise ValueError()
+                    # TODO: Fix this.
+                    # Sometimes slabs are missing, when they're too far out to sea.
+                    # This make the terrain render correctly but it attaches the points lying in the missing slab to another slab, which screws up the texture.
 
-                current_point_z = current_terrain.data.values[
-                    int(current_point_index_y)
-                ][int(current_point_index_x)]
+                    #print("INVALID POINT INDEX: ")
+                    #print("x: " + str(current_point_x) + " y: " + str(current_point_y))
+                    #print(
+                    #    "i_x "
+                    #    + str(current_point_index_x)
+                    #    + " i_y: "
+                    #    + str(current_point_index_y)
+                    #)
+
+                    #raise ValueError()
+                    current_point_z = 0
+                else:
+                    current_point_z = current_terrain.data.values[
+                        int(current_point_index_y)
+                    ][int(current_point_index_x)]
 
                 current_point_coords = [
                     current_point_x,

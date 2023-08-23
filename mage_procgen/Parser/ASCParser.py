@@ -1,8 +1,10 @@
 import os
 
+import re
 import pandas as p
 from mage_procgen.Utils.Utils import TerrainData
 from mage_procgen.Utils.Utils import GeoWindow
+from mage_procgen.Utils.DataFiles import file_coords_regex
 from mage_procgen.Parser.ShapeFileParser import ShapeFileParser
 
 
@@ -29,7 +31,18 @@ class ASCParser:
         for index, row in slab_parts.iterrows():
             file_name = os.path.basename(row["NOM_DALLE"]) + ".asc"
 
-            file_data = p.read_csv(os.path.join(file_folder, file_name))
+            file_full_path = os.path.join(file_folder, file_name)
+
+            # Sometimes the name of the file in the dalles.shp file does not correspond to the actual name of the file
+            if not os.path.isfile(file_full_path):
+                # The corner of the file seems always be present in format _DDDD_DDDD_
+                # We can use that to find the file we want
+                file_coords = file_coords_regex.findall(file_name)[0]
+
+                file_name = next(x for x in os.listdir(file_folder) if file_coords in x)
+                file_full_path = os.path.join(file_folder, file_name)
+
+            file_data = p.read_csv(file_full_path)
 
             # Number of columns must be read in dataframe.columns, the rest is in the rows ...
             nbcols = int(file_data.columns[0].split(" ")[-1])

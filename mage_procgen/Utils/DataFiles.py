@@ -1,5 +1,6 @@
 import subprocess
 import os
+import re
 
 base_folder = "/home/verstraa/Work/maps/"
 
@@ -35,6 +36,7 @@ hash_file_extenstion = ".md5"
 
 assets_folder = "Assets"
 
+file_coords_regex = re.compile("_[0-9]{4}_[0-9]{4}_")
 
 def setup_bdtopo(departement, archive_file):
     """
