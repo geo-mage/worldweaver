@@ -93,21 +93,21 @@ def main():
     configure_render(geo_window.center_deg)
 
     if config.render_objects:
-        #fields_renderer = PlotRenderer.FieldRenderer(
+        # fields_renderer = PlotRenderer.FieldRenderer(
         #    geo_data.terrain, config.field_render_config
-        #)
-        #fields_renderer.render(
+        # )
+        # fields_renderer.render(
         #    rendering_data.fields, geo_center, rendering_collection_name
-        #)
-        #print("Fields rendered")
+        # )
+        # print("Fields rendered")
 
-        #gardens_renderer = PlotRenderer.GardenRenderer(
+        # gardens_renderer = PlotRenderer.GardenRenderer(
         #    geo_data.terrain, config.garden_render_config
-        #)
-        #gardens_renderer.render(
+        # )
+        # gardens_renderer.render(
         #    rendering_data.gardens, geo_center, rendering_collection_name
-        #)
-        #print("Gardens rendered")
+        # )
+        # print("Gardens rendered")
 
         fences_renderer = PlotRenderer.FenceRenderer(
             geo_data.terrain, config.fence_render_config
@@ -149,13 +149,13 @@ def main():
         )
         print("Water rendered")
 
-        #background_renderer = BackgroundRenderer.BackgroundRenderer(
+        # background_renderer = BackgroundRenderer.BackgroundRenderer(
         #    geo_data.terrain, config.background_render_config
-        #)
-        #background_renderer.render(
+        # )
+        # background_renderer.render(
         #    rendering_data.background, geo_center, rendering_collection_name
-        #)
-        #print("Background rendered")
+        # )
+        # print("Background rendered")
 
     if config.render_terrain:
         terrain_renderer = TerrainRenderer.TerrainRenderer(config.terrain_resolution, 1)
@@ -205,7 +205,11 @@ def main():
                 upper_right = (camera_x + img_size / 2, camera_y + img_size / 2)
 
                 TaggingRasterProcessor.compute(
-                    base_export_path, lower_left, upper_right, config.out_img_pixel_size, tagging_colors
+                    base_export_path,
+                    lower_left,
+                    upper_right,
+                    config.out_img_pixel_size,
+                    tagging_colors,
                 )
 
 

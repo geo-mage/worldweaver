@@ -102,32 +102,32 @@ class ASCParser:
 
         while current_x < global_x_max and current_y < global_y_max:
 
-           for terrain in loaded_files:
-               if current_x == terrain.x_min and current_y == terrain.y_min:
-                   current_terrain = terrain
-                   break
+            for terrain in loaded_files:
+                if current_x == terrain.x_min and current_y == terrain.y_min:
+                    current_terrain = terrain
+                    break
 
-           # If the terrain that is supposed to be there is not, add it
-           if current_terrain is None:
-               loaded_files.append(
-                   TerrainData(
-                       current_x,
-                       current_y,
-                       current_x + resolution * nbcols,
-                       current_y + resolution * nbrows,
-                       resolution,
-                       nbcols,
-                       nbrows,
-                       no_data,
-                       terrain_data,
-                   )
-               )
+            # If the terrain that is supposed to be there is not, add it
+            if current_terrain is None:
+                loaded_files.append(
+                    TerrainData(
+                        current_x,
+                        current_y,
+                        current_x + resolution * nbcols,
+                        current_y + resolution * nbrows,
+                        resolution,
+                        nbcols,
+                        nbrows,
+                        no_data,
+                        terrain_data,
+                    )
+                )
 
-           # If we're at the end of a line
-           if current_x >= global_x_max:
-               current_y = current_y + resolution * nbrows
-               current_x = global_x_min
-           else:
-               current_x = current_x + resolution * nbcols
+            # If we're at the end of a line
+            if current_x >= global_x_max:
+                current_y = current_y + resolution * nbrows
+                current_x = global_x_min
+            else:
+                current_x = current_x + resolution * nbcols
 
         return loaded_files

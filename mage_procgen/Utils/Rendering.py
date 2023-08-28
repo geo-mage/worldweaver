@@ -64,6 +64,7 @@ def setup_export_folder(departement):
     os.makedirs(base_path, exist_ok=True)
     return base_path
 
+
 # TODO: move out of here when we know better what it should do
 def export_rendered_img(base_path):
     sc = C.scene

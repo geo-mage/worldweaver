@@ -146,7 +146,13 @@ class Loader:
                 water_data = current_water_data
 
         geo_data = GeoData(
-            plot_data, building_data, forest_data, road_data, water_data, terrain_data, departements
+            plot_data,
+            building_data,
+            forest_data,
+            road_data,
+            water_data,
+            terrain_data,
+            departements,
         )
 
         return geo_data

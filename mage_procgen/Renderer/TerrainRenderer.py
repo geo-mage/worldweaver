@@ -209,7 +209,12 @@ class TerrainRenderer:
 
                 try:
                     texture_file_path = Loader.Loader.load_texture(
-                        (mesh_info.x_min, mesh_info.y_min, mesh_info.x_max, mesh_info.y_max)
+                        (
+                            mesh_info.x_min,
+                            mesh_info.y_min,
+                            mesh_info.x_max,
+                            mesh_info.y_max,
+                        )
                     )
 
                     D.images.load(texture_file_path)
