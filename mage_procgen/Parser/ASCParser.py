@@ -83,4 +83,51 @@ class ASCParser:
                 )
             )
 
+        # Coherence check: find out if we are missing a slab
+        global_x_min = min([x.x_min for x in loaded_files])
+        global_x_max = max([x.x_max for x in loaded_files])
+        global_y_min = min([x.y_min for x in loaded_files])
+        global_y_max = max([x.y_max for x in loaded_files])
+
+        resolution = loaded_files[0].resolution
+        nbcols = loaded_files[0].nbcol
+        nbrows = loaded_files[0].nbrow
+        no_data = loaded_files[0].no_data
+
+        terrain_data = p.DataFrame([[0 for x in range(nbcols)] for y in range(nbrows)])
+
+        current_x = global_x_min
+        current_y = global_y_min
+        current_terrain = None
+
+        while current_x < global_x_max and current_y < global_y_max:
+
+           for terrain in loaded_files:
+               if current_x == terrain.x_min and current_y == terrain.y_min:
+                   current_terrain = terrain
+                   break
+
+           # If the terrain that is supposed to be there is not, add it
+           if current_terrain is None:
+               loaded_files.append(
+                   TerrainData(
+                       current_x,
+                       current_y,
+                       current_x + resolution * nbcols,
+                       current_y + resolution * nbrows,
+                       resolution,
+                       nbcols,
+                       nbrows,
+                       no_data,
+                       terrain_data,
+                   )
+               )
+
+           # If we're at the end of a line
+           if current_x >= global_x_max:
+               current_y = current_y + resolution * nbrows
+               current_x = global_x_min
+           else:
+               current_x = current_x + resolution * nbcols
+
         return loaded_files

@@ -5,6 +5,8 @@ sys.path.append("/usr/lib/python3/dist-packages/")
 
 from numpy import arange
 
+from datetime import datetime
+
 from mage_procgen.Renderer import (
     BuildingRenderer,
     ForestRenderer,
@@ -24,6 +26,7 @@ from mage_procgen.Processor.FloodProcessor import FloodProcessor
 from mage_procgen.Processor.TaggingRasterProcessor import TaggingRasterProcessor
 from mage_procgen.Utils.Rendering import (
     configure_render,
+    setup_export_folder,
     export_rendered_img,
     setup_img,
     rendering_collection_name,
@@ -90,21 +93,21 @@ def main():
     configure_render(geo_window.center_deg)
 
     if config.render_objects:
-        fields_renderer = PlotRenderer.FieldRenderer(
-            geo_data.terrain, config.field_render_config
-        )
-        fields_renderer.render(
-            rendering_data.fields, geo_center, rendering_collection_name
-        )
-        print("Fields rendered")
+        #fields_renderer = PlotRenderer.FieldRenderer(
+        #    geo_data.terrain, config.field_render_config
+        #)
+        #fields_renderer.render(
+        #    rendering_data.fields, geo_center, rendering_collection_name
+        #)
+        #print("Fields rendered")
 
-        gardens_renderer = PlotRenderer.GardenRenderer(
-            geo_data.terrain, config.garden_render_config
-        )
-        gardens_renderer.render(
-            rendering_data.gardens, geo_center, rendering_collection_name
-        )
-        print("Gardens rendered")
+        #gardens_renderer = PlotRenderer.GardenRenderer(
+        #    geo_data.terrain, config.garden_render_config
+        #)
+        #gardens_renderer.render(
+        #    rendering_data.gardens, geo_center, rendering_collection_name
+        #)
+        #print("Gardens rendered")
 
         fences_renderer = PlotRenderer.FenceRenderer(
             geo_data.terrain, config.fence_render_config
@@ -146,13 +149,13 @@ def main():
         )
         print("Water rendered")
 
-        background_renderer = BackgroundRenderer.BackgroundRenderer(
-            geo_data.terrain, config.background_render_config
-        )
-        background_renderer.render(
-            rendering_data.background, geo_center, rendering_collection_name
-        )
-        print("Background rendered")
+        #background_renderer = BackgroundRenderer.BackgroundRenderer(
+        #    geo_data.terrain, config.background_render_config
+        #)
+        #background_renderer.render(
+        #    rendering_data.background, geo_center, rendering_collection_name
+        #)
+        #print("Background rendered")
 
     if config.render_terrain:
         terrain_renderer = TerrainRenderer.TerrainRenderer(config.terrain_resolution, 1)
@@ -168,9 +171,11 @@ def main():
         flood_renderer = FloodRenderer.FloodRenderer(config.flood_render_config)
         flood_renderer.render(flood_data, rendering_collection_name)
 
-    config.export_img = False
+    config.export_img = True
 
     if config.export_img:
+
+        base_export_path = setup_export_folder(geo_data.departements[0])
 
         img_size = config.out_img_resolution * config.out_img_pixel_size
 
@@ -194,13 +199,13 @@ def main():
                     (camera_x, camera_y, 0),
                 )
 
-                export_rendered_img()
+                export_rendered_img(base_export_path)
 
                 lower_left = (camera_x - img_size / 2, camera_y - img_size / 2)
                 upper_right = (camera_x + img_size / 2, camera_y + img_size / 2)
 
                 TaggingRasterProcessor.compute(
-                    lower_left, upper_right, config.out_img_pixel_size, tagging_colors
+                    base_export_path, lower_left, upper_right, config.out_img_pixel_size, tagging_colors
                 )
 
 

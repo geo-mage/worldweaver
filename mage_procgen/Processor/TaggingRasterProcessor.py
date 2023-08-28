@@ -17,7 +17,7 @@ import rasterio
 
 class TaggingRasterProcessor:
     @staticmethod
-    def compute(lower_left, upper_right, resolution, tagging_colors):
+    def compute(base_path, lower_left, upper_right, resolution, tagging_colors):
 
         camera = D.objects["Camera"]
         origin = camera.location
@@ -46,8 +46,6 @@ class TaggingRasterProcessor:
         now = datetime.now()
         now_str = now.strftime("%Y_%m_%d:%H:%M:%S:%f")
 
-        base_path = "/home/verstraa/Work/maps/rendering/77/"
-
         full_path = os.path.join(base_path, now_str + ".png")
 
         # Switching back to channel first and changing type to be able to write the image
@@ -62,8 +60,8 @@ class TaggingRasterProcessor:
             height=img_full.shape[2],
             count=3,
             dtype=rasterio.uint8,
-            compress="JPEG",
-            photometric="YCBCR",
+            compress="LZW",
+            photometric="RGB",
         ) as dst:
             dst.write(img_full)
 

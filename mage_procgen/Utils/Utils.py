@@ -95,3 +95,4 @@ class GeoData:
     roads: g.GeoDataFrame
     water: g.GeoDataFrame
     terrain: TerrainDataList
+    departements: list[str]

@@ -207,15 +207,18 @@ class TerrainRenderer:
 
             if use_sat_img:
 
-                texture_file_path = Loader.Loader.load_texture(
-                    (mesh_info.x_min, mesh_info.y_min, mesh_info.x_max, mesh_info.y_max)
-                )
+                try:
+                    texture_file_path = Loader.Loader.load_texture(
+                        (mesh_info.x_min, mesh_info.y_min, mesh_info.x_max, mesh_info.y_max)
+                    )
 
-                D.images.load(texture_file_path)
+                    D.images.load(texture_file_path)
 
-                mesh_material.node_tree.nodes["Image Texture"].image = D.images[
-                    os.path.basename(texture_file_path)
-                ]
+                    mesh_material.node_tree.nodes["Image Texture"].image = D.images[
+                        os.path.basename(texture_file_path)
+                    ]
+                except:
+                    print("Couldn't add texture image to slab")
 
             mesh_data.materials.append(mesh_material)
 

@@ -4,6 +4,8 @@ import re
 
 base_folder = "/home/verstraa/Work/maps/"
 
+rendering = "rendering"
+
 departements = "Departements/"
 
 regions_file = "ARRONDISSEMENT/ARRONDISSEMENT.shp"

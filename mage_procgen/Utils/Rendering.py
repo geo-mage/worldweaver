@@ -6,6 +6,8 @@ import re
 
 import random
 
+import mage_procgen.Utils.DataFiles as df
+
 hex_color_regex = re.compile("^#[0-9a-fA-F]{6}$")
 hex_color_split_regex = re.compile("..")
 
@@ -54,14 +56,20 @@ def configure_render(geo_center_deg):
     D.collections[base_collection_name].children.link(rendering_collection)
 
 
+def setup_export_folder(departement):
+    now = datetime.now()
+    now_str = now.strftime("%Y_%m_%d:%H:%M")
+
+    base_path = os.path.join(df.base_folder, df.rendering, departement, now_str)
+    os.makedirs(base_path, exist_ok=True)
+    return base_path
+
 # TODO: move out of here when we know better what it should do
-def export_rendered_img():
+def export_rendered_img(base_path):
     sc = C.scene
 
     now = datetime.now()
     now_str = now.strftime("%Y_%m_%d:%H:%M:%S:%f")
-
-    base_path = "/home/verstraa/Work/maps/rendering/77/"
 
     sc.render.filepath = os.path.join(base_path, now_str + ".png")
 
