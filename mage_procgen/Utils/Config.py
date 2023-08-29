@@ -40,4 +40,5 @@ class Config:
     fence_render_config: RenderObjectConfig
     road_render_config: RenderObjectConfig
     water_render_config: RenderObjectConfig
+    tag_result_order: list
     tagging_config: dict

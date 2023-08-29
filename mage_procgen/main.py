@@ -30,7 +30,6 @@ from mage_procgen.Utils.Rendering import (
     export_rendered_img,
     setup_img,
     rendering_collection_name,
-    hex_color_to_tuple,
 )
 
 
@@ -171,46 +170,50 @@ def main():
         flood_renderer = FloodRenderer.FloodRenderer(config.flood_render_config)
         flood_renderer.render(flood_data, rendering_collection_name)
 
-    config.export_img = True
+        config.export_img = True
 
-    if config.export_img:
+        if config.export_img:
 
-        base_export_path = setup_export_folder(geo_data.departements[0])
+            base_export_path = setup_export_folder(geo_data.departements[0])
 
-        img_size = config.out_img_resolution * config.out_img_pixel_size
+            img_size = config.out_img_resolution * config.out_img_pixel_size
 
-        camera_step = img_size * 0.9
+            camera_step = img_size * 0.9
 
-        camera_x_min = flood_data[2][0] + img_size / 2
-        camera_x_max = flood_data[3][0] - img_size / 2
-        camera_y_min = flood_data[2][1] + img_size / 2
-        camera_y_max = flood_data[3][1] - img_size / 2
+            camera_x_min = flood_data[2][0] + img_size / 2
+            camera_x_max = flood_data[3][0] - img_size / 2
+            camera_y_min = flood_data[2][1] + img_size / 2
+            camera_y_max = flood_data[3][1] - img_size / 2
 
-        tagging_colors = {
-            layer_name: hex_color_to_tuple(hex_code)
-            for layer_name, hex_code in config.tagging_config.items()
-        }
+            # tagging_colors = {
+            #    layer_name: hex_color_to_tuple(hex_code)
+            #    for layer_name, hex_code in config.tagging_config.items()
+            # }
 
-        for camera_x in arange(camera_x_min, camera_x_max, camera_step):
-            for camera_y in arange(camera_y_min, camera_y_max, camera_step):
-                setup_img(
-                    config.out_img_resolution,
-                    config.out_img_pixel_size,
-                    (camera_x, camera_y, 0),
-                )
+            for camera_x in arange(camera_x_min, camera_x_max, camera_step):
+                for camera_y in arange(camera_y_min, camera_y_max, camera_step):
+                    now = datetime.now()
+                    now_str = now.strftime("%Y_%m_%d:%H:%M:%S:%f")
 
-                export_rendered_img(base_export_path)
+                    setup_img(
+                        config.out_img_resolution,
+                        config.out_img_pixel_size,
+                        (camera_x, camera_y, 0),
+                    )
 
-                lower_left = (camera_x - img_size / 2, camera_y - img_size / 2)
-                upper_right = (camera_x + img_size / 2, camera_y + img_size / 2)
+                    export_rendered_img(base_export_path, now_str)
 
-                TaggingRasterProcessor.compute(
-                    base_export_path,
-                    lower_left,
-                    upper_right,
-                    config.out_img_pixel_size,
-                    tagging_colors,
-                )
+                    lower_left = (camera_x - img_size / 2, camera_y - img_size / 2)
+                    upper_right = (camera_x + img_size / 2, camera_y + img_size / 2)
+
+                    TaggingRasterProcessor.compute(
+                        base_export_path,
+                        now_str,
+                        lower_left,
+                        upper_right,
+                        config.out_img_pixel_size,
+                        config.tag_result_order,
+                    )
 
 
 if __name__ == "__main__":

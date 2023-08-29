@@ -2,14 +2,11 @@ import os
 import math
 from bpy import context as C, data as D, ops as O
 from datetime import datetime
-import re
 
 import random
 
 import mage_procgen.Utils.DataFiles as df
 
-hex_color_regex = re.compile("^#[0-9a-fA-F]{6}$")
-hex_color_split_regex = re.compile("..")
 
 rendering_collection_name = "Rendering"
 base_collection_name = "Collection"
@@ -66,13 +63,10 @@ def setup_export_folder(departement):
 
 
 # TODO: move out of here when we know better what it should do
-def export_rendered_img(base_path):
+def export_rendered_img(base_path, base_name):
     sc = C.scene
 
-    now = datetime.now()
-    now_str = now.strftime("%Y_%m_%d:%H:%M:%S:%f")
-
-    sc.render.filepath = os.path.join(base_path, now_str + ".png")
+    sc.render.filepath = os.path.join(base_path, base_name + ".png")
 
     O.render.render(write_still=True)
 
@@ -89,16 +83,3 @@ def setup_img(resolution, pixel_size, center):
     camera_elevation = img_size / (2 * math.tan(camera.data.angle / 2))
 
     camera.location = (center[0], center[1], camera_elevation)
-
-
-def hex_color_to_tuple(hex_code):
-    # Checking if it's a valid hex code with RGB values
-    match = hex_color_regex.match(hex_code)
-    if match:
-        # Extracting the 3 values R, G and B
-        colors_hex = hex_color_split_regex.findall(hex_code.strip("#"))
-        # Convert hex to int
-        colors = [int(c, 16) for c in colors_hex]
-        return (colors[0], colors[1], colors[2])
-    else:
-        raise ValueError("Invalid hex string: " + hex_code)

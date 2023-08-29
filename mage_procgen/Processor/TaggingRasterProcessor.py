@@ -1,23 +1,17 @@
-import math
-
 from bpy import data as D
 
 from mathutils import *
 
 import numpy as np
 
-from mage_procgen.Utils.Utils import GeoWindow
-from mage_procgen.Utils.Geometry import center_point
-from math import floor, ceil
-
-from datetime import datetime
 import os
-import rasterio
 
 
 class TaggingRasterProcessor:
     @staticmethod
-    def compute(base_path, lower_left, upper_right, resolution, tagging_colors):
+    def compute(
+        base_path, file_name, lower_left, upper_right, resolution, tagging_order
+    ):
 
         camera = D.objects["Camera"]
         origin = camera.location
@@ -38,56 +32,35 @@ class TaggingRasterProcessor:
 
         # Preparing for the mapping of the tagging function. Signature is necessary because elevation works on a 3 dimensional vector (position) and returns another (RGB)
         tagging_function = np.vectorize(
-            TaggingRasterProcessor.__tag, excluded={1, 2, 3}, signature="(3)->(3)"
+            TaggingRasterProcessor.__tag, excluded={1, 2, 3}, signature="(3)->(6)"
         )
 
-        tagged = tagging_function(ray_direction, max_distance, origin, tagging_colors)
+        tagged = tagging_function(ray_direction, max_distance, origin, tagging_order)
 
-        now = datetime.now()
-        now_str = now.strftime("%Y_%m_%d:%H:%M:%S:%f")
+        full_path = os.path.join(base_path, file_name + ".npy")
 
-        full_path = os.path.join(base_path, now_str + ".png")
-
-        # Switching back to channel first and changing type to be able to write the image
-        img_full = np.rollaxis(tagged, axis=2).astype(rasterio.uint8)
-
-        # TODO: currently YCBCR requires jpeg compression. Evaluate if there is a better way
-        with rasterio.open(
-            full_path,
-            "w",
-            driver="GTiff",
-            width=img_full.shape[1],
-            height=img_full.shape[2],
-            count=3,
-            dtype=rasterio.uint8,
-            compress="LZW",
-            photometric="RGB",
-        ) as dst:
-            dst.write(img_full)
+        np.save(full_path, tagged)
 
     @staticmethod
-    def __tag(ray_direction, max_distance, origin, tagging_colors):
+    def __tag(ray_direction, max_distance, origin, tagging_order):
 
-        collisions = {}
+        tag_result = np.full(6, -9999)
 
         render_collection = D.collections["Rendering"].objects
+        terrain_collection = D.collections["Terrain"].objects
 
         for layer in render_collection:
             ray_result = layer.ray_cast(origin, ray_direction, distance=max_distance)
 
             if ray_result[0]:
                 elevation = ray_result[1][2]
-                collisions[layer.name] = elevation
+                tag_result[tagging_order.index(layer.name)] = elevation
 
-        highest_col_name = ""
-        highest_col_elevation = -math.inf
+        for layer in terrain_collection:
+            ray_result = layer.ray_cast(origin, ray_direction, distance=max_distance)
 
-        for layer_name, collision_elevation in collisions.items():
-            if collision_elevation > highest_col_elevation:
-                highest_col_name = layer_name
-                highest_col_elevation = collision_elevation
+            if ray_result[0]:
+                elevation = ray_result[1][2]
+                tag_result[tagging_order.index("Terrain")] = elevation
 
-        if highest_col_name in tagging_colors:
-            return np.array(tagging_colors[highest_col_name])
-        else:
-            return np.array([0, 0, 0])
+        return tag_result
