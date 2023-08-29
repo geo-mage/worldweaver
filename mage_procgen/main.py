@@ -91,6 +91,13 @@ def main():
     print("Starting rendering")
     configure_render(geo_window.center_deg)
 
+    if config.render_terrain:
+        terrain_renderer = TerrainRenderer.TerrainRenderer(config.terrain_resolution, 1)
+        terrain_renderer.render(
+            geo_data.terrain, geo_window, rendering_collection_name, config.use_sat_img
+        )
+        print("Terrain rendered")
+
     if config.render_objects:
         # fields_renderer = PlotRenderer.FieldRenderer(
         #    geo_data.terrain, config.field_render_config
@@ -156,13 +163,6 @@ def main():
         # )
         # print("Background rendered")
 
-    if config.render_terrain:
-        terrain_renderer = TerrainRenderer.TerrainRenderer(config.terrain_resolution, 1)
-        terrain_renderer.render(
-            geo_data.terrain, geo_window, rendering_collection_name, config.use_sat_img
-        )
-        print("Terrain rendered")
-
     if config.flood:
         flood_data = FloodProcessor.flood(
             geo_window, config.flood_height, config.flood_cell_size
@@ -170,7 +170,7 @@ def main():
         flood_renderer = FloodRenderer.FloodRenderer(config.flood_render_config)
         flood_renderer.render(flood_data, rendering_collection_name)
 
-        config.export_img = True
+        config.export_img = False
 
         if config.export_img:
 
