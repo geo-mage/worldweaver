@@ -58,7 +58,8 @@ class RenderingData:
     fences: PolygonList
     buildings: PolygonList
     roads: PolygonList
-    water: PolygonList
+    still_water: PolygonList
+    flowing_water: PolygonList
     background: PolygonList
 
 

@@ -22,7 +22,7 @@ from mage_procgen.Utils.Utils import GeoWindow, CRS_fr, CRS_degrees
 from mage_procgen.Loader.Loader import Loader
 from mage_procgen.Loader.ConfigLoader import ConfigLoader
 from mage_procgen.Processor.Preprocessor import Preprocessor
-from mage_procgen.Processor.FloodProcessor import FloodProcessor
+from mage_procgen.Processor.BasicFloodProcessor import BasicFloodProcessor
 from mage_procgen.Processor.TaggingRasterProcessor import TaggingRasterProcessor
 from mage_procgen.Utils.Rendering import (
     configure_render,
@@ -75,11 +75,10 @@ def main():
 
     # 06
     # Nice
-    #geo_window = GeoWindow(7.285, 7.30800, 43.68439, 43.69156, CRS_degrees, CRS_fr)
+    # geo_window = GeoWindow(7.285, 7.30800, 43.68439, 43.69156, CRS_degrees, CRS_fr)
     # geo_window = GeoWindow(7.293, 7.30800, 43.68439, 43.69156, CRS_degrees, CRS_fr)
     # Saint Sauveur sur Tinée
     geo_window = GeoWindow(7.097, 7.11500, 44.077, 44.09, CRS_degrees, CRS_fr)
-
 
     geo_center = geo_window.center
 
@@ -151,11 +150,18 @@ def main():
         )
         print("Roads rendered")
 
-        water_renderer = WaterRenderer.WaterRenderer(
+        still_water_renderer = WaterRenderer.StillWaterRenderer(
             geo_data.terrain, config.water_render_config
         )
-        water_renderer.render(
-            rendering_data.water, geo_center, rendering_collection_name
+        still_water_renderer.render(
+            rendering_data.still_water, geo_center, rendering_collection_name
+        )
+
+        flowing_water_renderer = WaterRenderer.FlowingWaterRenderer(
+            geo_data.terrain, config.water_render_config
+        )
+        flowing_water_renderer.render(
+            rendering_data.flowing_water, geo_center, rendering_collection_name
         )
         print("Water rendered")
 
@@ -168,7 +174,7 @@ def main():
         # print("Background rendered")
 
     if config.flood:
-        flood_data = FloodProcessor.flood(
+        flood_data = BasicFloodProcessor.flood(
             geo_window, config.flood_height, config.flood_cell_size
         )
         flood_renderer = FloodRenderer.FloodRenderer(config.flood_render_config)

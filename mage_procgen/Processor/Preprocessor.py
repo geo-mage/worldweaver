@@ -131,13 +131,24 @@ class Preprocessor:
         # Removing water from fields
         fields = fields.overlay(new_water, how="difference", keep_geom_type=True)
 
+        # Splitting water between "still" and "flowing"
+        # TODO: check this tag list/update it
+        flowing_water_tags = ["Ecoulement naturel", "Ecoulement canalisé", "Canal"]
+        flowing_water = new_water.query(
+            "NATURE in @flowing_water_tags"
+        )
+        still_water = new_water.query(
+            "NATURE not in @flowing_water_tags"
+        )
+
         forests_geom = Preprocessor.extract_geom(cleaned_forests.geometry)
         fields_geom = Preprocessor.extract_geom(fields.geometry)
         gardens_geom = Preprocessor.extract_geom(gardens.geometry)
         fences_geom = Preprocessor.extract_geom(fences.geometry)
         buildings_geom = Preprocessor.extract_geom(new_buildings.geometry)
         roads_geom = Preprocessor.extract_geom(new_roads.geometry)
-        water_geom = Preprocessor.extract_geom(new_water.geometry)
+        flowing_water_geom = Preprocessor.extract_geom(flowing_water.geometry)
+        still_water_geom = Preprocessor.extract_geom(still_water.geometry)
         background_geom = Preprocessor.extract_geom(background.geometry)
 
         rendering_data = RenderingData(
@@ -147,7 +158,8 @@ class Preprocessor:
             fences_geom,
             buildings_geom,
             roads_geom,
-            water_geom,
+            still_water_geom,
+            flowing_water_geom,
             background_geom,
         )
 

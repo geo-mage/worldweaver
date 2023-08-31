@@ -14,7 +14,7 @@ from mage_procgen.Utils.Geometry import center_point
 from math import floor, ceil
 
 
-class FloodProcessor:
+class BasicFloodProcessor:
     @staticmethod
     def flood(geo_window: GeoWindow, flood_height: float, flood_cell_size: float):
 
@@ -39,16 +39,16 @@ class FloodProcessor:
         # TODO: check if there are edge cases where this does not hold
         terrain_collection = D.collections["Terrain"].objects
         for terrain in terrain_collection:
-            vertices = terrain.data.vertices
-            z_coords = [v.co[2] for v in vertices]
+            terrain_box = terrain.bound_box
+            z_coords = [v[2] for v in terrain_box]
             cur_z_max = max(z_coords)
             cur_z_min = min(z_coords)
             if cur_z_max > max_z:
                 max_z = cur_z_max
             if cur_z_min < min_z:
                 min_z = cur_z_min
-        building_vertices = D.objects["Buildings"].data.vertices
-        building_z_coords = [v.co[2] for v in building_vertices]
+        building_box_vertices = D.objects["Buildings"].bound_box
+        building_z_coords = [v[2] for v in building_box_vertices]
         cur_z_max = max(building_z_coords)
         cur_z_min = min(building_z_coords)
         if cur_z_max > max_z:
@@ -76,7 +76,7 @@ class FloodProcessor:
 
         # Preparing for the mapping of the elevation function. Signature is necessary because elevation works on a 3 dimensional vector
         elevation_function = np.vectorize(
-            FloodProcessor.__find_elevation, excluded={1, 2}, signature="(3)->()"
+            BasicFloodProcessor.__find_elevation, excluded={1, 2}, signature="(3)->()"
         )
 
         elevation = elevation_function(comp_plane, max_distance, ray_direction)
