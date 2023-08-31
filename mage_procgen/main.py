@@ -74,8 +74,12 @@ def main():
     # geo_window = GeoWindow(4.6900, 4.8000, 45.4400, 45.5000, CRS_degrees, CRS_fr)
 
     # 06
-    geo_window = GeoWindow(7.285, 7.30800, 43.68439, 43.69156, CRS_degrees, CRS_fr)
+    # Nice
+    #geo_window = GeoWindow(7.285, 7.30800, 43.68439, 43.69156, CRS_degrees, CRS_fr)
     # geo_window = GeoWindow(7.293, 7.30800, 43.68439, 43.69156, CRS_degrees, CRS_fr)
+    # Saint Sauveur sur Tinée
+    geo_window = GeoWindow(7.097, 7.11500, 44.077, 44.09, CRS_degrees, CRS_fr)
+
 
     geo_center = geo_window.center
 
@@ -169,8 +173,6 @@ def main():
         )
         flood_renderer = FloodRenderer.FloodRenderer(config.flood_render_config)
         flood_renderer.render(flood_data, rendering_collection_name)
-
-        config.export_img = False
 
         if config.export_img:
 
