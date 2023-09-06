@@ -134,12 +134,8 @@ class Preprocessor:
         # Splitting water between "still" and "flowing"
         # TODO: check this tag list/update it
         flowing_water_tags = ["Ecoulement naturel", "Ecoulement canalisé", "Canal"]
-        flowing_water = new_water.query(
-            "NATURE in @flowing_water_tags"
-        )
-        still_water = new_water.query(
-            "NATURE not in @flowing_water_tags"
-        )
+        flowing_water = new_water.query("NATURE in @flowing_water_tags")
+        still_water = new_water.query("NATURE not in @flowing_water_tags")
 
         forests_geom = Preprocessor.extract_geom(cleaned_forests.geometry)
         fields_geom = Preprocessor.extract_geom(fields.geometry)

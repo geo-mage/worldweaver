@@ -82,4 +82,16 @@ def setup_img(resolution, pixel_size, center):
     img_size = resolution * pixel_size
     camera_elevation = img_size / (2 * math.tan(camera.data.angle / 2))
 
-    camera.location = (center[0], center[1], camera_elevation)
+    max_z = -math.inf
+
+    # Calculating the maximum height of the scene, using terrain and buildings
+    # TODO: check if there are edge cases where this does not hold
+    terrain_collection = D.collections["Terrain"].objects
+    for terrain in terrain_collection:
+        terrain_box = terrain.bound_box
+        z_coords = [v[2] for v in terrain_box]
+        cur_z_max = max(z_coords)
+        if cur_z_max > max_z:
+            max_z = cur_z_max
+
+    camera.location = (center[0], center[1], max_z + camera_elevation)

@@ -16,12 +16,14 @@ from mage_procgen.Renderer import (
     BackgroundRenderer,
     TerrainRenderer,
     FloodRenderer,
+    BasicFloodRenderer,
 )
 
 from mage_procgen.Utils.Utils import GeoWindow, CRS_fr, CRS_degrees
 from mage_procgen.Loader.Loader import Loader
 from mage_procgen.Loader.ConfigLoader import ConfigLoader
 from mage_procgen.Processor.Preprocessor import Preprocessor
+from mage_procgen.Processor.FloodProcessor import FloodProcessor
 from mage_procgen.Processor.BasicFloodProcessor import BasicFloodProcessor
 from mage_procgen.Processor.TaggingRasterProcessor import TaggingRasterProcessor
 from mage_procgen.Utils.Rendering import (
@@ -78,7 +80,8 @@ def main():
     # geo_window = GeoWindow(7.285, 7.30800, 43.68439, 43.69156, CRS_degrees, CRS_fr)
     # geo_window = GeoWindow(7.293, 7.30800, 43.68439, 43.69156, CRS_degrees, CRS_fr)
     # Saint Sauveur sur Tinée
-    geo_window = GeoWindow(7.097, 7.11500, 44.077, 44.09, CRS_degrees, CRS_fr)
+    # geo_window = GeoWindow(7.097, 7.11500, 44.077, 44.09, CRS_degrees, CRS_fr)
+    geo_window = GeoWindow(7.1, 7.11, 44.077, 44.09, CRS_degrees, CRS_fr)
 
     geo_center = geo_window.center
 
@@ -174,8 +177,13 @@ def main():
         # print("Background rendered")
 
     if config.flood:
-        flood_data = BasicFloodProcessor.flood(
-            geo_window, config.flood_height, config.flood_cell_size
+
+        flood_threshold = 500
+        flood_data = FloodProcessor.flood(
+            geo_window,
+            config.flood_height,
+            flood_threshold,
+            config.flood_cell_size,
         )
         flood_renderer = FloodRenderer.FloodRenderer(config.flood_render_config)
         flood_renderer.render(flood_data, rendering_collection_name)
@@ -192,11 +200,6 @@ def main():
             camera_x_max = flood_data[3][0] - img_size / 2
             camera_y_min = flood_data[2][1] + img_size / 2
             camera_y_max = flood_data[3][1] - img_size / 2
-
-            # tagging_colors = {
-            #    layer_name: hex_color_to_tuple(hex_code)
-            #    for layer_name, hex_code in config.tagging_config.items()
-            # }
 
             for camera_x in arange(camera_x_min, camera_x_max, camera_step):
                 for camera_y in arange(camera_y_min, camera_y_max, camera_step):

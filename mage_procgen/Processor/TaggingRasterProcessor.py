@@ -32,7 +32,7 @@ class TaggingRasterProcessor:
 
         # Preparing for the mapping of the tagging function. Signature is necessary because elevation works on a 3 dimensional vector (position) and returns another (RGB)
         tagging_function = np.vectorize(
-            TaggingRasterProcessor.__tag, excluded={1, 2, 3}, signature="(3)->(6)"
+            TaggingRasterProcessor.__tag, excluded={1, 2, 3}, signature="(3)->(7)"
         )
 
         tagged = tagging_function(ray_direction, max_distance, origin, tagging_order)
@@ -44,7 +44,7 @@ class TaggingRasterProcessor:
     @staticmethod
     def __tag(ray_direction, max_distance, origin, tagging_order):
 
-        tag_result = np.full(6, -9999)
+        tag_result = np.full(7, -9999)
 
         render_collection = D.collections["Rendering"].objects
         terrain_collection = D.collections["Terrain"].objects

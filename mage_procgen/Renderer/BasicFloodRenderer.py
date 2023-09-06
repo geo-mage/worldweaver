@@ -4,7 +4,7 @@ from bpy import data as D, context as C
 import bmesh
 
 
-class FloodRenderer:
+class BasicFloodRenderer:
 
     _mesh_name = "Flood"
     _AssetsFolder = "Assets"
@@ -38,8 +38,8 @@ class FloodRenderer:
 
     def render(self, flood_data, parent_collection_name):
 
-        flood_init_state = flood_data[0]
-        flood_pixels = flood_data[1]
+        flood_pixels = flood_data[0]
+        flood_plan_z = flood_data[1]
         lower_left = flood_data[2]
         upper_right = flood_data[3]
         cellsize = flood_data[4]
@@ -65,16 +65,10 @@ class FloodRenderer:
 
                     current_point_x = lower_left[0] + x * cellsize
 
-                    flood_height_point = flood_pixels[y][x]
-
-                    terrain_height_point = flood_init_state[y][x][0]
-
-                    current_point_z = flood_height_point + terrain_height_point
-
                     current_point_coords = [
                         current_point_x,
                         current_point_y,
-                        current_point_z,
+                        flood_plan_z,
                     ]
 
                     new_face_verts = [
