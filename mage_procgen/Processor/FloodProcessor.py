@@ -16,6 +16,8 @@ from math import floor, ceil
 
 from math import exp, pow
 
+from tqdm import tqdm
+
 
 class FloodProcessor:
     @staticmethod
@@ -149,23 +151,46 @@ class FloodProcessor:
             ),
         )
 
+        # limit=1.1 * flood_threshold,
         flood_graph_distances, predecessors, sources = dijkstra(
             flood_graph,
             indices=sources_index,
             min_only=True,
-            limit=1.1 * flood_threshold,
             return_predecessors=True,
         )
 
         flood_result = np.zeros((flood_state_rows, flood_state_cols))
-        for row in range(flood_state_rows):
+        #path_lengths = np.full((flood_state_rows, flood_state_cols), -9999)
+
+        print("Calculating flood")
+
+        for row in tqdm(range(flood_state_rows)):
             for column in range(flood_state_cols):
                 point_index = row * flood_state_cols + column
 
+                # Retrieving the source point of the current point
                 point_source = sources[point_index]
                 source_row = point_source // flood_state_cols
                 source_column = point_source % flood_state_cols
                 source_elevation = flood_init[source_row][source_column][0]
+
+                # Finding the path length
+                #path_length = 0
+                #predecessor = predecessors[point_index]
+#
+                #while predecessor != -9999:
+                #   path_length += 1
+                #   predecessor = predecessors[predecessor]
+                #   predecessor_row = predecessor // flood_state_cols
+                #   predecessor_column = predecessor % flood_state_cols
+#
+                #   # If path length for a predecessor has been found
+                #   if path_lengths[predecessor_row][predecessor_column] != -9999:
+                #       path_length = path_length + path_lengths[predecessor_row][predecessor_column]
+                #       break
+#
+                #path_lengths[row][column] = path_length
+                #print("Found path ! Length: " + str(path_length))
 
                 flood_result[row][column] = FloodProcessor.flood_height(
                     max_flood_height,
@@ -174,6 +199,7 @@ class FloodProcessor:
                     flood_init[row][column][0],
                     flood_init[row][column][1],
                     source_elevation,
+                    # path_length,
                 )
 
         return (
@@ -232,6 +258,7 @@ class FloodProcessor:
     @staticmethod
     def distance_function(point_a, point_b):
         return exp(point_b[0] - point_a[0])
+        #return 1
 
     @staticmethod
     def flood_height(
@@ -241,13 +268,20 @@ class FloodProcessor:
         terrain_height,
         building_height,
         source_height,
+        #path_length,
     ):
         if distance_to_source > flood_threshold:
             return 0
         else:
+            # Water height if the cell was at the same height as the source
             flood_value = max_flood_height * pow(
                 (distance_to_source - flood_threshold) / flood_threshold, 2
             )
+
+            # Correcting for terrain
+            flood_value += (source_height - terrain_height)
+
+            # Clamping. Don't know if it's still necessary
             if flood_value + terrain_height > source_height + max_flood_height:
                 corrected_flood_value = (
                     source_height + max_flood_height - terrain_height

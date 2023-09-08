@@ -2,7 +2,7 @@ import os
 import bpy
 from bpy import data as D, context as C
 import bmesh
-
+from tqdm import tqdm
 
 class FloodRenderer:
 
@@ -36,6 +36,8 @@ class FloodRenderer:
         # A Geometry Nodes setup with name object_config.geometry_node_name may already exist.
         self.geometry_node_name = data_to.node_groups[0].name
 
+    # TODO: fix issue where only parts of the edge cells are made. currently, it does one where specifically the topright exists
+    # Need to make sure that a cell is made once and only once
     def render(self, flood_data, parent_collection_name):
 
         flood_init_state = flood_data[0]
@@ -49,44 +51,63 @@ class FloodRenderer:
         corner_coord = cellsize / 2
 
         cell_coords = [
-            (-corner_coord, corner_coord),
-            (-corner_coord, -corner_coord),
-            (corner_coord, -corner_coord),
-            (corner_coord, corner_coord),
+            (-1, -1),
+            (-1, 0),
+            (0, 0),
+            (0, -1),
         ]
 
-        for y in range(len(flood_pixels)):
+        print("Rendering flood")
 
-            current_point_y = upper_right[1] - y * cellsize
+        for y in tqdm(range(1,len(flood_pixels))):
 
-            for x in range(len(flood_pixels[y])):
 
+            for x in range(1, len(flood_pixels[y])):
+
+                # If this point is flooded
                 if flood_pixels[y][x]:
 
-                    current_point_x = lower_left[0] + x * cellsize
+                    face_coords = []
 
-                    flood_height_point = flood_pixels[y][x]
+                    for coord_mod in cell_coords:
 
-                    terrain_height_point = flood_init_state[y][x][0]
+                        current_x = x + coord_mod[0]
+                        current_y = y + coord_mod[1]
 
-                    current_point_z = flood_height_point + terrain_height_point
+                        current_point_y = upper_right[1] - current_y * cellsize
+                        current_point_x = lower_left[0] + current_x * cellsize
 
-                    current_point_coords = [
-                        current_point_x,
-                        current_point_y,
-                        current_point_z,
-                    ]
+                        # Either is the flood height, or 0. which is exactly what we want
+                        flood_height_point = flood_pixels[current_y][current_x]
+                        ## If this point exists
+                        #if flood_pixels[current_point_y][current_x]:
+                        #    pass
+                        #
+                        #else:
 
-                    new_face_verts = [
-                        (
-                            cell[0] + current_point_coords[0],
-                            cell[1] + current_point_coords[1],
-                            current_point_coords[2],
+                        terrain_height_point = flood_init_state[current_y][current_x][0]
+
+                        current_point_z = flood_height_point + terrain_height_point
+
+                        current_point_coords = (
+                            current_point_x,
+                            current_point_y,
+                            current_point_z,
                         )
-                        for cell in cell_coords
-                    ]
 
-                    face = mesh.faces.new(mesh.verts.new(pt) for pt in new_face_verts)
+                        face_coords.append(current_point_coords)
+
+
+                    #new_face_verts = [
+                    #    (
+                    #        cell[0] + current_point_coords[0],
+                    #        cell[1] + current_point_coords[1],
+                    #        current_point_coords[2],
+                    #    )
+                    #    for cell in cell_coords
+                    #]
+
+                    face = mesh.faces.new(mesh.verts.new(pt) for pt in face_coords)
 
         mesh_name = self._mesh_name
         mesh_data = D.meshes.new(mesh_name)
