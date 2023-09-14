@@ -23,16 +23,20 @@ class Loader:
             bbox,
         )
 
-        departements = arrondissements["CODE_DEPT"].values
+        departements_names = arrondissements["CODE_DEPT"].values
 
         plot_data = None
         building_data = None
         forest_data = None
         road_data = None
         water_data = None
+        oceans_data = None
+        departements_data = None
         terrain_data = []
 
-        for current_departement in departements:
+        load_oceans = False
+
+        for current_departement in departements_names:
 
             print("Loading data for departement " + current_departement)
 
@@ -145,14 +149,57 @@ class Loader:
             else:
                 water_data = current_water_data
 
+            current_departement_data = ShapeFileParser.load(
+                os.path.join(
+                    df.base_folder,
+                    df.departements,
+                    current_departement,
+                    df.bdtopo_folder,
+                    df.delivery,
+                    df.dpt_folder,
+                    df.dpt_file,
+                ),
+                bbox,
+                force_2d=True,
+            )
+            if departements_data is not None:
+                departements_data = p.concat(
+                    [departements_data, current_departement_data]
+                )
+            else:
+                departements_data = current_departement_data
+
+            if os.path.isfile(
+                os.path.join(
+                    df.base_folder,
+                    df.departements,
+                    current_departement,
+                    df.bdtopo_folder,
+                    df.delivery,
+                    df.water_folder,
+                    df.shore_file,
+                )
+            ):
+                load_oceans = True
+
+        if load_oceans:
+            # Ocean file is in degrees so we have to convert the box back to this csr
+            ocean_box = geo_window.dataframe.to_crs(CRS_degrees).geometry[0].bounds
+            oceans_data = ShapeFileParser.load(
+                os.path.join(df.base_folder, df.departements, df.ocean_file),
+                ocean_box,
+                force_2d=True,
+            ).to_crs(CRS_fr)
+
         geo_data = GeoData(
             plot_data,
             building_data,
             forest_data,
             road_data,
             water_data,
+            oceans_data,
+            departements_data,
             terrain_data,
-            departements,
         )
 
         return geo_data

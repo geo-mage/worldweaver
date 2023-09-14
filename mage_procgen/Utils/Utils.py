@@ -95,5 +95,7 @@ class GeoData:
     # residentials: g.GeoDataFrame
     roads: g.GeoDataFrame
     water: g.GeoDataFrame
+    ocean: g.GeoDataFrame
+    departements: g.GeoDataFrame
     terrain: TerrainDataList
-    departements: list[str]
+    # departements_codes: list[str]

@@ -10,6 +10,8 @@ departements = "Departements/"
 
 regions_file = "ARRONDISSEMENT/ARRONDISSEMENT.shp"
 
+ocean_file = "OCEAN/World_Seas_IHO_v3.shp"
+
 terrain_DB = "RGEALTI"
 terrain_data_folder = "MNT"
 
@@ -25,6 +27,10 @@ road_folder = "TRANSPORT"
 road_file = "TRONCON_DE_ROUTE.shp"
 water_folder = "HYDROGRAPHIE"
 water_file = "SURFACE_HYDROGRAPHIQUE.shp"
+dpt_folder = "ADMINISTRATIF"
+dpt_file = "ARRONDISSEMENT.shp"
+
+shore_file = "LIMITE_TERRE_MER.shp"
 
 texture_folder = "Textures"
 texture_image_DB = "BDORTHO"

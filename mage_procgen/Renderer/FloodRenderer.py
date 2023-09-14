@@ -4,6 +4,7 @@ from bpy import data as D, context as C
 import bmesh
 from tqdm import tqdm
 
+
 class FloodRenderer:
 
     _mesh_name = "Flood"
@@ -59,8 +60,7 @@ class FloodRenderer:
 
         print("Rendering flood")
 
-        for y in tqdm(range(1,len(flood_pixels))):
-
+        for y in tqdm(range(1, len(flood_pixels))):
 
             for x in range(1, len(flood_pixels[y])):
 
@@ -80,10 +80,10 @@ class FloodRenderer:
                         # Either is the flood height, or 0. which is exactly what we want
                         flood_height_point = flood_pixels[current_y][current_x]
                         ## If this point exists
-                        #if flood_pixels[current_point_y][current_x]:
+                        # if flood_pixels[current_point_y][current_x]:
                         #    pass
                         #
-                        #else:
+                        # else:
 
                         terrain_height_point = flood_init_state[current_y][current_x][0]
 
@@ -97,15 +97,14 @@ class FloodRenderer:
 
                         face_coords.append(current_point_coords)
 
-
-                    #new_face_verts = [
+                    # new_face_verts = [
                     #    (
                     #        cell[0] + current_point_coords[0],
                     #        cell[1] + current_point_coords[1],
                     #        current_point_coords[2],
                     #    )
                     #    for cell in cell_coords
-                    #]
+                    # ]
 
                     face = mesh.faces.new(mesh.verts.new(pt) for pt in face_coords)
 

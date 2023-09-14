@@ -52,7 +52,7 @@ def main():
     # Fublaines
     # geo_window = GeoWindow(2.9185, 2.9314, 48.9396, 48.9466, CRS_degrees, CRS_fr)
     # geo_window = GeoWindow(2.93, 2.945, 48.9350, 48.94, CRS_degrees, CRS_fr)
-    geo_window = GeoWindow(2.9, 2.955, 48.93, 48.945, CRS_degrees, CRS_fr)
+    # geo_window = GeoWindow(2.9, 2.955, 48.93, 48.945, CRS_degrees, CRS_fr)
 
     # Choisy-en-Brie
     # geo_window = GeoWindow(3.2050, 3.2350, 48.7545, 48.7650, CRS_degrees, CRS_fr)
@@ -65,7 +65,6 @@ def main():
     # geo_window = GeoWindow(2.8977, 2.9083, 48.9459, 48.9501, CRS_degrees, CRS_fr)
 
     # La Ferté-sous-Jouarre
-    # TODO: ne marchent pas a cause de pb sur les opérations d'overlay sur les geodf
     # geo_window = GeoWindow(3.1, 3.16, 48.93, 48.97, CRS_degrees, CRS_fr)
     # geo_window = GeoWindow(3.11, 3.15, 48.933, 48.964, CRS_degrees, CRS_fr)
 
@@ -78,10 +77,10 @@ def main():
     # 06
     # Nice
     # geo_window = GeoWindow(7.285, 7.30800, 43.68439, 43.69156, CRS_degrees, CRS_fr)
-    # geo_window = GeoWindow(7.293, 7.30800, 43.68439, 43.69156, CRS_degrees, CRS_fr)
+    geo_window = GeoWindow(7.293, 7.30800, 43.68439, 43.69156, CRS_degrees, CRS_fr)
     # Saint Sauveur sur Tinée
     # geo_window = GeoWindow(7.097, 7.11500, 44.077, 44.09, CRS_degrees, CRS_fr)
-    #geo_window = GeoWindow(7.1, 7.11, 44.077, 44.09, CRS_degrees, CRS_fr)
+    # geo_window = GeoWindow(7.1, 7.11, 44.077, 44.09, CRS_degrees, CRS_fr)
 
     geo_center = geo_window.center
 
@@ -190,7 +189,9 @@ def main():
 
         if config.export_img:
 
-            base_export_path = setup_export_folder(geo_data.departements[0])
+            first_dpt_code = geo_data.departements["INSEE_DEP"][0]
+
+            base_export_path = setup_export_folder(first_dpt_code)
 
             img_size = config.out_img_resolution * config.out_img_pixel_size
 
