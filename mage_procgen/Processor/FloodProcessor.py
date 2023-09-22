@@ -9,6 +9,8 @@ from mathutils import *
 import numpy as np
 
 from scipy.sparse import bsr_array
+from scipy.ndimage import gaussian_filter as gf
+
 
 from mage_procgen.Utils.Utils import GeoWindow
 from mage_procgen.Utils.Geometry import center_point
@@ -160,6 +162,7 @@ class FloodProcessor:
         )
 
         flood_result = np.zeros((flood_state_rows, flood_state_cols))
+        flood_state = np.zeros((flood_state_rows, flood_state_cols))
         # path_lengths = np.full((flood_state_rows, flood_state_cols), -9999)
 
         print("Calculating flood")
@@ -192,7 +195,7 @@ class FloodProcessor:
                 # path_lengths[row][column] = path_length
                 # print("Found path ! Length: " + str(path_length))
 
-                flood_result[row][column] = FloodProcessor.flood_height(
+                (is_flooded, water_height) = FloodProcessor.flood_height(
                     max_flood_height,
                     flood_threshold,
                     flood_graph_distances[point_index],
@@ -202,9 +205,16 @@ class FloodProcessor:
                     # path_length,
                 )
 
+                flood_state[row][column] = is_flooded
+
+                flood_result[row][column] = water_height
+
+        flood_result = gf(flood_result, 5)
+
         return (
             flood_init,
             flood_result,
+            flood_state,
             rounded_ll,
             rounded_ur,
             flood_cell_size,
@@ -270,27 +280,42 @@ class FloodProcessor:
         source_height,
         # path_length,
     ):
+
+        water_height = terrain_height
+        is_flooded = 1
+
         if distance_to_source > flood_threshold:
-            return 0
-        else:
-            # Water height if the cell was at the same height as the source
-            flood_value = max_flood_height * pow(
-                (distance_to_source - flood_threshold) / flood_threshold, 2
-            )
+            is_flooded = 0
 
-            # Correcting for terrain
-            flood_value += source_height - terrain_height
+        # Water height if the cell was at the same height as the source
+        flood_value = max_flood_height * pow(
+            (distance_to_source - flood_threshold) / flood_threshold, 2
+        )
 
-            # Clamping. Don't know if it's still necessary
-            if flood_value + terrain_height > source_height + max_flood_height:
-                corrected_flood_value = (
-                    source_height + max_flood_height - terrain_height
-                )
-                if corrected_flood_value < 0:
-                    return 0
-                else:
-                    return flood_value
-            elif flood_value < 0:
-                return 0
-            else:
-                return flood_value
+        # Correcting for terrain
+        # flood_value += source_height - terrain_height
+
+        # water_height = terrain_height + flood_value
+
+        # Clamping. Don't know if it's still necessary
+
+        # if flood_value + terrain_height > source_height + max_flood_height:
+        #    # Water cannot be above the source height
+        #    corrected_flood_value = (
+        #        source_height + max_flood_height - terrain_height
+        #    )
+        #    if corrected_flood_value < 0:
+        #        is_flooded = 0
+        #    else:
+        #        water_height = terrain_height + corrected_flood_value
+        # elif flood_value < 0:
+        #    is_flooded = 0
+        # else:
+        #    water_height = terrain_height + flood_value
+
+        water_height = flood_value + source_height
+
+        if water_height < terrain_height + 1e-1:
+            is_flooded = 0
+
+        return (is_flooded, water_height)

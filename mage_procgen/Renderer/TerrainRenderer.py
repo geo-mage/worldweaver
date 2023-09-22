@@ -222,8 +222,8 @@ class TerrainRenderer:
                     mesh_material.node_tree.nodes["Image Texture"].image = D.images[
                         os.path.basename(texture_file_path)
                     ]
-                except:
-                    print("Couldn't add texture image to slab")
+                except Exception as e:
+                    print("Couldn't add texture image to slab: " + str(e))
 
             mesh_data.materials.append(mesh_material)
 

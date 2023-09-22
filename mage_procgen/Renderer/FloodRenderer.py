@@ -43,9 +43,10 @@ class FloodRenderer:
 
         flood_init_state = flood_data[0]
         flood_pixels = flood_data[1]
-        lower_left = flood_data[2]
-        upper_right = flood_data[3]
-        cellsize = flood_data[4]
+        is_flooded = flood_data[2]
+        lower_left = flood_data[3]
+        upper_right = flood_data[4]
+        cellsize = flood_data[5]
 
         mesh = bmesh.new()
 
@@ -65,7 +66,7 @@ class FloodRenderer:
             for x in range(1, len(flood_pixels[y])):
 
                 # If this point is flooded
-                if flood_pixels[y][x]:
+                if is_flooded[y][x]:
 
                     face_coords = []
 
@@ -87,7 +88,7 @@ class FloodRenderer:
 
                         terrain_height_point = flood_init_state[current_y][current_x][0]
 
-                        current_point_z = flood_height_point + terrain_height_point
+                        current_point_z = flood_height_point  # + terrain_height_point
 
                         current_point_coords = (
                             current_point_x,

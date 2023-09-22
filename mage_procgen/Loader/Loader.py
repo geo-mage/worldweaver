@@ -21,6 +21,7 @@ class Loader:
         arrondissements = ShapeFileParser.load(
             os.path.join(df.base_folder, df.departements, df.regions_file),
             bbox,
+            CRS_fr,
         )
 
         departements_names = arrondissements["CODE_DEPT"].values
@@ -74,6 +75,7 @@ class Loader:
                     df.plot_file,
                 ),
                 bbox,
+                CRS_fr,
             )
             if plot_data is not None:
                 plot_data = p.concat([plot_data, current_plot_data])
@@ -91,6 +93,7 @@ class Loader:
                     df.building_file,
                 ),
                 bbox,
+                CRS_fr,
             )
             if building_data is not None:
                 building_data = p.concat([building_data, current_building_data])
@@ -108,6 +111,7 @@ class Loader:
                     df.forest_file,
                 ),
                 bbox,
+                CRS_fr,
             )
             if forest_data is not None:
                 forest_data = p.concat([forest_data, current_forest_data])
@@ -125,6 +129,7 @@ class Loader:
                     df.road_file,
                 ),
                 bbox,
+                CRS_fr,
             )
             if road_data is not None:
                 road_data = p.concat([road_data, current_road_data])
@@ -142,6 +147,7 @@ class Loader:
                     df.water_file,
                 ),
                 bbox,
+                CRS_fr,
                 force_2d=True,
             )
             if water_data is not None:
@@ -160,6 +166,7 @@ class Loader:
                     df.dpt_file,
                 ),
                 bbox,
+                CRS_fr,
                 force_2d=True,
             )
             if departements_data is not None:
@@ -188,8 +195,9 @@ class Loader:
             oceans_data = ShapeFileParser.load(
                 os.path.join(df.base_folder, df.departements, df.ocean_file),
                 ocean_box,
+                CRS_fr,
                 force_2d=True,
-            ).to_crs(CRS_fr)
+            )
 
         geo_data = GeoData(
             plot_data,
@@ -210,6 +218,7 @@ class Loader:
         arrondissements = ShapeFileParser.load(
             os.path.join(df.base_folder, df.departements, df.regions_file),
             mesh_box,
+            CRS_fr
         )
 
         departements = list(set(arrondissements["CODE_DEPT"].values))

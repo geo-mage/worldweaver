@@ -3,10 +3,9 @@ import os
 import re
 import pandas as p
 from mage_procgen.Utils.Utils import TerrainData
-from mage_procgen.Utils.Utils import GeoWindow
+from mage_procgen.Utils.Utils import GeoWindow, CRS_fr
 from mage_procgen.Utils.DataFiles import file_coords_regex
 from mage_procgen.Parser.ShapeFileParser import ShapeFileParser
-
 
 class ASCParser:
     @staticmethod
@@ -17,7 +16,7 @@ class ASCParser:
     ):
 
         bbox = geo_window.bounds
-        slabs = ShapeFileParser.load(slab_file, bbox)
+        slabs = ShapeFileParser.load(slab_file, bbox, CRS_fr)
         slab_parts = slabs.overlay(
             geo_window.dataframe, how="intersection", keep_geom_type=True
         )
@@ -68,6 +67,8 @@ class ASCParser:
                 terrain_pts_list.append(point_list)
 
             terrain_data = p.DataFrame(terrain_pts_list)
+
+            print("Loaded slab : " + file_name)
 
             loaded_files.append(
                 TerrainData(

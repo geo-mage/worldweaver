@@ -58,11 +58,10 @@ def main():
     # geo_window = GeoWindow(3.2050, 3.2350, 48.7545, 48.7650, CRS_degrees, CRS_fr)
 
     # Meaux
-    # TODO: ne marche pas a cause de pb sur les opérations d'overlay sur les geodf
-    # geo_window = GeoWindow(2.8733, 2.9249, 48.9459, 48.9633, CRS_degrees, CRS_fr)
+    #geo_window = GeoWindow(2.8733, 2.9249, 48.9459, 48.9633, CRS_degrees, CRS_fr)
 
-    # geo_window = GeoWindow(2.8675, 2.8893, 48.9469, 48.9612, CRS_degrees, CRS_fr)
-    # geo_window = GeoWindow(2.8977, 2.9083, 48.9459, 48.9501, CRS_degrees, CRS_fr)
+    #geo_window = GeoWindow(2.8675, 2.8893, 48.9469, 48.9612, CRS_degrees, CRS_fr)
+    #geo_window = GeoWindow(2.8977, 2.9083, 48.9459, 48.9501, CRS_degrees, CRS_fr)
 
     # La Ferté-sous-Jouarre
     # geo_window = GeoWindow(3.1, 3.16, 48.93, 48.97, CRS_degrees, CRS_fr)
@@ -75,12 +74,15 @@ def main():
     # geo_window = GeoWindow(4.6900, 4.8000, 45.4400, 45.5000, CRS_degrees, CRS_fr)
 
     # 06
-    # Nice
+    # Nice shore
     # geo_window = GeoWindow(7.285, 7.30800, 43.68439, 43.69156, CRS_degrees, CRS_fr)
-    geo_window = GeoWindow(7.293, 7.30800, 43.68439, 43.69156, CRS_degrees, CRS_fr)
+    #geo_window = GeoWindow(7.293, 7.30800, 43.68439, 43.69156, CRS_degrees, CRS_fr)
+    # Nice inland
+    #geo_window = GeoWindow(7.245, 7.27800, 43.698, 43.716, CRS_degrees, CRS_fr)
+    #geo_window = GeoWindow(7.26, 7.275, 43.698, 43.7050, CRS_degrees, CRS_fr)
     # Saint Sauveur sur Tinée
     # geo_window = GeoWindow(7.097, 7.11500, 44.077, 44.09, CRS_degrees, CRS_fr)
-    # geo_window = GeoWindow(7.1, 7.11, 44.077, 44.09, CRS_degrees, CRS_fr)
+    geo_window = GeoWindow(7.1, 7.11, 44.077, 44.09, CRS_degrees, CRS_fr)
 
     geo_center = geo_window.center
 
@@ -177,7 +179,7 @@ def main():
 
     if config.flood:
 
-        flood_threshold = 500
+        flood_threshold = 1000
         flood_data = FloodProcessor.flood(
             geo_window,
             config.flood_height,

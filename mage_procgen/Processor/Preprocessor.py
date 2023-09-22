@@ -51,13 +51,14 @@ class Preprocessor:
 
         new_oceans = None
 
-        if not self.geo_data.ocean.empty:
+        if self.geo_data.ocean is not None:
             new_oceans = self.geo_data.ocean.overlay(
                 self.window, how="intersection", keep_geom_type=True
             )
-            new_oceans = new_oceans.overlay(
-                self.geo_data.departements, how="difference", keep_geom_type=True
-            )
+            if not new_oceans.empty:
+                new_oceans = new_oceans.overlay(
+                    self.geo_data.departements, how="difference", keep_geom_type=True
+                )
 
         # Windowing the roads before polygonising them leads to errors
         # Related thread: https://github.com/geopandas/geopandas/issues/1724
@@ -158,7 +159,7 @@ class Preprocessor:
         still_water_geom = Preprocessor.extract_geom(still_water.geometry)
         background_geom = Preprocessor.extract_geom(background.geometry)
 
-        if not new_oceans.empty:
+        if new_oceans is not None and not new_oceans.empty:
             oceans_geom = Preprocessor.extract_geom(new_oceans.geometry)
             flowing_water_geom.extend(oceans_geom)
 

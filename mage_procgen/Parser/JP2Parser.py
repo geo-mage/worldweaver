@@ -4,7 +4,7 @@ import numpy as np
 import rasterio
 from rasterio.windows import Window
 
-from mage_procgen.Utils.Utils import GeoWindow
+from mage_procgen.Utils.Utils import GeoWindow, CRS_fr
 from mage_procgen.Parser.ShapeFileParser import ShapeFileParser
 
 
@@ -18,7 +18,7 @@ class JP2Parser:
         texture_file_path: str,
     ):
         bbox = geo_window.bounds
-        slabs = ShapeFileParser.load(slab_file, bbox)
+        slabs = ShapeFileParser.load(slab_file, bbox, CRS_fr)
         slab_parts = slabs.overlay(
             geo_window.dataframe, how="intersection", keep_geom_type=True
         )
