@@ -5,13 +5,12 @@ from mathutils import *
 import numpy as np
 
 import os
+import math
 
 
 class TaggingRasterProcessor:
     @staticmethod
-    def compute(
-        base_path, file_name, lower_left, upper_right, resolution, tagging_order
-    ):
+    def compute(base_path, file_name, resolution, tagging_order):
 
         camera = D.objects["Camera"]
         origin = camera.location
@@ -19,14 +18,22 @@ class TaggingRasterProcessor:
         # camera Z should be by far the highest so this rule of thumb should hold
         max_distance = 2 * origin[2]
 
-        # This holds every vector that will be the direction of the rays
+        vector_coord = math.tan(camera.data.angle / 2)
+
+        # This holds every vector that will be the direction of the rays. They recreate the vectors used for the rendering (or at least a sampling of them)
         ray_direction = np.array(
             [
                 [
-                    Vector([x - origin[0], y - origin[1], 0 - origin[2]])
-                    for x in np.arange(lower_left[0], upper_right[0], resolution)
+                    Vector(
+                        [
+                            ((2 * (x / (resolution - 1)) - 1) * vector_coord),
+                            ((-2 * (y / (resolution - 1)) + 1) * vector_coord),
+                            -1,
+                        ]
+                    )
+                    for x in range(int(resolution))
                 ]
-                for y in np.arange(upper_right[1], lower_left[1], -resolution)
+                for y in range(int(resolution))
             ]
         )
 

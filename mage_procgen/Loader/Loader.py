@@ -218,7 +218,7 @@ class Loader:
         arrondissements = ShapeFileParser.load(
             os.path.join(df.base_folder, df.departements, df.regions_file),
             mesh_box,
-            CRS_fr
+            CRS_fr,
         )
 
         departements = list(set(arrondissements["CODE_DEPT"].values))

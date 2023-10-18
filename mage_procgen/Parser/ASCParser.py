@@ -7,6 +7,7 @@ from mage_procgen.Utils.Utils import GeoWindow, CRS_fr
 from mage_procgen.Utils.DataFiles import file_coords_regex
 from mage_procgen.Parser.ShapeFileParser import ShapeFileParser
 
+
 class ASCParser:
     @staticmethod
     def load(

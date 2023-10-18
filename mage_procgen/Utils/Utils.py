@@ -34,8 +34,7 @@ class GeoWindow:
                 )
             ]
         )
-        self.dataframe = g.GeoDataFrame(
-            {"geometry": window_s, "df": [1]}, crs=from_crs)
+        self.dataframe = g.GeoDataFrame({"geometry": window_s, "df": [1]}, crs=from_crs)
 
         # Have to convert it like this, so you are guaranteed to get a rectangle in the end.
         if from_crs != to_crs:
@@ -54,7 +53,8 @@ class GeoWindow:
                 ]
             )
             self.dataframe = g.GeoDataFrame(
-                {"geometry": window_s, "df": [1]}, crs=to_crs)
+                {"geometry": window_s, "df": [1]}, crs=to_crs
+            )
 
         centroid = self.dataframe.geometry[0].centroid
         # Used to geometrically center all the objects in render
