@@ -1,12 +1,12 @@
 import geopandas as g
 import pandas as p
-import math
-from shapely.geometry import Polygon, mapping
+from shapely.geometry import Polygon, LineString, mapping
 
 from dataclasses import dataclass
 
 Point = tuple[float, float, float]
 PolygonList = list[Polygon]
+LineStringList = list[LineString]
 
 CRS_degrees = 4326
 CRS_fr = 2154
@@ -76,6 +76,7 @@ class RenderingData:
     fences: PolygonList
     buildings: PolygonList
     roads: PolygonList
+    lanes: LineStringList
     still_water: PolygonList
     flowing_water: PolygonList
     background: PolygonList

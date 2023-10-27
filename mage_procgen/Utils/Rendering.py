@@ -9,6 +9,9 @@ import mage_procgen.Utils.DataFiles as df
 
 
 rendering_collection_name = "Rendering"
+terrain_collection_name = "Terrain"
+cars_collection_name = "Cars"
+buildings_collection_name = "Buildings"
 base_collection_name = "Collection"
 
 
@@ -51,6 +54,15 @@ def configure_render(geo_center_deg):
     # Preparing collections
     rendering_collection = D.collections.new(rendering_collection_name)
     D.collections[base_collection_name].children.link(rendering_collection)
+
+    terrain_collection = D.collections.new(terrain_collection_name)
+    D.collections[rendering_collection_name].children.link(terrain_collection)
+
+    cars_collection = D.collections.new(cars_collection_name)
+    D.collections[rendering_collection_name].children.link(cars_collection)
+
+    buildings_collection = D.collections.new(buildings_collection_name)
+    D.collections[rendering_collection_name].children.link(buildings_collection)
 
 
 def setup_export_folder(departement):

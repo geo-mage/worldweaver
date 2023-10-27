@@ -2,16 +2,36 @@ import math
 from shapely.geometry import Polygon, LineString
 
 default_thickness = 4
+default_lane_nbr = 2
+default_direction_code = 0
 max_point_distance = 1000
+directions = ["Double sens", "Sens direct", "Sens inverse"]
 
 
-def polygonise(poly_line: LineString, thickness: float) -> Polygon:
+def polygonise(
+    poly_line: LineString, thickness: float, lane_nbr: int, direction: str
+) -> Polygon:
 
     translation_module = (
         (thickness / 2) if not math.isnan(thickness) else (default_thickness / 2)
     )
 
     poly_points = []
+
+    direction_code = (
+        directions.index(direction)
+        if direction in directions
+        else default_direction_code
+    )
+
+    lane_count = int(lane_nbr) if not math.isnan(lane_nbr) else default_lane_nbr
+
+    lanes = {}
+    lanes_previous_segment = {}
+    translation_fractions = [
+        x / lane_count for x in range(1 - lane_count, lane_count + 1, 2)
+    ]
+
     is_first_point = True
     is_first_segment = True
     previous_point = None
@@ -46,6 +66,25 @@ def polygonise(poly_line: LineString, thickness: float) -> Polygon:
 
                 poly_points = [p1, p2, p3, p4]
                 previous_quadri = (p1, p2, p3, p4)
+
+                # Lanes
+                for fraction in translation_fractions:
+                    lane_p1 = (
+                        current_segment[0][0]
+                        + current_normale[0] * fraction * translation_module,
+                        current_segment[0][1]
+                        + current_normale[1] * fraction * translation_module,
+                    )
+                    lane_p2 = (
+                        current_segment[1][0]
+                        + current_normale[0] * fraction * translation_module,
+                        current_segment[1][1]
+                        + current_normale[1] * fraction * translation_module,
+                    )
+
+                    lanes[fraction] = [lane_p1, lane_p2]
+                    lanes_previous_segment[fraction] = (lane_p1, lane_p2)
+
                 is_first_segment = False
             else:
 
@@ -101,6 +140,42 @@ def polygonise(poly_line: LineString, thickness: float) -> Polygon:
                 )
 
                 previous_quadri = (p1, p2, p3, p4)
+
+                # Lanes
+                for fraction in translation_fractions:
+                    lane_p1 = (
+                        current_segment[0][0]
+                        + current_normale[0] * fraction * translation_module,
+                        current_segment[0][1]
+                        + current_normale[1] * fraction * translation_module,
+                    )
+                    lane_p2 = (
+                        current_segment[1][0]
+                        + current_normale[0] * fraction * translation_module,
+                        current_segment[1][1]
+                        + current_normale[1] * fraction * translation_module,
+                    )
+
+                    # Finding the correct intersection of the current segment and the previous one
+                    inters = line_intersection(
+                        (
+                            lanes_previous_segment[fraction][0],
+                            lanes_previous_segment[fraction][1],
+                        ),
+                        (lane_p1, lane_p2),
+                    )
+
+                    # In some edge cases, almost straight segments create very far points.
+                    # In those cases, using the points of the new poly is a very fair approximation.
+                    inters_distance = math.sqrt(
+                        (inters[0] - lane_p1[0]) * (inters[0] - lane_p1[0])
+                        + (inters[1] - lane_p1[1]) * (inters[1] - lane_p1[1])
+                    )
+                    if inters_distance > max_point_distance:
+                        inters = lane_p1
+
+                    lanes[fraction] = lanes[fraction][:-1] + [inters, lane_p2]
+                    lanes_previous_segment[fraction] = (lane_p1, lane_p2)
         else:
             is_first_point = False
 
@@ -109,7 +184,21 @@ def polygonise(poly_line: LineString, thickness: float) -> Polygon:
     # Polygons need to be closed
     poly_points.append(poly_points[0])
 
-    return Polygon(poly_points)
+    road_polygon = Polygon(poly_points)
+
+    if direction_code == 2:
+        # Flip all
+        for fraction in lanes.keys():
+            lanes[fraction].reverse()
+    if direction_code == 0:
+        # Flip < 0
+        for fraction in lanes.keys():
+            if fraction < 0:
+                lanes[fraction].reverse()
+
+    lanes_lines = [LineString(lane) for lane in lanes.values()]
+
+    return (road_polygon, lanes_lines)
 
 
 def normal(
@@ -126,11 +215,13 @@ def normal(
 
     normal_vector = (-dy, dx)
 
-    normal_norm = math.sqrt(
-        normal_vector[0] * normal_vector[0] + normal_vector[1] * normal_vector[1]
-    )
+    normal_norm = norm2d(normal_vector)
 
     return (normal_vector[0] / normal_norm, normal_vector[1] / normal_norm)
+
+
+def norm2d(vector):
+    return math.sqrt(vector[0] * vector[0] + vector[1] * vector[1])
 
 
 def line_intersection(

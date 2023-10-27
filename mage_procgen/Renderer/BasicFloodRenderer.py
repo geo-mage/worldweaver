@@ -1,6 +1,6 @@
 import os
 import bpy
-from bpy import data as D, context as C
+from bpy import data as D
 import bmesh
 
 

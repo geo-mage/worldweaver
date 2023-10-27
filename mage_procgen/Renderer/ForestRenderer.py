@@ -1,4 +1,4 @@
-from bpy import data as D, context as C, ops as O
+from bpy import data as D
 
 from mage_procgen.Renderer.BaseRenderer import BaseRenderer
 from mage_procgen.Utils.Utils import TerrainData

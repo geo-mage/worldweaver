@@ -51,23 +51,26 @@ class TaggingRasterProcessor:
     @staticmethod
     def __tag(ray_direction, max_distance, origin, tagging_order):
 
-        tag_result = np.full(7, -9999)
+        tag_result = np.full(len(tagging_order), -9999)
 
-        render_collection = D.collections["Rendering"].objects
-        terrain_collection = D.collections["Terrain"].objects
+        render_collection = D.collections["Rendering"]
 
-        for layer in render_collection:
+        for layer in render_collection.objects:
             ray_result = layer.ray_cast(origin, ray_direction, distance=max_distance)
 
             if ray_result[0]:
                 elevation = ray_result[1][2]
                 tag_result[tagging_order.index(layer.name)] = elevation
 
-        for layer in terrain_collection:
-            ray_result = layer.ray_cast(origin, ray_direction, distance=max_distance)
+        for collection in render_collection.children:
+            for layer in collection.objects:
+                ray_result = layer.ray_cast(
+                    origin, ray_direction, distance=max_distance
+                )
 
-            if ray_result[0]:
-                elevation = ray_result[1][2]
-                tag_result[tagging_order.index("Terrain")] = elevation
+                if ray_result[0]:
+                    elevation = ray_result[1][2]
+                    tag_result[tagging_order.index(collection.name)] = elevation
+                    break
 
         return tag_result

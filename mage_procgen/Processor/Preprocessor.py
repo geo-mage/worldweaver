@@ -1,13 +1,12 @@
 import geopandas as g
 from mage_procgen.Utils.Utils import (
     RenderingData,
-    TaggingData,
-    GeoData,
     GeoWindow,
     PolygonList,
 )
 from mage_procgen.Utils.Geometry import polygonise
 from shapely.geometry import MultiPolygon, Polygon, mapping
+from functools import reduce
 
 
 class Preprocessor:
@@ -67,10 +66,14 @@ class Preprocessor:
         # TODO For now just pass the lists of geom, tagging will be handled later
 
         # Transform the Polylines into polygons to allow geometry operations with other dataframes
-        new_roads["geometry"] = [
-            polygonise(x[0], x[1])
-            for x in new_roads[["geometry", "LARGEUR"]].to_numpy().tolist()
+        roads_elements = [
+            polygonise(x[0], x[1], x[2], x[3])
+            for x in new_roads[["geometry", "LARGEUR", "NB_VOIES", "SENS"]]
+            .to_numpy()
+            .tolist()
         ]
+        new_roads["geometry"] = [x[0] for x in roads_elements]
+        roads_lanes = reduce(lambda x, y: x + y, [x[1] for x in roads_elements])
 
         # Now that roads are polygons, we can apply the window on them and remove them from the background
         new_roads = new_roads.overlay(
@@ -170,6 +173,7 @@ class Preprocessor:
             fences_geom,
             buildings_geom,
             roads_geom,
+            roads_lanes,
             still_water_geom,
             flowing_water_geom,
             background_geom,

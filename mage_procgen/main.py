@@ -32,6 +32,9 @@ from mage_procgen.Utils.Rendering import (
     export_rendered_img,
     setup_img,
     rendering_collection_name,
+    cars_collection_name,
+    terrain_collection_name,
+    buildings_collection_name,
 )
 
 
@@ -101,7 +104,7 @@ def main():
     if config.render_terrain:
         terrain_renderer = TerrainRenderer.TerrainRenderer(config.terrain_resolution, 1)
         terrain_renderer.render(
-            geo_data.terrain, geo_window, rendering_collection_name, config.use_sat_img
+            geo_data.terrain, geo_window, terrain_collection_name, config.use_sat_img
         )
         print("Terrain rendered")
 
@@ -142,15 +145,19 @@ def main():
             geo_data.terrain, config.building_render_config
         )
         building_renderer.render(
-            rendering_data.buildings, geo_center, rendering_collection_name
+            rendering_data.buildings, geo_center, buildings_collection_name
         )
         print("Buildings rendered")
 
         road_renderer = RoadRenderer.RoadRenderer(
-            geo_data.terrain, config.road_render_config
+            geo_data.terrain, config.road_render_config, config.car_render_config
         )
         road_renderer.render(
-            rendering_data.roads, geo_center, rendering_collection_name
+            rendering_data.roads,
+            geo_center,
+            rendering_collection_name,
+            rendering_data.lanes,
+            cars_collection_name,
         )
         print("Roads rendered")
 

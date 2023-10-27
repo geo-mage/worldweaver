@@ -1,12 +1,11 @@
 import os
 import bpy
-from bpy import data as D, context as C, ops as O
+from bpy import data as D
 import bmesh
-from shapely.geometry import mapping
-from tqdm import tqdm
+
 import math
-from collections import deque
-from mage_procgen.Utils.Utils import PolygonList, Point, GeoWindow
+
+from mage_procgen.Utils.Utils import GeoWindow
 from mage_procgen.Utils.Geometry import center_point
 from mage_procgen.Loader import Loader
 
@@ -53,8 +52,7 @@ class TerrainRenderer:
         use_sat_img: bool = False,
     ):
 
-        terrain_collection = bpy.data.collections.new(self._mesh_name)
-        D.collections[parent_collection_name].children.link(terrain_collection)
+        terrain_collection = D.collections[parent_collection_name]
 
         center = geo_window.center
 

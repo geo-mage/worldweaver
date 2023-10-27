@@ -27,7 +27,9 @@ def tagging_file_to_png(file_name, flood_height, highest_object):
     if flood_height:
         # Preparing for the mapping of the flood height function.
         flood_height_function = np.vectorize(
-            __flood_height, excluded={1}, signature="(7)->()"
+            __flood_height,
+            excluded={1},
+            signature="({})->()".format(len(tagging_colors)),
         )
 
         flood_height_raster = flood_height_function(
@@ -42,7 +44,9 @@ def tagging_file_to_png(file_name, flood_height, highest_object):
     if highest_object:
         # Preparing for the mapping of the highest object function.
         highest_object_function = np.vectorize(
-            __highest_object, excluded={1, 2}, signature="(7)->(3)"
+            __highest_object,
+            excluded={1, 2},
+            signature="({})->(3)".format(len(tagging_colors)),
         )
 
         highest_object_raster = highest_object_function(
