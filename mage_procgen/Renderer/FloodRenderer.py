@@ -59,6 +59,8 @@ class FloodRenderer:
             (0, -1),
         ]
 
+        meshes_points = {}
+
         print("Rendering flood")
 
         for y in tqdm(range(1, len(flood_pixels))):
@@ -96,7 +98,11 @@ class FloodRenderer:
                             current_point_z,
                         )
 
-                        face_coords.append(current_point_coords)
+                        if current_point_coords not in meshes_points:
+                            meshes_points[current_point_coords] = mesh.verts.new(
+                                current_point_coords
+                            )
+                        face_coords.append(meshes_points[current_point_coords])
 
                     # new_face_verts = [
                     #    (
@@ -107,7 +113,7 @@ class FloodRenderer:
                     #    for cell in cell_coords
                     # ]
 
-                    face = mesh.faces.new(mesh.verts.new(pt) for pt in face_coords)
+                    face = mesh.faces.new(face_coords)
 
         mesh_name = self._mesh_name
         mesh_data = D.meshes.new(mesh_name)

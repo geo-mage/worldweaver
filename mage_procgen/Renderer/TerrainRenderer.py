@@ -63,7 +63,7 @@ class TerrainRenderer:
         previous_point_terrain_index = 0
 
         meshes = {x: TerrainMeshInfo(bmesh.new()) for x in range(len(terrain_data))}
-        meshes_points = {x : {} for x in range(len(terrain_data))}
+        meshes_points = {x: {} for x in range(len(terrain_data))}
 
         global_x_min = min([x.x_min for x in terrain_data])
         global_x_max = max([x.x_max for x in terrain_data])
@@ -181,8 +181,12 @@ class TerrainRenderer:
                     new_face_mesh_verts = []
                     for pt in new_face_verts:
                         if pt not in meshes_points[previous_point_terrain_index]:
-                            meshes_points[previous_point_terrain_index][pt] = meshes[previous_point_terrain_index].mesh.verts.new(pt)
-                        new_face_mesh_verts.append(meshes_points[previous_point_terrain_index][pt])
+                            meshes_points[previous_point_terrain_index][pt] = meshes[
+                                previous_point_terrain_index
+                            ].mesh.verts.new(pt)
+                        new_face_mesh_verts.append(
+                            meshes_points[previous_point_terrain_index][pt]
+                        )
 
                     face = meshes[previous_point_terrain_index].mesh.faces.new(
                         new_face_mesh_verts
