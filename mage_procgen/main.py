@@ -7,34 +7,18 @@ from numpy import arange
 
 from datetime import datetime
 
-from mage_procgen.Renderer import (
-    BuildingRenderer,
-    ForestRenderer,
-    PlotRenderer,
-    RoadRenderer,
-    WaterRenderer,
-    BackgroundRenderer,
-    TerrainRenderer,
-    FloodRenderer,
-    BasicFloodRenderer,
-)
-
 from mage_procgen.Utils.Utils import GeoWindow, CRS_fr, CRS_degrees
 from mage_procgen.Loader.Loader import Loader
 from mage_procgen.Loader.ConfigLoader import ConfigLoader
 from mage_procgen.Processor.Preprocessor import Preprocessor
 from mage_procgen.Processor.FloodProcessor import FloodProcessor
+from mage_procgen.Manager.RenderManager import RenderManager
 from mage_procgen.Processor.BasicFloodProcessor import BasicFloodProcessor
 from mage_procgen.Processor.TaggingRasterProcessor import TaggingRasterProcessor
 from mage_procgen.Utils.Rendering import (
-    configure_render,
     setup_export_folder,
     export_rendered_img,
     setup_img,
-    rendering_collection_name,
-    cars_collection_name,
-    terrain_collection_name,
-    buildings_collection_name,
 )
 
 
@@ -98,91 +82,10 @@ def main():
     rendering_data = processor.process(config.remove_landlocked_plots)
     print("Preprocessing done")
 
-    print("Starting rendering")
-    configure_render(geo_window.center_deg)
-
-    if config.render_terrain:
-        terrain_renderer = TerrainRenderer.TerrainRenderer(config.terrain_resolution, 1)
-        terrain_renderer.render(
-            geo_data.terrain, geo_window, terrain_collection_name, config.use_sat_img
-        )
-        print("Terrain rendered")
-
-    if config.render_objects:
-        # fields_renderer = PlotRenderer.FieldRenderer(
-        #    geo_data.terrain, config.field_render_config
-        # )
-        # fields_renderer.render(
-        #    rendering_data.fields, geo_center, rendering_collection_name
-        # )
-        # print("Fields rendered")
-
-        # gardens_renderer = PlotRenderer.GardenRenderer(
-        #    geo_data.terrain, config.garden_render_config
-        # )
-        # gardens_renderer.render(
-        #    rendering_data.gardens, geo_center, rendering_collection_name
-        # )
-        # print("Gardens rendered")
-
-        fences_renderer = PlotRenderer.FenceRenderer(
-            geo_data.terrain, config.fence_render_config
-        )
-        fences_renderer.render(
-            rendering_data.fences, geo_center, rendering_collection_name
-        )
-        print("Fences rendered")
-
-        forest_renderer = ForestRenderer.ForestRenderer(
-            geo_data.terrain, config.forest_render_config
-        )
-        forest_renderer.render(
-            rendering_data.forests, geo_center, rendering_collection_name
-        )
-        print("Forests rendered")
-
-        building_renderer = BuildingRenderer.BuildingRenderer(
-            geo_data.terrain, config.building_render_config
-        )
-        building_renderer.render(
-            rendering_data.buildings, geo_center, buildings_collection_name
-        )
-        print("Buildings rendered")
-
-        road_renderer = RoadRenderer.RoadRenderer(
-            geo_data.terrain, config.road_render_config, config.car_render_config
-        )
-        road_renderer.render(
-            rendering_data.roads,
-            geo_center,
-            rendering_collection_name,
-            rendering_data.lanes,
-            cars_collection_name,
-        )
-        print("Roads rendered")
-
-        still_water_renderer = WaterRenderer.StillWaterRenderer(
-            geo_data.terrain, config.water_render_config
-        )
-        still_water_renderer.render(
-            rendering_data.still_water, geo_center, rendering_collection_name
-        )
-
-        flowing_water_renderer = WaterRenderer.FlowingWaterRenderer(
-            geo_data.terrain, config.water_render_config
-        )
-        flowing_water_renderer.render(
-            rendering_data.flowing_water, geo_center, rendering_collection_name
-        )
-        print("Water rendered")
-
-        # background_renderer = BackgroundRenderer.BackgroundRenderer(
-        #    geo_data.terrain, config.background_render_config
-        # )
-        # background_renderer.render(
-        #    rendering_data.background, geo_center, rendering_collection_name
-        # )
-        # print("Background rendered")
+    render_manager = RenderManager(
+        geo_data.terrain, rendering_data, geo_window, CRS_fr, config
+    )
+    render_manager.draw_flood_interactors()
 
     if config.flood:
 
@@ -193,8 +96,17 @@ def main():
             flood_threshold,
             config.flood_cell_size,
         )
-        flood_renderer = FloodRenderer.FloodRenderer(config.flood_render_config)
-        flood_renderer.render(flood_data, rendering_collection_name)
+
+        render_manager.draw_flood(flood_data)
+
+        setup_img(
+            config.out_img_resolution,
+            config.out_img_pixel_size,
+            (0, 0, 0),
+        )
+
+        # Beautify
+        render_manager.beautify_zone()
 
         if config.export_img:
 
@@ -222,6 +134,9 @@ def main():
                         (camera_x, camera_y, 0),
                     )
 
+                    # Beautify
+                    render_manager.beautify_zone()
+
                     export_rendered_img(base_export_path, now_str)
 
                     TaggingRasterProcessor.compute(
@@ -230,6 +145,9 @@ def main():
                         config.out_img_resolution,
                         config.tag_result_order,
                     )
+
+                    # Clean
+                    render_manager.clean_zone()
 
 
 if __name__ == "__main__":

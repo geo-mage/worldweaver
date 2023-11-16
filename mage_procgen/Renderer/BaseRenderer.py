@@ -214,3 +214,8 @@ class BaseRenderer:
         ]
 
         return centered_points_coords
+
+    def clear_object(self):
+
+        D.objects.remove(D.objects[self._mesh_name], do_unlink=True)
+        D.meshes.remove(D.meshes[self._mesh_name], do_unlink=True)

@@ -70,16 +70,17 @@ class GeoWindow:
 
 @dataclass
 class RenderingData:
-    fields: PolygonList
-    forests: PolygonList
-    gardens: PolygonList
-    fences: PolygonList
-    buildings: PolygonList
-    roads: PolygonList
+    fields: g.GeoDataFrame
+    forests: g.GeoDataFrame
+    gardens: g.GeoDataFrame
+    fences: g.GeoDataFrame
+    buildings: g.GeoDataFrame
+    roads: g.GeoDataFrame
     lanes: LineStringList
-    still_water: PolygonList
-    flowing_water: PolygonList
-    background: PolygonList
+    still_water: g.GeoDataFrame
+    flowing_water: g.GeoDataFrame
+    ocean: g.GeoDataFrame
+    background: g.GeoDataFrame
 
 
 @dataclass

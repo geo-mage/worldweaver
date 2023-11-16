@@ -278,3 +278,11 @@ class RoadRenderer:
     def next_car_distance(self):
         # TODO: improve this with better distribution
         return 20 + 10 * random()
+
+    def clear_object(self):
+
+        D.objects.remove(D.objects[self._mesh_name], do_unlink=True)
+        D.meshes.remove(D.meshes[self._mesh_name], do_unlink=True)
+
+        D.objects.remove(D.objects[self._car_mesh_name], do_unlink=True)
+        D.meshes.remove(D.meshes[self._car_mesh_name], do_unlink=True)

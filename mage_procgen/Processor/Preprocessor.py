@@ -2,7 +2,6 @@ import geopandas as g
 from mage_procgen.Utils.Utils import (
     RenderingData,
     GeoWindow,
-    PolygonList,
 )
 from mage_procgen.Utils.Geometry import polygonise
 from shapely.geometry import MultiPolygon, Polygon, mapping
@@ -152,47 +151,21 @@ class Preprocessor:
         flowing_water = new_water.query("NATURE in @flowing_water_tags")
         still_water = new_water.query("NATURE not in @flowing_water_tags")
 
-        forests_geom = Preprocessor.extract_geom(cleaned_forests.geometry)
-        fields_geom = Preprocessor.extract_geom(fields.geometry)
-        gardens_geom = Preprocessor.extract_geom(gardens.geometry)
-        fences_geom = Preprocessor.extract_geom(fences.geometry)
-        buildings_geom = Preprocessor.extract_geom(new_buildings.geometry)
-        roads_geom = Preprocessor.extract_geom(new_roads.geometry)
-        flowing_water_geom = Preprocessor.extract_geom(flowing_water.geometry)
-        still_water_geom = Preprocessor.extract_geom(still_water.geometry)
-        background_geom = Preprocessor.extract_geom(background.geometry)
-
-        if new_oceans is not None and not new_oceans.empty:
-            oceans_geom = Preprocessor.extract_geom(new_oceans.geometry)
-            flowing_water_geom.extend(oceans_geom)
-
         rendering_data = RenderingData(
-            fields_geom,
-            forests_geom,
-            gardens_geom,
-            fences_geom,
-            buildings_geom,
-            roads_geom,
+            fields,
+            cleaned_forests,
+            gardens,
+            fences,
+            new_buildings,
+            new_roads,
             roads_lanes,
-            still_water_geom,
-            flowing_water_geom,
-            background_geom,
+            still_water,
+            flowing_water,
+            new_oceans,
+            background,
         )
 
         return rendering_data
-
-    @staticmethod
-    def extract_geom(geometry_list: g.GeoSeries) -> PolygonList:
-        to_return = []
-        for x in geometry_list:
-            # If it's a multipolygon, it has multiple polygons inside of it that we need to separate for later
-            if type(x) == MultiPolygon:
-                for y in x.geoms:
-                    to_return.append(y)
-            else:
-                to_return.append(x)
-
-        return to_return
 
     @staticmethod
     def remove_landlocked_plots(plots: g.GeoDataFrame) -> g.GeoDataFrame:
