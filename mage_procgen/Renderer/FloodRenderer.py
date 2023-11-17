@@ -59,7 +59,8 @@ class FloodRenderer:
             (0, -1),
         ]
 
-        meshes_points = {}
+        meshes_points_top = {}
+        meshes_points_bottom = {}
 
         print("Rendering flood")
 
@@ -70,7 +71,8 @@ class FloodRenderer:
                 # If this point is flooded
                 if is_flooded[y][x]:
 
-                    face_coords = []
+                    top_face_coords = []
+                    bottom_face_coords = []
 
                     for coord_mod in cell_coords:
 
@@ -80,40 +82,56 @@ class FloodRenderer:
                         current_point_y = upper_right[1] - current_y * cellsize
                         current_point_x = lower_left[0] + current_x * cellsize
 
-                        # Either is the flood height, or 0. which is exactly what we want
+                        # Top face
                         flood_height_point = flood_pixels[current_y][current_x]
-                        ## If this point exists
-                        # if flood_pixels[current_point_y][current_x]:
-                        #    pass
-                        #
-                        # else:
 
-                        terrain_height_point = flood_init_state[current_y][current_x][0]
-
-                        current_point_z = flood_height_point  # + terrain_height_point
-
-                        current_point_coords = (
-                            current_point_x,
-                            current_point_y,
-                            current_point_z,
+                        current_point_top_z = (
+                            flood_height_point  # + terrain_height_point
                         )
 
-                        if current_point_coords not in meshes_points:
-                            meshes_points[current_point_coords] = mesh.verts.new(
-                                current_point_coords
-                            )
-                        face_coords.append(meshes_points[current_point_coords])
+                        current_top_point_coords = (
+                            current_point_x,
+                            current_point_y,
+                            current_point_top_z,
+                        )
 
-                    # new_face_verts = [
-                    #    (
-                    #        cell[0] + current_point_coords[0],
-                    #        cell[1] + current_point_coords[1],
-                    #        current_point_coords[2],
-                    #    )
-                    #    for cell in cell_coords
-                    # ]
+                        if current_top_point_coords not in meshes_points_top:
+                            meshes_points_top[
+                                current_top_point_coords
+                            ] = mesh.verts.new(current_top_point_coords)
+                        top_face_coords.append(
+                            meshes_points_top[current_top_point_coords]
+                        )
 
-                    face = mesh.faces.new(face_coords)
+                        # Bottom face
+                        terrain_height_point = flood_init_state[current_y][current_x][0]
+                        building_height_point = flood_init_state[current_y][current_x][
+                            1
+                        ]
+
+                        current_point_bottom_z = (
+                            building_height_point
+                            if building_height_point != 0
+                            and building_height_point < flood_height_point
+                            else terrain_height_point
+                        )
+
+                        current_bottom_point_coords = (
+                            current_point_x,
+                            current_point_y,
+                            current_point_bottom_z,
+                        )
+
+                        if current_bottom_point_coords not in meshes_points_bottom:
+                            meshes_points_bottom[
+                                current_bottom_point_coords
+                            ] = mesh.verts.new(current_bottom_point_coords)
+                        bottom_face_coords.append(
+                            meshes_points_bottom[current_bottom_point_coords]
+                        )
+
+                    face_top = mesh.faces.new(top_face_coords)
+                    face_bottom = mesh.faces.new(bottom_face_coords)
 
         mesh_name = self._mesh_name
         mesh_data = D.meshes.new(mesh_name)
