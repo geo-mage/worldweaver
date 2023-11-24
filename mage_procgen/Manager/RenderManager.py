@@ -111,61 +111,65 @@ class RenderManager:
     def draw_flood(self, flood_data):
         self.flood_renderer.render(flood_data, rendering_collection_name)
 
-    def beautify_zone(self):
-        camera = D.objects["Camera"]
-        origin = camera.location
+    def beautify_zone(self, restrict_to_camera):
 
-        # camera Z should be by far the highest so this rule of thumb should hold
-        max_distance = 2 * origin[2]
+        zone_window = self.window
 
-        vector_coord = math.tan(camera.data.angle / 2)
+        if restrict_to_camera:
+            camera = D.objects["Camera"]
+            origin = camera.location
 
-        # To draw more than the actual view
-        vector_multiplier = 1.2
+            # camera Z should be by far the highest so this rule of thumb should hold
+            max_distance = 2 * origin[2]
 
-        vector_ul = (
-            -vector_multiplier * vector_coord,
-            -vector_multiplier * vector_coord,
-            -1,
-        )
-        vector_ur = (
-            vector_multiplier * vector_coord,
-            -vector_multiplier * vector_coord,
-            -1,
-        )
-        vector_ll = (
-            -vector_multiplier * vector_coord,
-            vector_multiplier * vector_coord,
-            -1,
-        )
-        vector_lr = (
-            vector_multiplier * vector_coord,
-            vector_multiplier * vector_coord,
-            -1,
-        )
+            vector_coord = math.tan(camera.data.angle / 2)
 
-        zone_delimiters = (
-            self.__corner_coord(vector_ul, max_distance, origin),
-            self.__corner_coord(vector_ur, max_distance, origin),
-            self.__corner_coord(vector_ll, max_distance, origin),
-            self.__corner_coord(vector_lr, max_distance, origin),
-        )
+            # To draw more than the actual view
+            vector_multiplier = 1.2
 
-        terrains_in_zone = [zone_delimiter[1] for zone_delimiter in zone_delimiters]
-        terrain_collection = D.collections["Terrain"].objects
-        for terrain in terrain_collection:
-            if terrain.name not in terrains_in_zone:
-                terrain.hide_viewport = True
-                terrain.hide_render = True
+            vector_ul = (
+                -vector_multiplier * vector_coord,
+                -vector_multiplier * vector_coord,
+                -1,
+            )
+            vector_ur = (
+                vector_multiplier * vector_coord,
+                -vector_multiplier * vector_coord,
+                -1,
+            )
+            vector_ll = (
+                -vector_multiplier * vector_coord,
+                vector_multiplier * vector_coord,
+                -1,
+            )
+            vector_lr = (
+                vector_multiplier * vector_coord,
+                vector_multiplier * vector_coord,
+                -1,
+            )
 
-        zone_x_min = min([c[0][0] for c in zone_delimiters]) + self.window.center[0]
-        zone_x_max = max([c[0][0] for c in zone_delimiters]) + self.window.center[0]
-        zone_y_min = min([c[0][1] for c in zone_delimiters]) + self.window.center[1]
-        zone_y_max = max([c[0][1] for c in zone_delimiters]) + self.window.center[1]
+            zone_delimiters = (
+                self.__corner_coord(vector_ul, max_distance, origin),
+                self.__corner_coord(vector_ur, max_distance, origin),
+                self.__corner_coord(vector_ll, max_distance, origin),
+                self.__corner_coord(vector_lr, max_distance, origin),
+            )
 
-        zone_window = GeoWindow(
-            zone_x_min, zone_x_max, zone_y_min, zone_y_max, self.crs, self.crs
-        )
+            terrains_in_zone = [zone_delimiter[1] for zone_delimiter in zone_delimiters]
+            terrain_collection = D.collections["Terrain"].objects
+            for terrain in terrain_collection:
+                if terrain.name not in terrains_in_zone:
+                    terrain.hide_viewport = True
+                    terrain.hide_render = True
+
+            zone_x_min = min([c[0][0] for c in zone_delimiters]) + self.window.center[0]
+            zone_x_max = max([c[0][0] for c in zone_delimiters]) + self.window.center[0]
+            zone_y_min = min([c[0][1] for c in zone_delimiters]) + self.window.center[1]
+            zone_y_max = max([c[0][1] for c in zone_delimiters]) + self.window.center[1]
+
+            zone_window = GeoWindow.from_square(
+                zone_x_min, zone_x_max, zone_y_min, zone_y_max, self.crs, self.crs
+            )
 
         # fields_zone = self.rendering_data.fields.overlay(zone_window.dataframe, how="intersection", keep_geom_type=True)
         # fields = self.__extract_geom(fields_zone.geometry)

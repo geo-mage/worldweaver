@@ -20,6 +20,9 @@ class GeoWindowConfig:
 @dataclass
 class Config:
     geo_window: GeoWindowConfig
+    restrict_to_town: bool
+    town_dpt: int
+    town_name: str
     render_objects: bool
     remove_landlocked_plots: bool
     render_terrain: bool

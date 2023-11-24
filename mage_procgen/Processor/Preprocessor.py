@@ -1,11 +1,10 @@
 import geopandas as g
-from mage_procgen.Utils.Utils import (
-    RenderingData,
-    GeoWindow,
-)
+from mage_procgen.Utils.Utils import RenderingData, GeoWindow, CRS_fr
 from mage_procgen.Utils.Geometry import polygonise
 from shapely.geometry import MultiPolygon, Polygon, mapping
 from functools import reduce
+from mage_procgen.Utils.Config import Config
+from mage_procgen.Loader.Loader import Loader
 
 
 class Preprocessor:
@@ -13,17 +12,26 @@ class Preprocessor:
     _minimal_size = 20
     _building_inter_threshold = 1
 
-    def __init__(self, geo_data: g.GeoDataFrame, geowindow: GeoWindow, crs: int):
+    def __init__(
+        self, geo_data: g.GeoDataFrame, geowindow: GeoWindow, config: Config, crs: int
+    ):
         self.geo_data = geo_data
-        self.window = geowindow.dataframe
+        self.window = geowindow
         self.crs = crs
+        self.config = config
 
-    def process(self, remove_landlocked: bool) -> RenderingData:
+    def process(self) -> RenderingData:
 
         print("Processing")
+        if self.config.restrict_to_town:
+            town = Loader.load_town_shape(
+                self.window, self.config.town_dpt, self.config.town_name
+            )
+            town.overlay(self.window.dataframe, how="intersection", keep_geom_type=True)
+            self.window = GeoWindow(town.geometry[0], CRS_fr, self.crs)
 
         # Background should be the whole area minus every other object
-        background = self.window.copy()
+        background = self.window.dataframe.copy()
         background = background.overlay(
             self.geo_data.plots, how="difference", keep_geom_type=True
         )
@@ -35,23 +43,23 @@ class Preprocessor:
         )
 
         new_plots = self.geo_data.plots.overlay(
-            self.window, how="intersection", keep_geom_type=True
+            self.window.dataframe, how="intersection", keep_geom_type=True
         )
         new_buildings = self.geo_data.buildings.overlay(
-            self.window, how="intersection", keep_geom_type=True
+            self.window.dataframe, how="intersection", keep_geom_type=True
         )
         new_forests = self.geo_data.forests.overlay(
-            self.window, how="intersection", keep_geom_type=True
+            self.window.dataframe, how="intersection", keep_geom_type=True
         )
         new_water = self.geo_data.water.overlay(
-            self.window, how="intersection", keep_geom_type=True
+            self.window.dataframe, how="intersection", keep_geom_type=True
         )
 
         new_oceans = None
 
         if self.geo_data.ocean is not None:
             new_oceans = self.geo_data.ocean.overlay(
-                self.window, how="intersection", keep_geom_type=True
+                self.window.dataframe, how="intersection", keep_geom_type=True
             )
             if not new_oceans.empty:
                 new_oceans = new_oceans.overlay(
@@ -64,29 +72,33 @@ class Preprocessor:
 
         # TODO For now just pass the lists of geom, tagging will be handled later
 
+        non_car_natures = ["Chemin", "Escalier", "Sentier"]
+        roads_with_cars = new_roads.query("NATURE not in @non_car_natures")
         # Transform the Polylines into polygons to allow geometry operations with other dataframes
         roads_elements = [
             polygonise(x[0], x[1], x[2], x[3])
-            for x in new_roads[["geometry", "LARGEUR", "NB_VOIES", "SENS"]]
+            for x in roads_with_cars[["geometry", "LARGEUR", "NB_VOIES", "SENS"]]
             .to_numpy()
             .tolist()
         ]
-        new_roads["geometry"] = [x[0] for x in roads_elements]
+        roads_with_cars["geometry"] = [x[0] for x in roads_elements]
         roads_lanes = reduce(lambda x, y: x + y, [x[1] for x in roads_elements])
 
         # Now that roads are polygons, we can apply the window on them and remove them from the background
-        new_roads = new_roads.overlay(
-            self.window, how="intersection", keep_geom_type=True
+        roads_with_cars = roads_with_cars.overlay(
+            self.window.dataframe, how="intersection", keep_geom_type=True
         )
         background = background.overlay(
-            new_roads, how="difference", keep_geom_type=True
+            roads_with_cars, how="difference", keep_geom_type=True
         )
 
-        if remove_landlocked:
+        if self.config.remove_landlocked_plots:
             # Removing plots that are contained inside other plots
             new_plots = Preprocessor.remove_landlocked_plots(new_plots)
 
-        new_plots = new_plots.overlay(new_roads, how="difference", keep_geom_type=True)
+        new_plots = new_plots.overlay(
+            roads_with_cars, how="difference", keep_geom_type=True
+        )
 
         # TODO: check this. otherwise, just remove roads from forests
         # Forests should be restricted to plots
@@ -140,7 +152,9 @@ class Preprocessor:
         fields_tmp = non_forest_plots.query(
             "IDU not in @plots_with_building.IDU.values"
         )
-        fields = fields_tmp.overlay(new_roads, how="difference", keep_geom_type=True)
+        fields = fields_tmp.overlay(
+            roads_with_cars, how="difference", keep_geom_type=True
+        )
 
         # Removing water from fields
         fields = fields.overlay(new_water, how="difference", keep_geom_type=True)
@@ -157,7 +171,7 @@ class Preprocessor:
             gardens,
             fences,
             new_buildings,
-            new_roads,
+            roads_with_cars,
             roads_lanes,
             still_water,
             flowing_water,

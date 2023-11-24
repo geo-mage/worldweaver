@@ -13,8 +13,9 @@ CRS_fr = 2154
 
 
 class GeoWindow:
-    def __init__(
-        self,
+    @classmethod
+    def from_square(
+        cls,
         x_min: float,
         x_max: float,
         y_min: float,
@@ -34,7 +35,15 @@ class GeoWindow:
                 )
             ]
         )
-        self.dataframe = g.GeoDataFrame({"geometry": window_s, "df": [1]}, crs=from_crs)
+        return cls(window_s, from_crs, to_crs)
+
+    def __init__(
+        self,
+        geometry: g.GeoSeries,
+        from_crs: int,
+        to_crs: int,
+    ):
+        self.dataframe = g.GeoDataFrame({"geometry": geometry, "df": [1]}, crs=from_crs)
 
         # Have to convert it like this, so you are guaranteed to get a rectangle in the end.
         if from_crs != to_crs:

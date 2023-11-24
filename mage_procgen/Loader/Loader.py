@@ -213,6 +213,29 @@ class Loader:
         return geo_data
 
     @staticmethod
+    def load_town_shape(geo_window: GeoWindow, departement_nbr: int, town_name: str):
+
+        bbox = geo_window.bounds
+
+        towns = ShapeFileParser.load(
+            os.path.join(
+                df.base_folder,
+                df.departements,
+                str(departement_nbr),
+                df.bdtopo_folder,
+                df.delivery,
+                df.dpt_folder,
+                df.town_file,
+            ),
+            bbox,
+            CRS_fr,
+        )
+
+        town = towns.query("NOM == @town_name")
+
+        return town
+
+    @staticmethod
     def load_texture(mesh_box: tuple[float, float, float, float]) -> str:
 
         arrondissements = ShapeFileParser.load(
@@ -268,7 +291,7 @@ class Loader:
             df.slab_file,
         )
 
-        current_terrain_window = GeoWindow(
+        current_terrain_window = GeoWindow.from_square(
             mesh_box[0],
             mesh_box[2],
             mesh_box[1],

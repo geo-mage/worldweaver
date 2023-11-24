@@ -4,7 +4,7 @@ import geopandas as g
 import shapely
 
 
-class ShapeFileParser(BaseParser):
+class ShapeFileParser:
     @staticmethod
     def load(
         file_path: str,
@@ -24,7 +24,7 @@ class ShapeFileParser(BaseParser):
 
 
 # Need this because of a bug (?) if we use pyogrio on roads (timestamp issue)
-class RoadShapeFileParser(ShapeFileParser):
+class RoadShapeFileParser:
     _fields = "fields"
     _invalid_columns = ["DATE_SERV", "DATE_CONF", "DATE_APP"]
 

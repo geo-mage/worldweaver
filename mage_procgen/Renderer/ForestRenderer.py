@@ -11,6 +11,6 @@ class ForestRenderer(BaseRenderer):
         super().__init__(terrain_data, object_config)
 
         # Need to bind the forest geometry node to the terrain collection so that trees are neither floating nor underground
-        # D.node_groups[self.geometry_node_name].nodes["Collection Info"].inputs[
-        #    0
-        # ].default_value = D.collections["Terrain"]
+        D.node_groups[self.geometry_node_name].nodes["Collection Info"].inputs[
+            0
+        ].default_value = D.collections["Terrain"]

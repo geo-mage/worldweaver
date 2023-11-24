@@ -29,6 +29,7 @@ water_folder = "HYDROGRAPHIE"
 water_file = "SURFACE_HYDROGRAPHIQUE.shp"
 dpt_folder = "ADMINISTRATIF"
 dpt_file = "ARRONDISSEMENT.shp"
+town_file = "COMMUNE.shp"
 
 shore_file = "LIMITE_TERRE_MER.shp"
 
