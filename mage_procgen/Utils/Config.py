@@ -24,7 +24,6 @@ class Config:
     town_dpt: int
     town_name: str
     render_objects: bool
-    remove_landlocked_plots: bool
     render_terrain: bool
     terrain_resolution: float
     use_sat_img: bool
@@ -34,13 +33,9 @@ class Config:
     export_img: bool
     out_img_resolution: int
     out_img_pixel_size: float
-    background_render_config: RenderObjectConfig
     building_render_config: RenderObjectConfig
     flood_render_config: RenderObjectConfig
     forest_render_config: RenderObjectConfig
-    field_render_config: RenderObjectConfig
-    garden_render_config: RenderObjectConfig
-    fence_render_config: RenderObjectConfig
     road_render_config: RenderObjectConfig
     water_render_config: RenderObjectConfig
     car_render_config: RenderObjectConfig

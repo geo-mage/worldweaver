@@ -79,17 +79,13 @@ class GeoWindow:
 
 @dataclass
 class RenderingData:
-    fields: g.GeoDataFrame
     forests: g.GeoDataFrame
-    gardens: g.GeoDataFrame
-    fences: g.GeoDataFrame
     buildings: g.GeoDataFrame
     roads: g.GeoDataFrame
     lanes: LineStringList
     still_water: g.GeoDataFrame
     flowing_water: g.GeoDataFrame
     ocean: g.GeoDataFrame
-    background: g.GeoDataFrame
 
 
 @dataclass
@@ -118,13 +114,10 @@ TerrainDataList = list[TerrainData]
 
 @dataclass
 class GeoData:
-    plots: g.GeoDataFrame
     buildings: g.GeoDataFrame
     forests: g.GeoDataFrame
-    # residentials: g.GeoDataFrame
     roads: g.GeoDataFrame
     water: g.GeoDataFrame
     ocean: g.GeoDataFrame
     departements: g.GeoDataFrame
     terrain: TerrainDataList
-    # departements_codes: list[str]

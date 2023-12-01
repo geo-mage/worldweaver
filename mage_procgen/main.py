@@ -39,7 +39,7 @@ def main():
     # Fublaines
     # geo_window = GeoWindow.from_square(2.9185, 2.9314, 48.9396, 48.9466, CRS_degrees, CRS_fr)
     # geo_window = GeoWindow.from_square(2.93, 2.945, 48.9350, 48.94, CRS_degrees, CRS_fr)
-    # geo_window = GeoWindow.from_square(2.9, 2.955, 48.93, 48.945, CRS_degrees, CRS_fr)
+    geo_window = GeoWindow.from_square(2.9, 2.955, 48.93, 48.945, CRS_degrees, CRS_fr)
 
     # Choisy-en-Brie
     # geo_window = GeoWindow.from_square(3.2050, 3.2350, 48.7545, 48.7650, CRS_degrees, CRS_fr)
@@ -73,9 +73,7 @@ def main():
 
     # 62
     # Loos-en-gohelle
-    geo_window = GeoWindow.from_square(
-        2.7735, 2.8117, 50.4409, 50.4659, CRS_degrees, CRS_fr
-    )
+    # geo_window = GeoWindow.from_square(2.7735, 2.8117, 50.4409, 50.4659, CRS_degrees, CRS_fr)
     # geo_window = GeoWindow.from_square(2.7817, 2.8092, 50.4511, 50.4659, CRS_degrees, CRS_fr)
     # geo_window = GeoWindow.from_square(2.769, 2.7892, 50.44, 50.4518, CRS_degrees, CRS_fr)
     # geo_window = GeoWindow.from_square(2.7789, 2.7874, 50.4428, 50.4483, CRS_degrees, CRS_fr)

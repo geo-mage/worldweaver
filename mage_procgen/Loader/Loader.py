@@ -26,7 +26,6 @@ class Loader:
 
         departements_names = arrondissements["CODE_DEPT"].values
 
-        plot_data = None
         building_data = None
         forest_data = None
         road_data = None
@@ -64,32 +63,14 @@ class Loader:
 
             terrain_data.extend(current_terrain_data)
 
-            current_plot_data = ShapeFileParser.load(
-                os.path.join(
-                    df.base_folder,
-                    df.departements,
-                    current_departement,
-                    df.parcellaire_DB,
-                    df.delivery,
-                    df.parcellaire_data_folder,
-                    df.plot_file,
-                ),
-                bbox,
-                CRS_fr,
-            )
-            if plot_data is not None:
-                plot_data = p.concat([plot_data, current_plot_data])
-            else:
-                plot_data = current_plot_data
-
             current_building_data = ShapeFileParser.load(
                 os.path.join(
                     df.base_folder,
                     df.departements,
                     current_departement,
-                    df.parcellaire_DB,
+                    df.bdtopo_folder,
                     df.delivery,
-                    df.parcellaire_data_folder,
+                    df.building_folder,
                     df.building_file,
                 ),
                 bbox,
@@ -200,7 +181,6 @@ class Loader:
             )
 
         geo_data = GeoData(
-            plot_data,
             building_data,
             forest_data,
             road_data,

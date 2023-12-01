@@ -15,11 +15,6 @@ ocean_file = "OCEAN/World_Seas_IHO_v3.shp"
 terrain_DB = "RGEALTI"
 terrain_data_folder = "MNT"
 
-parcellaire_DB = "PARCELLAIRE_EXPRESS"
-parcellaire_data_folder = "PEPCI"
-plot_file = "PARCELLE.SHP"
-building_file = "BATIMENT.SHP"
-
 bdtopo_folder = "BDTOPO"
 forest_folder = "OCCUPATION_DU_SOL"
 forest_file = "ZONE_DE_VEGETATION.shp"
@@ -30,6 +25,8 @@ water_file = "SURFACE_HYDROGRAPHIQUE.shp"
 dpt_folder = "ADMINISTRATIF"
 dpt_file = "ARRONDISSEMENT.shp"
 town_file = "COMMUNE.shp"
+building_folder = "BATI"
+building_file = "BATIMENT.shp"
 
 shore_file = "LIMITE_TERRE_MER.shp"
 
@@ -326,79 +323,5 @@ def setup_rgealti(departement, archive_file):
             terrain_DB,
             additional,
             terrain_data_folder,
-        ),
-    )
-
-
-# TODO: delete the other folders ?
-def setup_parcellaire(departement, archive_file):
-    """
-    Extracts PARCELLAIRE_EXPRESS archive, and changes the folders to simplify it
-    from
-
-     PARCELLAIRE_EXPRESS
-         PARCELLAIRE_EXPRESS_1-1__SHP_LAMB93_D006_2023-04-01
-             PARCELLAIRE_EXPRESS
-                 1_DONNEES_LIVRAISON_2021-04-00084
-                     PEPCI_1-1_SHP_LAMB93_D006
-                         BATIMENT.SHP
-                         PARCELLE.SHP
-
-     to
-
-     PARCELLAIRE_EXPRESS
-         1_DONNEES_LIVRAISON
-             PEPCI
-                BATIMENT.SHP
-                PARCELLE.SHP
-
-    :param departement: number of the departement
-    :param archive_file: archive of the database (or the first file of the split archive)
-    """
-
-    current_base_folder = os.path.join(
-        base_folder, departements, str(departement), parcellaire_DB
-    )
-
-    archive_name = os.path.basename(archive_file).split(".")[0]
-
-    out_file_option = "-o" + current_base_folder
-
-    command_line = "7zz x " + archive_file + " " + out_file_option
-
-    subprocess.run([command_line], shell=True)
-
-    # PARCELLAIRE_EXPRESS_1-1__SHP_LAMB93_D006_2023-04-01
-    path1 = os.path.join(current_base_folder, archive_name)
-
-    # PARCELLAIRE_EXPRESS
-    dir1 = os.listdir(path1)[0]
-    path2 = os.path.join(path1, dir1)
-
-    # 1_DONNEES_LIVRAISON_2021-04-00084
-    # os.listdir return order is not sorted. better match by substring
-    dir2 = next(x for x in os.listdir(path2) if delivery in x)
-    path3 = os.path.join(path2, dir2)
-
-    # PEPCI_1-1_SHP_LAMB93_D006
-    # Other file in the directory has the same name but it's the hashfile
-    dir3 = next(x for x in os.listdir(path3) if hash_file_extenstion not in x)
-    path4 = os.path.join(path3, dir3)
-
-    os.makedirs(
-        os.path.join(
-            base_folder, departements, str(departement), parcellaire_DB, delivery
-        ),
-        exist_ok=True,
-    )
-    os.rename(
-        path4,
-        os.path.join(
-            base_folder,
-            departements,
-            str(departement),
-            parcellaire_DB,
-            delivery,
-            parcellaire_data_folder,
         ),
     )

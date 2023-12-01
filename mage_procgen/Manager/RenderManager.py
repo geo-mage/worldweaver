@@ -16,13 +16,10 @@ from mage_procgen.Utils.Rendering import (
 from mage_procgen.Renderer import (
     BuildingRenderer,
     ForestRenderer,
-    PlotRenderer,
     RoadRenderer,
     WaterRenderer,
-    BackgroundRenderer,
     TerrainRenderer,
     FloodRenderer,
-    BasicFloodRenderer,
 )
 
 
@@ -54,15 +51,6 @@ class RenderManager:
         self.flood_renderer = FloodRenderer.FloodRenderer(
             self.config.flood_render_config
         )
-        # self.fields_renderer = PlotRenderer.FieldRenderer(
-        #   self.terrain_data, self.config.field_render_config
-        # )
-        # self.gardens_renderer = PlotRenderer.GardenRenderer(
-        #   self.terrain_data, self.config.garden_render_config
-        # )
-        self.fences_renderer = PlotRenderer.FenceRenderer(
-            self.terrain_data, self.config.fence_render_config
-        )
         self.forests_renderer = ForestRenderer.ForestRenderer(
             self.terrain_data, self.config.forest_render_config
         )
@@ -74,9 +62,6 @@ class RenderManager:
         self.still_water_renderer = WaterRenderer.StillWaterRenderer(
             self.terrain_data, self.config.water_render_config
         )
-        # self.background_renderer = BackgroundRenderer.BackgroundRenderer(
-        #   self.terrain_data, self.config.background_render_config
-        # )
 
     def draw_flood_interactors(self):
         # print("Starting rendering")
@@ -171,26 +156,6 @@ class RenderManager:
                 zone_x_min, zone_x_max, zone_y_min, zone_y_max, self.crs, self.crs
             )
 
-        # fields_zone = self.rendering_data.fields.overlay(zone_window.dataframe, how="intersection", keep_geom_type=True)
-        # fields = self.__extract_geom(fields_zone.geometry)
-        # self.fields_renderer.render(
-        #   fields, self.window.center, rendering_collection_name
-        # )
-        #
-        # gardens_zone = self.rendering_data.gardens.overlay(zone_window.dataframe, how="intersection", keep_geom_type=True)
-        # gardens = self.__extract_geom(gardens_zone.geometry)
-        # self.gardens_renderer.render(
-        #   gardens, self.window.center, rendering_collection_name
-        # )
-
-        fences_zone = self.rendering_data.fences.overlay(
-            zone_window.dataframe, how="intersection", keep_geom_type=True
-        )
-        fences = self.__extract_geom(fences_zone.geometry)
-        self.fences_renderer.render(
-            fences, self.window.center, rendering_collection_name
-        )
-
         forests_zone = self.rendering_data.forests.overlay(
             zone_window.dataframe, how="intersection", keep_geom_type=True
         )
@@ -198,12 +163,6 @@ class RenderManager:
         self.forests_renderer.render(
             forests, self.window.center, rendering_collection_name
         )
-
-        # building_zone = self.rendering_data.buildings.overlay(zone_window.dataframe, how="intersection", keep_geom_type=True)
-        # building = self.__extract_geom(building_zone.geometry)
-        # self.building_renderer.render(
-        #     building, self.window.center, rendering_collection_name
-        # )
 
         road_zone = self.rendering_data.roads.overlay(
             zone_window.dataframe, how="intersection", keep_geom_type=True
@@ -226,33 +185,17 @@ class RenderManager:
             still_water, self.window.center, rendering_collection_name
         )
 
-        # background_zone = self.rendering_data.background.overlay(zone_window.dataframe, how="intersection", keep_geom_type=True)
-        # background = self.__extract_geom(background_zone.geometry)
-        # self.background_renderer.render(
-        #     background, self.window.center, rendering_collection_name
-        # )
-
     def clean_zone(self):
         terrain_collection = D.collections["Terrain"].objects
         for terrain in terrain_collection:
             terrain.hide_viewport = False
             terrain.hide_render = False
 
-        # self.fields_renderer.clear_object()
-
-        # self.gardens_renderer.clear_object()
-
-        self.fences_renderer.clear_object()
-
         self.forests_renderer.clear_object()
-
-        # self.building_renderer.clear_object()
 
         self.road_renderer.clear_object()
 
         self.still_water_renderer.clear_object()
-
-        # self.background_renderer.clear_object()
 
     def __corner_coord(self, ray_direction, max_distance, origin):
 
