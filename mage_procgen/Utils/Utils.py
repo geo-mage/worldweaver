@@ -80,7 +80,10 @@ class GeoWindow:
 @dataclass
 class RenderingData:
     forests: g.GeoDataFrame
-    buildings: g.GeoDataFrame
+    churches: g.GeoDataFrame
+    malls: g.GeoDataFrame
+    factories: g.GeoDataFrame
+    default_buildings: g.GeoDataFrame
     roads: g.GeoDataFrame
     lanes: LineStringList
     still_water: g.GeoDataFrame

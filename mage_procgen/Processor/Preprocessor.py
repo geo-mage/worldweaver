@@ -95,9 +95,22 @@ class Preprocessor:
         flowing_water = new_water.query("NATURE in @flowing_water_tags")
         still_water = new_water.query("NATURE not in @flowing_water_tags")
 
+        churches_tags = ["Religieux"]
+        churches = new_buildings.query("USAGE1 in @churches_tags")
+        non_churches = new_buildings.query("USAGE1 not in @churches_tags")
+        malls_tags = ["Commercial et services"]
+        malls = non_churches.query("USAGE1 in @malls_tags")
+        non_malls = non_churches.query("USAGE1 not in @malls_tags")
+        factories_tags = ["Industriel"]
+        factories = non_malls.query("USAGE1 in @factories_tags")
+        default_buildings = non_malls.query("USAGE1 not in @factories_tags")
+
         rendering_data = RenderingData(
             cleaned_forests,
-            new_buildings,
+            churches,
+            malls,
+            factories,
+            default_buildings,
             roads_with_cars,
             roads_lanes,
             still_water,

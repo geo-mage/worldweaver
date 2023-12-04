@@ -19,3 +19,15 @@ class BuildingRenderer(BaseRenderer):
         ]
 
         return centered_points_coords
+
+
+class ChurchRenderer(BuildingRenderer):
+    _mesh_name = "Churches"
+
+
+class MallRenderer(BuildingRenderer):
+    _mesh_name = "Malls"
+
+
+class FactoryRenderer(BuildingRenderer):
+    _mesh_name = "Factories"

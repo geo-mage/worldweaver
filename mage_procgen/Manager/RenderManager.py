@@ -45,6 +45,15 @@ class RenderManager:
         self.building_renderer = BuildingRenderer.BuildingRenderer(
             self.terrain_data, self.config.building_render_config
         )
+        self.malls_renderer = BuildingRenderer.MallRenderer(
+            self.terrain_data, self.config.mall_render_config
+        )
+        self.churches_renderer = BuildingRenderer.ChurchRenderer(
+            self.terrain_data, self.config.church_render_config
+        )
+        self.factories_renderer = BuildingRenderer.FactoryRenderer(
+            self.terrain_data, self.config.factory_render_config
+        )
         self.flowing_water_renderer = WaterRenderer.FlowingWaterRenderer(
             self.terrain_data, self.config.water_render_config
         )
@@ -76,10 +85,23 @@ class RenderManager:
         )
         print("Terrain rendered")
 
-        buildings = self.__extract_geom(self.rendering_data.buildings.geometry)
+        buildings = self.__extract_geom(self.rendering_data.default_buildings.geometry)
         self.building_renderer.render(
             buildings, self.window.center, buildings_collection_name
         )
+
+        churches = self.__extract_geom(self.rendering_data.churches.geometry)
+        self.churches_renderer.render(
+            churches, self.window.center, buildings_collection_name
+        )
+
+        factories = self.__extract_geom(self.rendering_data.factories.geometry)
+        self.factories_renderer.render(
+            factories, self.window.center, buildings_collection_name
+        )
+
+        malls = self.__extract_geom(self.rendering_data.malls.geometry)
+        self.malls_renderer.render(malls, self.window.center, buildings_collection_name)
 
         flowing_water = self.__extract_geom(self.rendering_data.flowing_water.geometry)
         if (
