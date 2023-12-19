@@ -6,6 +6,14 @@ base_folder = "/home/verstraa/Work/maps/"
 
 rendering = "rendering"
 
+temp_folder = "TMP"
+
+depth_map_file = "depth_map"
+
+depth_map_file_full_name = "depth_map0001.exr"
+
+temp_rendering_file = "rendering_tmp.png"
+
 departements = "Departements/"
 
 regions_file = "ARRONDISSEMENT/ARRONDISSEMENT.shp"

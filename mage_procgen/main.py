@@ -18,7 +18,11 @@ from mage_procgen.Processor.TaggingRasterProcessor import TaggingRasterProcessor
 from mage_procgen.Utils.Rendering import (
     setup_export_folder,
     export_rendered_img,
-    setup_img,
+    setup_img_persp,
+    setup_img_ortho,
+    setup_compositing_flood,
+    switch_compositing_render,
+    switch_compositing_flood,
 )
 
 
@@ -39,7 +43,7 @@ def main():
     # Fublaines
     # geo_window = GeoWindow.from_square(2.9185, 2.9314, 48.9396, 48.9466, CRS_degrees, CRS_fr)
     # geo_window = GeoWindow.from_square(2.93, 2.945, 48.9350, 48.94, CRS_degrees, CRS_fr)
-    geo_window = GeoWindow.from_square(2.9, 2.955, 48.93, 48.945, CRS_degrees, CRS_fr)
+    #geo_window = GeoWindow.from_square(2.9, 2.955, 48.93, 48.945, CRS_degrees, CRS_fr)
 
     # Choisy-en-Brie
     # geo_window = GeoWindow.from_square(3.2050, 3.2350, 48.7545, 48.7650, CRS_degrees, CRS_fr)
@@ -69,7 +73,7 @@ def main():
     # geo_window = GeoWindow.from_square(7.26, 7.275, 43.698, 43.7050, CRS_degrees, CRS_fr)
     # Saint Sauveur sur Tinée
     # geo_window = GeoWindow.from_square(7.097, 7.11500, 44.077, 44.09, CRS_degrees, CRS_fr)
-    # geo_window = GeoWindow.from_square(7.1, 7.11, 44.077, 44.09, CRS_degrees, CRS_fr)
+    geo_window = GeoWindow.from_square(7.1, 7.11, 44.077, 44.09, CRS_degrees, CRS_fr)
 
     # 62
     # Loos-en-gohelle
@@ -96,7 +100,7 @@ def main():
         render_manager.beautify_zone(False)
 
     if config.flood:
-
+        setup_compositing_flood()
         flood_threshold = 1000
         flood_data = FloodProcessor.flood(
             geo_window,
@@ -107,17 +111,19 @@ def main():
 
         render_manager.draw_flood(flood_data)
 
-        # TMP
-        # setup_img(
-        #     config.out_img_resolution,
-        #     config.out_img_pixel_size,
-        #     (0, 0, 0),
-        # )
-        #
-        # # Beautify
-        render_manager.beautify_zone(False)
+        if not config.export_img:
+
+            setup_img_persp(
+                config.out_img_resolution,
+                config.out_img_pixel_size,
+                (0, 0, 0),
+            )
+
+            render_manager.beautify_zone(False)
 
         if config.export_img:
+
+            switch_compositing_render()
 
             first_dpt_code = geo_data.departements["INSEE_DEP"][0]
 
@@ -134,29 +140,37 @@ def main():
 
             for camera_x in arange(camera_x_min, camera_x_max, camera_step):
                 for camera_y in arange(camera_y_min, camera_y_max, camera_step):
-                    now = datetime.now()
-                    now_str = now.strftime("%Y_%m_%d:%H:%M:%S:%f")
+                    try:
+                        now = datetime.now()
+                        now_str = now.strftime("%Y_%m_%d:%H:%M:%S:%f")
 
-                    setup_img(
-                        config.out_img_resolution,
-                        config.out_img_pixel_size,
-                        (camera_x, camera_y, 0),
-                    )
+                        setup_img_persp(
+                            config.out_img_resolution,
+                            config.out_img_pixel_size,
+                            (camera_x, camera_y, 0),
+                        )
 
-                    # Beautify
-                    render_manager.beautify_zone(True)
+                        # Beautify
+                        zone_window = render_manager.beautify_zone(True)
 
-                    export_rendered_img(base_export_path, now_str)
+                        export_rendered_img(base_export_path, now_str)
 
-                    TaggingRasterProcessor.compute(
-                        base_export_path,
-                        now_str,
-                        config.out_img_resolution,
-                        config.tag_result_order,
-                    )
+                        TaggingRasterProcessor.compute(
+                            base_export_path,
+                            now_str,
+                            config.out_img_resolution,
+                            config.tag_result_order,
+                            zone_window,
+                            geo_window.center,
+                        )
 
-                    # Clean
-                    render_manager.clean_zone()
+                        # Clean
+                        render_manager.clean_zone()
+
+                    except Exception as error:
+                        print("Could not generate an image: ", error)
+
+
 
 
 if __name__ == "__main__":

@@ -6,6 +6,7 @@ from dataclasses import dataclass
 
 Point = tuple[float, float, float]
 PolygonList = list[Polygon]
+BuildingList = list[(float, Polygon)]
 LineStringList = list[LineString]
 
 CRS_degrees = 4326

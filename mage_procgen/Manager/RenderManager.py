@@ -85,24 +85,6 @@ class RenderManager:
         )
         print("Terrain rendered")
 
-        buildings = self.__extract_geom(self.rendering_data.default_buildings.geometry)
-        self.building_renderer.render(
-            buildings, self.window.center, buildings_collection_name
-        )
-
-        churches = self.__extract_geom(self.rendering_data.churches.geometry)
-        self.churches_renderer.render(
-            churches, self.window.center, buildings_collection_name
-        )
-
-        factories = self.__extract_geom(self.rendering_data.factories.geometry)
-        self.factories_renderer.render(
-            factories, self.window.center, buildings_collection_name
-        )
-
-        malls = self.__extract_geom(self.rendering_data.malls.geometry)
-        self.malls_renderer.render(malls, self.window.center, buildings_collection_name)
-
         flowing_water = self.__extract_geom(self.rendering_data.flowing_water.geometry)
         if (
             self.rendering_data.ocean is not None
@@ -162,21 +144,55 @@ class RenderManager:
                 self.__corner_coord(vector_lr, max_distance, origin),
             )
 
-            terrains_in_zone = [zone_delimiter[1] for zone_delimiter in zone_delimiters]
-            terrain_collection = D.collections["Terrain"].objects
-            for terrain in terrain_collection:
-                if terrain.name not in terrains_in_zone:
-                    terrain.hide_viewport = True
-                    terrain.hide_render = True
+            try:
+                zone_x_min = min([c[0][0] for c in zone_delimiters]) + self.window.center[0]
+                zone_x_max = max([c[0][0] for c in zone_delimiters]) + self.window.center[0]
+                zone_y_min = min([c[0][1] for c in zone_delimiters]) + self.window.center[1]
+                zone_y_max = max([c[0][1] for c in zone_delimiters]) + self.window.center[1]
 
-            zone_x_min = min([c[0][0] for c in zone_delimiters]) + self.window.center[0]
-            zone_x_max = max([c[0][0] for c in zone_delimiters]) + self.window.center[0]
-            zone_y_min = min([c[0][1] for c in zone_delimiters]) + self.window.center[1]
-            zone_y_max = max([c[0][1] for c in zone_delimiters]) + self.window.center[1]
+                zone_window = GeoWindow.from_square(
+                    zone_x_min, zone_x_max, zone_y_min, zone_y_max, self.crs, self.crs
+                )
 
-            zone_window = GeoWindow.from_square(
-                zone_x_min, zone_x_max, zone_y_min, zone_y_max, self.crs, self.crs
-            )
+                terrains_in_zone = [zone_delimiter[1] for zone_delimiter in zone_delimiters]
+                terrain_collection = D.collections["Terrain"].objects
+                for terrain in terrain_collection:
+                    if terrain.name not in terrains_in_zone:
+                        terrain.hide_viewport = True
+                        terrain.hide_render = True
+
+            except:
+                raise ValueError("Zone to beautify is outside of the boundaries of the scene")
+
+        buildings_zone = self.rendering_data.default_buildings.overlay(
+            zone_window.dataframe, how="intersection", keep_geom_type=True
+        )
+        buildings = self.__extract_buildings_data(buildings_zone)
+        self.building_renderer.render(
+            buildings, self.window.center, buildings_collection_name
+        )
+
+        churches_zone = self.rendering_data.churches.overlay(
+            zone_window.dataframe, how="intersection", keep_geom_type=True
+        )
+        churches = self.__extract_buildings_data(churches_zone)
+        self.churches_renderer.render(
+            churches, self.window.center, buildings_collection_name
+        )
+
+        factories_zone = self.rendering_data.factories.overlay(
+            zone_window.dataframe, how="intersection", keep_geom_type=True
+        )
+        factories = self.__extract_buildings_data(factories_zone)
+        self.factories_renderer.render(
+            factories, self.window.center, buildings_collection_name
+        )
+
+        malls_zone = self.rendering_data.malls.overlay(
+            zone_window.dataframe, how="intersection", keep_geom_type=True
+        )
+        malls = self.__extract_buildings_data(malls_zone)
+        self.malls_renderer.render(malls, self.window.center, buildings_collection_name)
 
         forests_zone = self.rendering_data.forests.overlay(
             zone_window.dataframe, how="intersection", keep_geom_type=True
@@ -207,6 +223,8 @@ class RenderManager:
             still_water, self.window.center, rendering_collection_name
         )
 
+        return zone_window
+
     def clean_zone(self):
         terrain_collection = D.collections["Terrain"].objects
         for terrain in terrain_collection:
@@ -218,6 +236,14 @@ class RenderManager:
         self.road_renderer.clear_object()
 
         self.still_water_renderer.clear_object()
+
+        self.building_renderer.clear_object()
+
+        self.churches_renderer.clear_object()
+
+        self.malls_renderer.clear_object()
+
+        self.factories_renderer.clear_object()
 
     def __corner_coord(self, ray_direction, max_distance, origin):
 
@@ -243,6 +269,20 @@ class RenderManager:
             if type(x) == MultiPolygon:
                 for y in x.geoms:
                     to_return.append(y)
+            else:
+                to_return.append(x)
+
+        return to_return
+
+    def __extract_buildings_data(self, buildings: g.GeoDataFrame) -> PolygonList:
+        to_return = []
+
+        data = [(x[0], x[1]) for x in buildings[["NB_ETAGES", "geometry"]].to_numpy().tolist()]
+        for x in data:
+            # If it's a multipolygon, it has multiple polygons inside of it that we need to separate for later
+            if type(x[1]) == MultiPolygon:
+                for y in x[1].geoms:
+                    to_return.append((x[0],y))
             else:
                 to_return.append(x)
 

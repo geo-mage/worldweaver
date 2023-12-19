@@ -14,12 +14,23 @@ from scipy.ndimage import gaussian_filter as gf
 
 from mage_procgen.Utils.Utils import GeoWindow
 from mage_procgen.Utils.Geometry import center_point
+from mage_procgen.Utils.Rendering import (
+    export_rendered_img,
+    setup_img_ortho,
+)
+
 from math import floor, ceil
 
 from math import exp, pow
 
 from tqdm import tqdm
 
+import mage_procgen.Utils.DataFiles as df
+import os
+
+import OpenEXR
+import Imath
+import array
 
 class FloodProcessor:
     @staticmethod
@@ -41,6 +52,17 @@ class FloodProcessor:
         rounded_ll = (ceil(centered_ll[0]), ceil(centered_ll[1]), 0)
         rounded_ur = (floor(centered_ur[0]), floor(centered_ur[1]), 0)
 
+        size_x = rounded_ur[0] - rounded_ll[0]
+        size_y = rounded_ur[1] - rounded_ll[1]
+
+        camera_z = setup_img_ortho(
+            size_x,
+            size_y,
+            flood_cell_size,
+            (0,0))
+
+        export_rendered_img(os.path.join(df.base_folder, df.rendering, df.temp_folder), df.temp_rendering_file)
+
         max_z = -math.inf
         min_z = math.inf
 
@@ -56,14 +78,6 @@ class FloodProcessor:
                 max_z = cur_z_max
             if cur_z_min < min_z:
                 min_z = cur_z_min
-        building_box_vertices = D.objects["Buildings"].bound_box
-        building_z_coords = [v[2] for v in building_box_vertices]
-        cur_z_max = max(building_z_coords)
-        cur_z_min = min(building_z_coords)
-        if cur_z_max > max_z:
-            max_z = cur_z_max
-        if cur_z_min < min_z:
-            min_z = cur_z_min
 
         # Plane from which the rays shoot need to be above the scene. Margin on 50m is taken to be sure.
         comp_plane_z = max_z + 50
@@ -84,15 +98,30 @@ class FloodProcessor:
         ray_direction = Vector([0, 0, -1])
 
         # Preparing for the mapping of the elevation function. Signature is necessary because elevation works on a 3 dimensional vector
-        init_flood_state = np.vectorize(
-            FloodProcessor.__init_flood_state, excluded={1, 2}, signature="(3)->(3)"
+        init_source_points = np.vectorize(
+            FloodProcessor.__init_source_points, excluded={1, 2}, signature="(3)->()"
         )
 
-        flood_init = init_flood_state(comp_plane, max_distance, ray_direction)
+        depth_map_file = OpenEXR.InputFile(os.path.join(df.base_folder, df.rendering, df.temp_folder, df.depth_map_file_full_name))
+
+        # Compute the size
+        depth_map_data_window = depth_map_file.header()['dataWindow']
+        depth_map_size = (depth_map_data_window.max.x - depth_map_data_window.min.x + 1, depth_map_data_window.max.y - depth_map_data_window.min.y + 1)
+
+        # Read the three color channels as 32-bit floats
+        FLOAT = Imath.PixelType(Imath.PixelType.FLOAT)
+
+        depth_map = np.array(array.array('f', depth_map_file.channel("R", FLOAT))).reshape(depth_map_size[1], depth_map_size[0])
+        
+        height_map = camera_z - depth_map
+        source_points = init_source_points(comp_plane, max_distance, ray_direction)
+
+        if height_map.shape != source_points.shape:
+            raise ValueError("Height map and source raster are not the same shape")
 
         # Compute for each pixel the height of the flood, if applicable
-        flood_state_rows = flood_init.shape[0]
-        flood_state_cols = flood_init.shape[1]
+        flood_state_rows = source_points.shape[0]
+        flood_state_cols = source_points.shape[1]
 
         # To get the coordinates of a cell's neighbors
         coord_modifiers = [
@@ -114,10 +143,9 @@ class FloodProcessor:
         for row in range(flood_state_rows):
             for column in range(flood_state_cols):
                 point_distance_index = row * flood_state_cols + column
-                point_value = flood_init[row][column]
 
                 # If a point is a source
-                if point_value[2]:
+                if source_points[row][column]:
                     sources_index.append(point_distance_index)
 
                 for mod in coord_modifiers:
@@ -132,13 +160,12 @@ class FloodProcessor:
                         and comp_col < flood_state_cols
                     ):
                         mod_index = comp_row * flood_state_cols + comp_col
-                        mod_value = flood_init[comp_row][comp_col]
                         rows.append(point_distance_index)
                         cols.append(mod_index)
 
                         # Compute the cell to cell distance
                         data.append(
-                            FloodProcessor.distance_function(point_value, mod_value)
+                            FloodProcessor.distance_function(height_map[row][column], height_map[comp_row][comp_col])
                         )
 
         a_rows = np.array(rows)
@@ -175,7 +202,7 @@ class FloodProcessor:
                 point_source = sources[point_index]
                 source_row = point_source // flood_state_cols
                 source_column = point_source % flood_state_cols
-                source_elevation = flood_init[source_row][source_column][0]
+                source_elevation = height_map[source_row][source_column]
 
                 # Finding the path length
                 # path_length = 0
@@ -199,8 +226,7 @@ class FloodProcessor:
                     max_flood_height,
                     flood_threshold,
                     flood_graph_distances[point_index],
-                    flood_init[row][column][0],
-                    flood_init[row][column][1],
+                    height_map[row][column],
                     source_elevation,
                     # path_length,
                 )
@@ -212,7 +238,7 @@ class FloodProcessor:
         flood_result = gf(flood_result, 5)
 
         return (
-            flood_init,
+            height_map,
             flood_result,
             flood_state,
             rounded_ll,
@@ -221,34 +247,7 @@ class FloodProcessor:
         )
 
     @staticmethod
-    def __init_flood_state(point, max_distance, ray_direction):
-
-        terrain_collection = D.collections["Terrain"].objects
-
-        elevation = None
-
-        for terrain in terrain_collection:
-            ray_result = terrain.ray_cast(point, ray_direction, distance=max_distance)
-
-            if ray_result[0]:
-                elevation = ray_result[1][2]
-
-        # No collision with terrain, should not happen
-        if elevation is None:
-            raise ValueError("Could not find elevation of point " + str(point))
-
-        buildings = D.objects["Buildings"]
-
-        building_ray_result = buildings.ray_cast(
-            point, ray_direction, distance=max_distance
-        )
-
-        building_height = 0
-
-        if building_ray_result[0]:
-            # TODO: check should not be necessary here ?
-            if building_ray_result[1][2] > elevation:
-                building_height = building_ray_result[1][2]
+    def __init_source_points(point, max_distance, ray_direction):
 
         flowing_water = D.objects["Flowing_Water"]
 
@@ -259,15 +258,15 @@ class FloodProcessor:
         is_source = 0
 
         if flowing_water_ray_result[0]:
-            is_source = 1
-
-        return np.array([elevation, building_height, is_source])
+            return 1
+        else:
+            return 0
 
     # TODO: take buildings into account somehow
     # TODO: generally, calibrate this
     @staticmethod
     def distance_function(point_a, point_b):
-        return exp(point_b[0] - point_a[0])
+        return exp(point_b - point_a)
         # return 1
 
     @staticmethod
@@ -276,7 +275,7 @@ class FloodProcessor:
         flood_threshold,
         distance_to_source,
         terrain_height,
-        building_height,
+        #building_height,
         source_height,
         # path_length,
     ):
@@ -286,6 +285,7 @@ class FloodProcessor:
 
         if distance_to_source > flood_threshold:
             is_flooded = 0
+            return (is_flooded, 0)
 
         # Water height if the cell was at the same height as the source
         flood_value = max_flood_height * pow(

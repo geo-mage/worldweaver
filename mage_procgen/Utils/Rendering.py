@@ -46,6 +46,16 @@ def configure_render(geo_center_deg):
     camera.data.lens_unit = "FOV"
     camera.data.angle = 10 * math.pi / 180
 
+    # Ortho Camera
+    camera_data = D.cameras.new(name='Camera_Ortho')
+    camera_object = D.objects.new('Camera_Ortho', camera_data)
+    D.collections[base_collection_name].objects.link(camera_object)
+    camera_data.type = "ORTHO"
+    camera_data.clip_end = 100000
+    camera_object.location = (0, 0, 1100)
+    camera_object.rotation_euler = (0, 0, 0)
+    camera_data.ortho_scale = 200
+
     # Rendering
     sc.render.engine = "CYCLES"
     sc.cycles.device = "GPU"
@@ -83,14 +93,14 @@ def export_rendered_img(base_path, base_name):
     O.render.render(write_still=True)
 
 
-def setup_img(resolution, pixel_size, center):
+def setup_img_persp(resolution, pixel_size, center):
 
     sc = C.scene
     sc.render.resolution_x = resolution
     sc.render.resolution_y = resolution
 
     camera = D.objects["Camera"]
-
+    sc.camera = camera
     img_size = resolution * pixel_size
     camera_elevation = img_size / (2 * math.tan(camera.data.angle / 2))
 
@@ -107,3 +117,53 @@ def setup_img(resolution, pixel_size, center):
             max_z = cur_z_max
 
     camera.location = (center[0], center[1], max_z + camera_elevation)
+
+def setup_img_ortho(size_x, size_y, pixel_size, center):
+    sc = C.scene
+    sc.render.resolution_x = size_x // pixel_size
+    sc.render.resolution_y = size_y // pixel_size
+
+    size = max(size_x, size_y)
+
+    camera = D.objects["Camera_Ortho"]
+    sc.camera = camera
+    camera.data.ortho_scale = size
+
+    max_z = -math.inf
+
+    # Calculating the maximum height of the scene, using terrain and buildings
+    # TODO: check if there are edge cases where this does not hold
+    terrain_collection = D.collections["Terrain"].objects
+    for terrain in terrain_collection:
+        terrain_box = terrain.bound_box
+        z_coords = [v[2] for v in terrain_box]
+        cur_z_max = max(z_coords)
+        if cur_z_max > max_z:
+            max_z = cur_z_max
+
+    camera_z = max_z + 50
+
+    camera.location = (center[0], center[1], max_z + 50)
+
+    return camera_z
+
+def setup_compositing_flood():
+    D.scenes["Scene"].use_nodes = True
+    D.scenes["Scene"].view_layers["ViewLayer"].use_pass_z = True
+    scene = C.scene
+    nodes = scene.node_tree.nodes
+    output_file = nodes.new("CompositorNodeOutputFile")
+    output_file.format.file_format = "OPEN_EXR"
+    output_file.base_path = os.path.join(df.base_folder, df.rendering, df.temp_folder)
+    links = scene.node_tree.links
+    output_file.file_slots.remove(output_file.inputs[0])
+    output_file.file_slots.new("depth_map")
+    link = links.new(nodes["Render Layers"].outputs[2], output_file.inputs[0])
+
+def switch_compositing_flood():
+    D.scenes["Scene"].use_nodes = True
+
+def switch_compositing_render():
+    D.scenes["Scene"].use_nodes = False
+
+

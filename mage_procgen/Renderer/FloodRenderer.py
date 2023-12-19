@@ -104,22 +104,12 @@ class FloodRenderer:
                         )
 
                         # Bottom face
-                        terrain_height_point = flood_init_state[current_y][current_x][0]
-                        building_height_point = flood_init_state[current_y][current_x][
-                            1
-                        ]
-
-                        current_point_bottom_z = (
-                            building_height_point
-                            if building_height_point != 0
-                            and building_height_point < flood_height_point
-                            else terrain_height_point
-                        )
+                        terrain_height_point = flood_init_state[current_y][current_x]
 
                         current_bottom_point_coords = (
                             current_point_x,
                             current_point_y,
-                            current_point_bottom_z,
+                            terrain_height_point,
                         )
 
                         if current_bottom_point_coords not in meshes_points_bottom:
