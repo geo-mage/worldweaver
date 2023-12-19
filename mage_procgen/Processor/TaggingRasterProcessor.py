@@ -12,7 +12,9 @@ from mage_procgen.Utils.Rendering import buildings_collection_name
 
 class TaggingRasterProcessor:
     @staticmethod
-    def compute(base_path, file_name, resolution, tagging_order, zone_window, scene_center):
+    def compute(
+        base_path, file_name, resolution, tagging_order, zone_window, scene_center
+    ):
 
         camera = D.objects["Camera"]
         origin = camera.location
@@ -66,14 +68,16 @@ class TaggingRasterProcessor:
             TaggingRasterProcessor.__tag, excluded={1, 2, 3}, signature="(3)->(7)"
         )
 
-        tagged = tagging_function(ray_direction, max_distance, origin, tagging_order)#, buildings_in_zone)
+        tagged = tagging_function(
+            ray_direction, max_distance, origin, tagging_order
+        )  # , buildings_in_zone)
 
         full_path = os.path.join(base_path, file_name + ".npy")
 
         np.save(full_path, tagged)
 
     @staticmethod
-    def __tag(ray_direction, max_distance, origin, tagging_order):#, buildings_list):
+    def __tag(ray_direction, max_distance, origin, tagging_order):  # , buildings_list):
 
         tag_result = np.full(len(tagging_order), -9999)
 
@@ -87,7 +91,7 @@ class TaggingRasterProcessor:
                 tag_result[tagging_order.index(layer.name)] = elevation
 
         for collection in render_collection.children:
-            #if collection.name != buildings_collection_name:
+            # if collection.name != buildings_collection_name:
             for layer in collection.objects:
                 ray_result = layer.ray_cast(
                     origin, ray_direction, distance=max_distance

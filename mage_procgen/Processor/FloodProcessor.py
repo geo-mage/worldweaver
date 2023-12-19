@@ -32,6 +32,7 @@ import OpenEXR
 import Imath
 import array
 
+
 class FloodProcessor:
     @staticmethod
     def flood(
@@ -55,13 +56,12 @@ class FloodProcessor:
         size_x = rounded_ur[0] - rounded_ll[0]
         size_y = rounded_ur[1] - rounded_ll[1]
 
-        camera_z = setup_img_ortho(
-            size_x,
-            size_y,
-            flood_cell_size,
-            (0,0))
+        camera_z = setup_img_ortho(size_x, size_y, flood_cell_size, (0, 0))
 
-        export_rendered_img(os.path.join(df.base_folder, df.rendering, df.temp_folder), df.temp_rendering_file)
+        export_rendered_img(
+            os.path.join(df.base_folder, df.rendering, df.temp_folder),
+            df.temp_rendering_file,
+        )
 
         max_z = -math.inf
         min_z = math.inf
@@ -102,17 +102,29 @@ class FloodProcessor:
             FloodProcessor.__init_source_points, excluded={1, 2}, signature="(3)->()"
         )
 
-        depth_map_file = OpenEXR.InputFile(os.path.join(df.base_folder, df.rendering, df.temp_folder, df.depth_map_file_full_name))
+        depth_map_file = OpenEXR.InputFile(
+            os.path.join(
+                df.base_folder,
+                df.rendering,
+                df.temp_folder,
+                df.depth_map_file_full_name,
+            )
+        )
 
         # Compute the size
-        depth_map_data_window = depth_map_file.header()['dataWindow']
-        depth_map_size = (depth_map_data_window.max.x - depth_map_data_window.min.x + 1, depth_map_data_window.max.y - depth_map_data_window.min.y + 1)
+        depth_map_data_window = depth_map_file.header()["dataWindow"]
+        depth_map_size = (
+            depth_map_data_window.max.x - depth_map_data_window.min.x + 1,
+            depth_map_data_window.max.y - depth_map_data_window.min.y + 1,
+        )
 
         # Read the three color channels as 32-bit floats
         FLOAT = Imath.PixelType(Imath.PixelType.FLOAT)
 
-        depth_map = np.array(array.array('f', depth_map_file.channel("R", FLOAT))).reshape(depth_map_size[1], depth_map_size[0])
-        
+        depth_map = np.array(
+            array.array("f", depth_map_file.channel("R", FLOAT))
+        ).reshape(depth_map_size[1], depth_map_size[0])
+
         height_map = camera_z - depth_map
         source_points = init_source_points(comp_plane, max_distance, ray_direction)
 
@@ -165,7 +177,9 @@ class FloodProcessor:
 
                         # Compute the cell to cell distance
                         data.append(
-                            FloodProcessor.distance_function(height_map[row][column], height_map[comp_row][comp_col])
+                            FloodProcessor.distance_function(
+                                height_map[row][column], height_map[comp_row][comp_col]
+                            )
                         )
 
         a_rows = np.array(rows)
@@ -275,7 +289,7 @@ class FloodProcessor:
         flood_threshold,
         distance_to_source,
         terrain_height,
-        #building_height,
+        # building_height,
         source_height,
         # path_length,
     ):

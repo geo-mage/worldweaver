@@ -47,8 +47,8 @@ def configure_render(geo_center_deg):
     camera.data.angle = 10 * math.pi / 180
 
     # Ortho Camera
-    camera_data = D.cameras.new(name='Camera_Ortho')
-    camera_object = D.objects.new('Camera_Ortho', camera_data)
+    camera_data = D.cameras.new(name="Camera_Ortho")
+    camera_object = D.objects.new("Camera_Ortho", camera_data)
     D.collections[base_collection_name].objects.link(camera_object)
     camera_data.type = "ORTHO"
     camera_data.clip_end = 100000
@@ -118,6 +118,7 @@ def setup_img_persp(resolution, pixel_size, center):
 
     camera.location = (center[0], center[1], max_z + camera_elevation)
 
+
 def setup_img_ortho(size_x, size_y, pixel_size, center):
     sc = C.scene
     sc.render.resolution_x = size_x // pixel_size
@@ -147,6 +148,7 @@ def setup_img_ortho(size_x, size_y, pixel_size, center):
 
     return camera_z
 
+
 def setup_compositing_flood():
     D.scenes["Scene"].use_nodes = True
     D.scenes["Scene"].view_layers["ViewLayer"].use_pass_z = True
@@ -160,10 +162,10 @@ def setup_compositing_flood():
     output_file.file_slots.new("depth_map")
     link = links.new(nodes["Render Layers"].outputs[2], output_file.inputs[0])
 
+
 def switch_compositing_flood():
     D.scenes["Scene"].use_nodes = True
 
+
 def switch_compositing_render():
     D.scenes["Scene"].use_nodes = False
-
-

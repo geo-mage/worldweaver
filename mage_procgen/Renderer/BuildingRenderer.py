@@ -7,6 +7,7 @@ from shapely.geometry import mapping
 from tqdm import tqdm
 from mage_procgen.Utils.Utils import BuildingList, Point
 
+
 class BuildingRenderer(BaseRenderer):
     _mesh_name = "Buildings"
 
@@ -83,7 +84,6 @@ class BuildingRenderer(BaseRenderer):
         for object_name in self._mesh_names:
             D.objects.remove(D.objects[object_name], do_unlink=True)
             D.meshes.remove(D.meshes[object_name], do_unlink=True)
-
 
 
 class ChurchRenderer(BuildingRenderer):

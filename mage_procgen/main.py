@@ -43,7 +43,7 @@ def main():
     # Fublaines
     # geo_window = GeoWindow.from_square(2.9185, 2.9314, 48.9396, 48.9466, CRS_degrees, CRS_fr)
     # geo_window = GeoWindow.from_square(2.93, 2.945, 48.9350, 48.94, CRS_degrees, CRS_fr)
-    #geo_window = GeoWindow.from_square(2.9, 2.955, 48.93, 48.945, CRS_degrees, CRS_fr)
+    # geo_window = GeoWindow.from_square(2.9, 2.955, 48.93, 48.945, CRS_degrees, CRS_fr)
 
     # Choisy-en-Brie
     # geo_window = GeoWindow.from_square(3.2050, 3.2350, 48.7545, 48.7650, CRS_degrees, CRS_fr)
@@ -169,8 +169,6 @@ def main():
 
                     except Exception as error:
                         print("Could not generate an image: ", error)
-
-
 
 
 if __name__ == "__main__":

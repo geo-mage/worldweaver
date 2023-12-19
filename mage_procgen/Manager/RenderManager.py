@@ -145,16 +145,26 @@ class RenderManager:
             )
 
             try:
-                zone_x_min = min([c[0][0] for c in zone_delimiters]) + self.window.center[0]
-                zone_x_max = max([c[0][0] for c in zone_delimiters]) + self.window.center[0]
-                zone_y_min = min([c[0][1] for c in zone_delimiters]) + self.window.center[1]
-                zone_y_max = max([c[0][1] for c in zone_delimiters]) + self.window.center[1]
+                zone_x_min = (
+                    min([c[0][0] for c in zone_delimiters]) + self.window.center[0]
+                )
+                zone_x_max = (
+                    max([c[0][0] for c in zone_delimiters]) + self.window.center[0]
+                )
+                zone_y_min = (
+                    min([c[0][1] for c in zone_delimiters]) + self.window.center[1]
+                )
+                zone_y_max = (
+                    max([c[0][1] for c in zone_delimiters]) + self.window.center[1]
+                )
 
                 zone_window = GeoWindow.from_square(
                     zone_x_min, zone_x_max, zone_y_min, zone_y_max, self.crs, self.crs
                 )
 
-                terrains_in_zone = [zone_delimiter[1] for zone_delimiter in zone_delimiters]
+                terrains_in_zone = [
+                    zone_delimiter[1] for zone_delimiter in zone_delimiters
+                ]
                 terrain_collection = D.collections["Terrain"].objects
                 for terrain in terrain_collection:
                     if terrain.name not in terrains_in_zone:
@@ -162,7 +172,9 @@ class RenderManager:
                         terrain.hide_render = True
 
             except:
-                raise ValueError("Zone to beautify is outside of the boundaries of the scene")
+                raise ValueError(
+                    "Zone to beautify is outside of the boundaries of the scene"
+                )
 
         buildings_zone = self.rendering_data.default_buildings.overlay(
             zone_window.dataframe, how="intersection", keep_geom_type=True
@@ -277,12 +289,15 @@ class RenderManager:
     def __extract_buildings_data(self, buildings: g.GeoDataFrame) -> PolygonList:
         to_return = []
 
-        data = [(x[0], x[1]) for x in buildings[["NB_ETAGES", "geometry"]].to_numpy().tolist()]
+        data = [
+            (x[0], x[1])
+            for x in buildings[["NB_ETAGES", "geometry"]].to_numpy().tolist()
+        ]
         for x in data:
             # If it's a multipolygon, it has multiple polygons inside of it that we need to separate for later
             if type(x[1]) == MultiPolygon:
                 for y in x[1].geoms:
-                    to_return.append((x[0],y))
+                    to_return.append((x[0], y))
             else:
                 to_return.append(x)
 
