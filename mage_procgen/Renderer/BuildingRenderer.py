@@ -5,11 +5,55 @@ from bpy import data as D
 import bmesh
 from shapely.geometry import mapping
 from tqdm import tqdm
-from mage_procgen.Utils.Utils import BuildingList, Point
+from mage_procgen.Utils.Utils import BuildingList, Point, TerrainData
+import os
+import bpy
 
 
 class BuildingRenderer(BaseRenderer):
     _mesh_name = "Buildings"
+
+    def __init__(self, terrain_data: list[TerrainData], object_config):
+        self.config = object_config
+        _location = os.path.realpath(
+            os.path.join(os.getcwd(), os.path.dirname(__file__))
+        )
+        filepath = os.path.realpath(
+            os.path.join(
+                _location, "..", self._AssetsFolder, self.config.geometry_node_file
+            )
+        )
+        try:
+            with bpy.data.libraries.load(filepath) as (data_from, data_to):
+                data_to.node_groups = [self.config.geometry_node_name]
+
+        except Exception as _:
+            raise Exception(
+                'Unable to load the Geometry Nodes setup with the name "'
+                + self.config.geometry_node_name
+                + '"'
+                + "from the file "
+                + filepath
+            )
+
+        # A Geometry Nodes setup with name object_config.geometry_node_name may alredy exist.
+        self.geometry_node_name = data_to.node_groups[0].name
+
+        # Buildify does not realize instances of the objects it adds, so they have their own pass index.
+        # In order to set it, we have to get the objects that are used by the geometry nodes.
+        # This way is quite dirty and specific to Buildify, but it works.
+        # We get all collections that are used in the imported geometrynode, and deduce the objects.
+        added_collections = []
+        for node in D.node_groups[self.geometry_node_name].nodes:
+            for input in node.inputs:
+                if input.type == "COLLECTION":
+                    added_collections.append(input.default_value)
+
+        for collection in set(added_collections):
+            for obj in collection.objects:
+                obj.pass_index = object_config.tagging_index
+
+        self._terrain_data = terrain_data
 
     def render(
         self,
@@ -51,6 +95,7 @@ class BuildingRenderer(BaseRenderer):
             mesh.to_mesh(mesh_data)
             mesh.free()
             mesh_obj = D.objects.new(mesh_data.name, mesh_data)
+            mesh_obj.pass_index = self.config.tagging_index
             D.collections[parent_collection_name].objects.link(mesh_obj)
 
             self._mesh_names.append(mesh_obj.name)

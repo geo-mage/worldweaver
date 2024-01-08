@@ -20,9 +20,10 @@ from mage_procgen.Utils.Rendering import (
     export_rendered_img,
     setup_img_persp,
     setup_img_ortho,
+    setup_img_ortho_res,
     setup_compositing_flood,
-    switch_compositing_render,
-    switch_compositing_flood,
+    setup_compositing_render,
+    set_compositing_render_image_name,
 )
 
 
@@ -112,22 +113,30 @@ def main():
         render_manager.draw_flood(flood_data)
 
         if not config.export_img:
+            first_dpt_code = geo_data.departements["INSEE_DEP"][0]
 
-            setup_img_persp(
+            base_export_path = setup_export_folder(first_dpt_code)
+            setup_compositing_render(base_export_path)
+            now = datetime.now()
+            now_str = now.strftime("%Y_%m_%d:%H:%M:%S:%f")
+            set_compositing_render_image_name(now_str + "_tagging")
+
+            setup_img_ortho_res(
                 config.out_img_resolution,
                 config.out_img_pixel_size,
                 (0, 0, 0),
             )
 
             render_manager.beautify_zone(False)
+            export_rendered_img(base_export_path, now_str)
 
         if config.export_img:
-
-            switch_compositing_render()
 
             first_dpt_code = geo_data.departements["INSEE_DEP"][0]
 
             base_export_path = setup_export_folder(first_dpt_code)
+
+            setup_compositing_render(base_export_path)
 
             img_size = config.out_img_resolution * config.out_img_pixel_size
 
@@ -153,16 +162,18 @@ def main():
                         # Beautify
                         zone_window = render_manager.beautify_zone(True)
 
+                        set_compositing_render_image_name(now_str + "_tagging")
+
                         export_rendered_img(base_export_path, now_str)
 
-                        TaggingRasterProcessor.compute(
-                            base_export_path,
-                            now_str,
-                            config.out_img_resolution,
-                            config.tag_result_order,
-                            zone_window,
-                            geo_window.center,
-                        )
+                        # TaggingRasterProcessor.compute(
+                        #     base_export_path,
+                        #     now_str,
+                        #     config.out_img_resolution,
+                        #     config.tag_result_order,
+                        #     zone_window,
+                        #     geo_window.center,
+                        # )
 
                         # Clean
                         render_manager.clean_zone()

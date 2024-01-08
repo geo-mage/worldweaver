@@ -149,23 +149,84 @@ def setup_img_ortho(size_x, size_y, pixel_size, center):
     return camera_z
 
 
+def setup_img_ortho_res(resolution, pixel_size, center):
+    sc = C.scene
+    sc.render.resolution_x = resolution
+    sc.render.resolution_y = resolution
+
+    size = resolution * pixel_size
+
+    camera = D.objects["Camera_Ortho"]
+    sc.camera = camera
+    camera.data.ortho_scale = size
+
+    max_z = -math.inf
+
+    # Calculating the maximum height of the scene, using terrain and buildings
+    # TODO: check if there are edge cases where this does not hold
+    terrain_collection = D.collections["Terrain"].objects
+    for terrain in terrain_collection:
+        terrain_box = terrain.bound_box
+        z_coords = [v[2] for v in terrain_box]
+        cur_z_max = max(z_coords)
+        if cur_z_max > max_z:
+            max_z = cur_z_max
+
+    camera_z = max_z + 50
+
+    camera.location = (center[0], center[1], max_z + 50)
+
+    return camera_z
+
+
 def setup_compositing_flood():
     D.scenes["Scene"].use_nodes = True
     D.scenes["Scene"].view_layers["ViewLayer"].use_pass_z = True
+    D.scenes["Scene"].view_layers["ViewLayer"].use_pass_object_index = False
     scene = C.scene
     nodes = scene.node_tree.nodes
+    nodes.clear()
+    r_layers = nodes.new("CompositorNodeRLayers")
     output_file = nodes.new("CompositorNodeOutputFile")
     output_file.format.file_format = "OPEN_EXR"
     output_file.base_path = os.path.join(df.base_folder, df.rendering, df.temp_folder)
-    links = scene.node_tree.links
     output_file.file_slots.remove(output_file.inputs[0])
     output_file.file_slots.new("depth_map")
+    links = scene.node_tree.links
     link = links.new(nodes["Render Layers"].outputs[2], output_file.inputs[0])
 
 
-def switch_compositing_flood():
-    D.scenes["Scene"].use_nodes = True
+def setup_compositing_render(folder):
+    D.scenes["Scene"].use_nodes = use_nodes = True
+    D.scenes["Scene"].view_layers["ViewLayer"].use_pass_z = False
+    D.scenes["Scene"].view_layers["ViewLayer"].use_pass_object_index = True
+    scene = C.scene
+    nodes = scene.node_tree.nodes
+    nodes.clear()
+    r_layers = nodes.new("CompositorNodeRLayers")
+    output_file = nodes.new("CompositorNodeOutputFile")
+    output_file.format.file_format = "PNG"
+    output_file.format.color_mode = "BW"
+    output_file.format.color_depth = "8"
+    output_file.base_path = folder
+    norm = nodes.new("CompositorNodeNormalize")
+    links = scene.node_tree.links
+    link = links.new(nodes["Render Layers"].outputs[2], norm.inputs[0])
+    link2 = links.new(norm.outputs[0], output_file.inputs[0])
 
 
-def switch_compositing_render():
-    D.scenes["Scene"].use_nodes = False
+def set_compositing_render_image_name(image_name):
+    output_file = D.scenes["Scene"].node_tree.nodes["File Output"]
+    output_file.file_slots.remove(output_file.inputs[0])
+    output_file.file_slots.new(image_name)
+    norm = D.scenes["Scene"].node_tree.nodes["Normalize"]
+    links = D.scenes["Scene"].node_tree.links
+    link2 = links.new(norm.outputs[0], output_file.inputs[0])
+
+
+# def switch_compositing_flood():
+#     D.scenes["Scene"].use_nodes = True
+#
+#
+# def switch_compositing_render():
+#     D.scenes["Scene"].use_nodes = False

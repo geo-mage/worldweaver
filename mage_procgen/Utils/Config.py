@@ -5,6 +5,7 @@ from dataclasses import dataclass
 class RenderObjectConfig:
     geometry_node_file: str
     geometry_node_name: str
+    tagging_index: int
 
 
 @dataclass

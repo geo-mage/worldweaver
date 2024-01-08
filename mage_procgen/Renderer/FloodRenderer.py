@@ -50,8 +50,6 @@ class FloodRenderer:
 
         mesh = bmesh.new()
 
-        corner_coord = cellsize / 2
-
         cell_coords = [
             (-1, -1),
             (-1, 0),
@@ -128,6 +126,7 @@ class FloodRenderer:
         mesh.to_mesh(mesh_data)
         mesh.free()
         mesh_obj = D.objects.new(mesh_data.name, mesh_data)
+        mesh_obj.pass_index = self.config.tagging_index
         D.collections[parent_collection_name].objects.link(mesh_obj)
 
         m = mesh_obj.modifiers.new("", "NODES")

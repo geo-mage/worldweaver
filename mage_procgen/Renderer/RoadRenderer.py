@@ -95,6 +95,7 @@ class RoadRenderer:
         mesh.to_mesh(mesh_data)
         mesh.free()
         mesh_obj = D.objects.new(mesh_data.name, mesh_data)
+        mesh_obj.pass_index = self.config.tagging_index
         D.collections[parent_collection_name].objects.link(mesh_obj)
 
         m = mesh_obj.modifiers.new("", "NODES")
@@ -180,6 +181,7 @@ class RoadRenderer:
         car_mesh.to_mesh(car_mesh_data)
         car_mesh.free()
         car_mesh_obj = D.objects.new(car_mesh_data.name, car_mesh_data)
+        car_mesh_obj.pass_index = self.car_config.tagging_index
         D.collections[car_collection_name].objects.link(car_mesh_obj)
 
         m = car_mesh_obj.modifiers.new("", "NODES")
