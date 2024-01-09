@@ -73,8 +73,6 @@ class RenderManager:
         )
 
     def draw_flood_interactors(self):
-        # print("Starting rendering")
-
         # Rendering objects that interact with flood
         print("Rendering objects that interact with flood")
         self.terrain_renderer.render(
@@ -162,15 +160,6 @@ class RenderManager:
                     zone_x_min, zone_x_max, zone_y_min, zone_y_max, self.crs, self.crs
                 )
 
-                terrains_in_zone = [
-                    zone_delimiter[1] for zone_delimiter in zone_delimiters
-                ]
-                terrain_collection = D.collections["Terrain"].objects
-                for terrain in terrain_collection:
-                    if terrain.name not in terrains_in_zone:
-                        terrain.hide_viewport = True
-                        terrain.hide_render = True
-
             except:
                 raise ValueError(
                     "Zone to beautify is outside of the boundaries of the scene"
@@ -217,6 +206,7 @@ class RenderManager:
         road_zone = self.rendering_data.roads.overlay(
             zone_window.dataframe, how="intersection", keep_geom_type=True
         )
+
         road = self.__extract_geom(road_zone.geometry)
         lanes_zone = self.__window_lanes(zone_window)
         self.road_renderer.render(
@@ -238,11 +228,6 @@ class RenderManager:
         return zone_window
 
     def clean_zone(self):
-        terrain_collection = D.collections["Terrain"].objects
-        for terrain in terrain_collection:
-            terrain.hide_viewport = False
-            terrain.hide_render = False
-
         self.forests_renderer.clear_object()
 
         self.road_renderer.clear_object()

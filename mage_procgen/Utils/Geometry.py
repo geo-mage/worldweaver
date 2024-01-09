@@ -16,7 +16,7 @@ def polygonise(
         (thickness / 2) if not math.isnan(thickness) else (default_thickness / 2)
     )
 
-    poly_points = []
+    polys = []
 
     direction_code = (
         directions.index(direction)
@@ -35,7 +35,6 @@ def polygonise(
     is_first_point = True
     is_first_segment = True
     previous_point = None
-    previous_quadri = None
 
     for point in poly_line.coords:
 
@@ -64,8 +63,7 @@ def polygonise(
                     current_segment[0][1] - current_normale[1] * translation_module,
                 )
 
-                poly_points = [p1, p2, p3, p4]
-                previous_quadri = (p1, p2, p3, p4)
+                polys.append([p1, p2, p3, p4, p1])
 
                 # Lanes
                 for fraction in translation_fractions:
@@ -87,6 +85,8 @@ def polygonise(
 
                 is_first_segment = False
             else:
+
+                previous_quadri = polys[-1]
 
                 # 4 points of the new quadri
                 p1 = (
@@ -130,16 +130,11 @@ def polygonise(
                 if inters2_distance > max_point_distance:
                     inters2 = p4
 
-                # Merging
-                middle_index = len(poly_points) // 2
-                points_first_part = poly_points[: (middle_index - 1)]
-                points_second_part = poly_points[(middle_index + 1) :]
+                # Modifying the previous polygon
+                polys[-1][1] = inters1
+                polys[-1][2] = inters2
 
-                poly_points = (
-                    points_first_part + [inters1, p2, p3, inters2] + points_second_part
-                )
-
-                previous_quadri = (p1, p2, p3, p4)
+                polys.append([inters1, p2, p3, inters2, inters1])
 
                 # Lanes
                 for fraction in translation_fractions:
@@ -181,10 +176,7 @@ def polygonise(
 
         previous_point = point
 
-    # Polygons need to be closed
-    poly_points.append(poly_points[0])
-
-    road_polygon = Polygon(poly_points)
+    road_polygons = [Polygon(poly_points) for poly_points in polys]
 
     if direction_code == 2:
         # Flip all
@@ -198,7 +190,7 @@ def polygonise(
 
     lanes_lines = [LineString(lane) for lane in lanes.values()]
 
-    return (road_polygon, lanes_lines)
+    return (road_polygons, lanes_lines)
 
 
 def normal(

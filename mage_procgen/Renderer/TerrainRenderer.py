@@ -1,6 +1,6 @@
 import os
 import bpy
-from bpy import data as D
+from bpy import data as D, context as C, ops as O
 import bmesh
 
 import math
@@ -263,6 +263,13 @@ class TerrainRenderer:
                         start_coord[0] + cur_coord[0],
                         start_coord[1] + cur_coord[1],
                     )
+
+        bpy.ops.object.select_all(action="DESELECT")
+        C.view_layer.objects.active = D.collections[parent_collection_name].objects[0]
+        for terrain_obj in D.collections[parent_collection_name].objects:
+            terrain_obj.select_set(True)
+
+        O.object.join()
 
     @staticmethod
     def __check_boundaries(point, terrain_mesh_info):

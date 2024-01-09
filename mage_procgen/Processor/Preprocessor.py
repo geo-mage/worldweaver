@@ -66,11 +66,28 @@ class Preprocessor:
             .to_numpy()
             .tolist()
         ]
-        roads_with_cars["geometry"] = [x[0] for x in roads_elements]
+
+        roads_content = {}
+        or_row_index = 0
+
+        for index, row in roads_with_cars.iterrows():
+            for geometry in roads_elements[or_row_index][0]:
+                new_row = row.to_dict()
+                new_row["geometry"] = geometry
+
+                for key, value in new_row.items():
+                    if key not in roads_content.keys():
+                        roads_content[key] = []
+                    roads_content[key].append(value)
+
+            or_row_index += 1
+
+        roads_polygonised = g.GeoDataFrame(roads_content, crs=CRS_fr)
+
         roads_lanes = reduce(lambda x, y: x + y, [x[1] for x in roads_elements])
 
         # Now that roads are polygons, we can apply the window on them and remove them from the background
-        roads_with_cars = roads_with_cars.overlay(
+        roads_polygonised = roads_polygonised.overlay(
             self.window.dataframe, how="intersection", keep_geom_type=True
         )
 
@@ -111,7 +128,7 @@ class Preprocessor:
             malls,
             factories,
             default_buildings,
-            roads_with_cars,
+            roads_polygonised,
             roads_lanes,
             still_water,
             flowing_water,

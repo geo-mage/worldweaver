@@ -6,6 +6,7 @@ from shapely.geometry import mapping
 from tqdm import tqdm
 from mage_procgen.Utils.Utils import PolygonList, Point, TerrainData, LineStringList
 from mage_procgen.Utils.Geometry import norm2d
+from mage_procgen.Utils.Rendering import terrain_collection_name
 from random import random
 
 # TODO: find common paths with BaseRenderer
@@ -101,8 +102,18 @@ class RoadRenderer:
         m = mesh_obj.modifiers.new("", "NODES")
         m.node_group = D.node_groups[self.geometry_node_name]
 
-        # Lanes
+        s = D.objects["Roads"].modifiers.new("", "SUBSURF")
+        s.subdivision_type = "SIMPLE"
+        s.levels = 3
+        s.render_levels = 3
 
+        sw = D.objects["Roads"].modifiers.new("", "SHRINKWRAP")
+        sw.wrap_mode = "ABOVE_SURFACE"
+
+        sw.target = D.collections[terrain_collection_name].objects[0]
+        sw.offset = 0.05
+
+        # Lanes
         car_mesh = bmesh.new()
         next_car_distance = self.next_car_distance()
 
