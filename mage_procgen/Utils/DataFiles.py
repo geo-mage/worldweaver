@@ -12,7 +12,7 @@ depth_map_file = "depth_map"
 
 depth_map_file_full_name = "depth_map0001.exr"
 
-temp_rendering_file = "rendering_tmp.png"
+temp_rendering_file = "rendering_tmp"
 
 departements = "Departements/"
 

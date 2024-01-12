@@ -162,22 +162,6 @@ class TerrainRenderer:
                         center_point(previous_terrain_line[x], center),
                     ]
 
-                    # Some checks will be superfluous, but better be safe than sorry
-                    TerrainRenderer.__check_boundaries(
-                        current_terrain_line[x], meshes[previous_point_terrain_index]
-                    )
-                    TerrainRenderer.__check_boundaries(
-                        current_terrain_line[x - 1],
-                        meshes[previous_point_terrain_index],
-                    )
-                    TerrainRenderer.__check_boundaries(
-                        previous_terrain_line[x - 1],
-                        meshes[previous_point_terrain_index],
-                    )
-                    TerrainRenderer.__check_boundaries(
-                        previous_terrain_line[x], meshes[previous_point_terrain_index]
-                    )
-
                     new_face_mesh_verts = []
                     for pt in new_face_verts:
                         if pt not in meshes_points[previous_point_terrain_index]:
@@ -188,9 +172,35 @@ class TerrainRenderer:
                             meshes_points[previous_point_terrain_index][pt]
                         )
 
-                    face = meshes[previous_point_terrain_index].mesh.faces.new(
-                        new_face_mesh_verts
-                    )
+                    # Checking if the point is inside the window
+                    is_point_in_window = True
+                    is_point_in_window &= current_point_x >= box[0] - 1
+                    is_point_in_window &= current_point_x < box[2] + 1
+                    is_point_in_window &= current_point_y >= box[1] - 1
+                    is_point_in_window &= current_point_y < box[3] + 1
+
+                    if is_point_in_window:
+                        # Some checks will be superfluous, but better be safe than sorry
+                        TerrainRenderer.__check_boundaries(
+                            current_terrain_line[x],
+                            meshes[previous_point_terrain_index],
+                        )
+                        TerrainRenderer.__check_boundaries(
+                            current_terrain_line[x - 1],
+                            meshes[previous_point_terrain_index],
+                        )
+                        TerrainRenderer.__check_boundaries(
+                            previous_terrain_line[x - 1],
+                            meshes[previous_point_terrain_index],
+                        )
+                        TerrainRenderer.__check_boundaries(
+                            previous_terrain_line[x],
+                            meshes[previous_point_terrain_index],
+                        )
+
+                        face = meshes[previous_point_terrain_index].mesh.faces.new(
+                            new_face_mesh_verts
+                        )
 
                 previous_point_terrain_index = terrain_index
 

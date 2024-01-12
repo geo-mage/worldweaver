@@ -81,7 +81,12 @@ def main():
     # geo_window = GeoWindow.from_square(2.7735, 2.8117, 50.4409, 50.4659, CRS_degrees, CRS_fr)
     # geo_window = GeoWindow.from_square(2.7817, 2.8092, 50.4511, 50.4659, CRS_degrees, CRS_fr)
     # geo_window = GeoWindow.from_square(2.769, 2.7892, 50.44, 50.4518, CRS_degrees, CRS_fr)
-    # geo_window = GeoWindow.from_square(2.7789, 2.7874, 50.4428, 50.4483, CRS_degrees, CRS_fr)
+    geo_window = GeoWindow.from_square(
+        2.7789, 2.7874, 50.4428, 50.4483, CRS_degrees, CRS_fr
+    )
+
+    # Whole city
+    # geo_window = GeoWindow.from_square(2.77, 2.8114, 50.44, 50.466, CRS_degrees, CRS_fr)
 
     geo_data = Loader.load(geo_window)
 
