@@ -1,5 +1,6 @@
 import math
-from shapely.geometry import Polygon, LineString
+from shapely.geometry import Polygon, LineString, Point
+from mage_procgen.Utils.Utils import GeoWindow
 
 default_thickness = 4
 default_lane_nbr = 2
@@ -9,7 +10,12 @@ directions = ["Double sens", "Sens direct", "Sens inverse"]
 
 
 def polygonise(
-    poly_line: LineString, thickness: float, lane_nbr: int, direction: str
+    poly_line: LineString,
+    thickness: float,
+    lane_nbr: int,
+    direction: str,
+    restrict_to_town: bool,
+    window: GeoWindow,
 ) -> Polygon:
 
     translation_module = (
@@ -80,7 +86,17 @@ def polygonise(
                         + current_normale[1] * fraction * translation_module,
                     )
 
-                    lanes[fraction] = [lane_p1, lane_p2]
+                    # Lanes being shapely lines, they cannot be windowed like other objects so we have to do it here
+                    skip_point = False
+                    if restrict_to_town:
+                        new_point = Point(lane_p1[0], lane_p1[1])
+                        town_poly = window.dataframe.geometry[0]
+                        skip_point = not new_point.within(town_poly)
+
+                    if not skip_point:
+                        lanes[fraction] = [lane_p1, lane_p2]
+                    else:
+                        lanes[fraction] = []
                     lanes_previous_segment[fraction] = (lane_p1, lane_p2)
 
                 is_first_segment = False
@@ -169,7 +185,18 @@ def polygonise(
                     if inters_distance > max_point_distance:
                         inters = lane_p1
 
-                    lanes[fraction] = lanes[fraction][:-1] + [inters, lane_p2]
+                    # Lanes being shapely lines, they cannot be windowed like other objects so we have to do it here
+                    skip_point = False
+                    if restrict_to_town:
+                        new_point = Point(lane_p2[0], lane_p2[1])
+                        town_poly = window.dataframe.geometry[0]
+                        skip_point = not new_point.within(town_poly)
+
+                    if not skip_point:
+                        if len(lanes[fraction]) > 0:
+                            lanes[fraction] = lanes[fraction][:-1] + [inters, lane_p2]
+                        else:
+                            lanes[fraction] = [inters, lane_p2]
                     lanes_previous_segment[fraction] = (lane_p1, lane_p2)
         else:
             is_first_point = False

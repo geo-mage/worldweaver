@@ -61,7 +61,9 @@ class Preprocessor:
         roads_with_cars = new_roads.query("NATURE not in @non_car_natures")
         # Transform the Polylines into polygons to allow geometry operations with other dataframes
         roads_elements = [
-            polygonise(x[0], x[1], x[2], x[3])
+            polygonise(
+                x[0], x[1], x[2], x[3], self.config.restrict_to_town, self.window
+            )
             for x in roads_with_cars[["geometry", "LARGEUR", "NB_VOIES", "SENS"]]
             .to_numpy()
             .tolist()

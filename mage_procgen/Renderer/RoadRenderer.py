@@ -136,7 +136,7 @@ class RoadRenderer:
 
                     while place_car:
 
-                        # Place car
+                        # Place car using a vector along which we will align the car model
                         car_point = (
                             previous_point[0]
                             + next_car_distance
