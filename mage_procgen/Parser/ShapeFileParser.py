@@ -22,6 +22,20 @@ class ShapeFileParser:
 
         return file_data
 
+    @staticmethod
+    def load_no_window(
+        file_path: str,
+        to_crs: int,
+        force_2d=False,
+    ) -> g.GeoDataFrame:
+        file_data = read_dataframe(file_path, force_2d=force_2d).to_crs(to_crs)
+
+        file_data.set_geometry(
+            shapely.set_precision(file_data.geometry, 1e-2), inplace=True
+        )
+
+        return file_data
+
 
 # Need this because of a bug (?) if we use pyogrio on roads (timestamp issue)
 class RoadShapeFileParser:

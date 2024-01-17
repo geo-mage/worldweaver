@@ -3,7 +3,7 @@ from mage_procgen.Utils.Utils import RenderingData, GeoWindow, CRS_fr
 from mage_procgen.Utils.Geometry import polygonise
 from shapely.geometry import MultiPolygon, Polygon, mapping
 from functools import reduce
-from mage_procgen.Utils.Config import Config
+from mage_procgen.Utils.Config import Config, window_type_town
 from mage_procgen.Loader.Loader import Loader
 
 
@@ -23,13 +23,6 @@ class Preprocessor:
     def process(self) -> RenderingData:
 
         print("Processing")
-        if self.config.restrict_to_town:
-            town = Loader.load_town_shape(
-                self.window, self.config.town_dpt, self.config.town_name
-            )
-            town.overlay(self.window.dataframe, how="intersection", keep_geom_type=True)
-            self.window = GeoWindow(town.geometry[0], CRS_fr, self.crs)
-
         new_buildings = self.geo_data.buildings.overlay(
             self.window.dataframe, how="intersection", keep_geom_type=True
         )
@@ -62,7 +55,12 @@ class Preprocessor:
         # Transform the Polylines into polygons to allow geometry operations with other dataframes
         roads_elements = [
             polygonise(
-                x[0], x[1], x[2], x[3], self.config.restrict_to_town, self.window
+                x[0],
+                x[1],
+                x[2],
+                x[3],
+                self.config.window_type == window_type_town,
+                self.window,
             )
             for x in roads_with_cars[["geometry", "LARGEUR", "NB_VOIES", "SENS"]]
             .to_numpy()

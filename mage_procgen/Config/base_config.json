@@ -1,0 +1,77 @@
+{
+ "py/object": "mage_procgen.Utils.Config.Config",
+ "window_type": "COORDS",
+ "geo_window": {
+  "py/object": "mage_procgen.Utils.Config.GeoWindowConfig",
+  "x_min": 2.9185,
+  "y_min": 48.9396,
+  "x_max": 2.9314,
+  "y_max": 48.9466,
+  "crs_from": 4326
+ },
+ "town_dpt": 62,
+ "town_name": "Loos-en-Gohelle",
+ "window_shapefile": "",
+ "terrain_resolution": 2,
+ "use_sat_img": true,
+ "flood": false,
+ "flood_height": 10,
+ "flood_cell_size": 1,
+ "export_img": false,
+ "out_img_resolution": 512,
+ "out_img_pixel_size": 0.2,
+ "building_render_config": {
+  "py/object": "mage_procgen.Utils.Config.RenderObjectConfig",
+  "geometry_node_file": "Buildings.blend",
+  "geometry_node_name": "Buildings",
+  "tagging_index": 6
+ },
+ "church_render_config": {
+  "py/object": "mage_procgen.Utils.Config.RenderObjectConfig",
+  "geometry_node_file": "Churches.blend",
+  "geometry_node_name": "Churches",
+  "tagging_index": 6
+ },
+ "factory_render_config": {
+  "py/object": "mage_procgen.Utils.Config.RenderObjectConfig",
+  "geometry_node_file": "Factories.blend",
+  "geometry_node_name": "Factories",
+  "tagging_index": 6
+ },
+ "mall_render_config": {
+  "py/object": "mage_procgen.Utils.Config.RenderObjectConfig",
+  "geometry_node_file": "Malls.blend",
+  "geometry_node_name": "Malls",
+  "tagging_index": 6
+ },
+ "flood_render_config": {
+  "py/object": "mage_procgen.Utils.Config.RenderObjectConfig",
+  "geometry_node_file": "Flood.blend",
+  "geometry_node_name": "Flood",
+  "tagging_index": 2
+ },
+ "forest_render_config": {
+  "py/object": "mage_procgen.Utils.Config.RenderObjectConfig",
+  "geometry_node_file": "Forests2.blend",
+  "geometry_node_name": "Forest",
+  "tagging_index": 3
+ },
+ "road_render_config": {
+  "py/object": "mage_procgen.Utils.Config.RenderObjectConfig",
+  "geometry_node_file": "Roads.blend",
+  "geometry_node_name": "Roads",
+  "tagging_index": 4
+ },
+ "water_render_config": {
+  "py/object": "mage_procgen.Utils.Config.RenderObjectConfig",
+  "geometry_node_file": "Water.blend",
+  "geometry_node_name": "Water",
+  "tagging_index": 2
+ },
+ "car_render_config": {
+  "py/object": "mage_procgen.Utils.Config.RenderObjectConfig",
+  "geometry_node_file": "Cars.blend",
+  "geometry_node_name": "CarsOnVector2",
+  "tagging_index": 5
+ }
+}

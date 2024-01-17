@@ -46,6 +46,10 @@ texture_data_folder = "OHR_RVB"
 additional = "3_SUPPLEMENTS_LIVRAISON"
 slab_file = "dalles.shp"
 
+config_folder = "Config"
+base_config_file = "base_config.json"
+default_config_file = "config.json"
+
 hash_file_extenstion = ".md5"
 
 assets_folder = "Assets"
@@ -69,7 +73,6 @@ def setup_bdtopo(departement, archive_file):
                             TRONCON_DE_ROUTE.shp
                         HYDROGRAPHIE
                             SURFACE_HYDROGRAPHIQUE.shp
-
 
      to
 

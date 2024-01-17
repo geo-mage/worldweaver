@@ -1,13 +1,22 @@
 # Need to import dependencies of packages, and this folder is not in blender's pythonpath
+import shutil
 import sys
 
 sys.path.append("/usr/lib/python3/dist-packages/")
 
+import os
 from numpy import arange
+import fiona
 
 from datetime import datetime
 
 from mage_procgen.Utils.Utils import GeoWindow, CRS_fr, CRS_degrees
+from mage_procgen.Utils.Config import Config
+from mage_procgen.Utils.DataFiles import (
+    config_folder,
+    base_config_file,
+    default_config_file,
+)
 from mage_procgen.Loader.Loader import Loader
 from mage_procgen.Loader.ConfigLoader import ConfigLoader
 from mage_procgen.Processor.Preprocessor import Preprocessor
@@ -29,62 +38,98 @@ from mage_procgen.Utils.Rendering import (
 
 def main():
 
-    config = ConfigLoader.load("/home/verstraa/Work/maps/config.json")
-
-    geo_window: GeoWindow = GeoWindow.from_square(
-        config.geo_window.x_min,
-        config.geo_window.x_max,
-        config.geo_window.y_min,
-        config.geo_window.y_max,
-        config.geo_window.crs_from,
-        config.geo_window.crs_to,
+    _location = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
+    config_filepath = os.path.realpath(
+        os.path.join(_location, config_folder, default_config_file)
     )
 
-    # 77
-    # Fublaines
-    # geo_window = GeoWindow.from_square(2.9185, 2.9314, 48.9396, 48.9466, CRS_degrees, CRS_fr)
-    # geo_window = GeoWindow.from_square(2.93, 2.945, 48.9350, 48.94, CRS_degrees, CRS_fr)
-    # geo_window = GeoWindow.from_square(2.9, 2.955, 48.93, 48.945, CRS_degrees, CRS_fr)
+    if not os.path.isfile(config_filepath):
+        print("No config file found, copying base config")
+        shutil.copyfile(
+            os.path.join(_location, config_folder, base_config_file), config_filepath
+        )
 
-    # Choisy-en-Brie
-    # geo_window = GeoWindow.from_square(3.2050, 3.2350, 48.7545, 48.7650, CRS_degrees, CRS_fr)
+    config = ConfigLoader.load(config_filepath)
 
-    # Meaux
-    # geo_window = GeoWindow.from_square(2.8733, 2.9249, 48.9459, 48.9633, CRS_degrees, CRS_fr)
+    geo_window = None
 
-    # geo_window = GeoWindow.from_square(2.8675, 2.8893, 48.9469, 48.9612, CRS_degrees, CRS_fr)
-    # geo_window = GeoWindow.from_square(2.8977, 2.9083, 48.9459, 48.9501, CRS_degrees, CRS_fr)
+    match config.window_type:
+        case "TOWN":
+            town = Loader.load_town_shape(config.town_dpt, config.town_name)
+            town_bounds = town.geometry[0].bounds
+            # geo_window = GeoWindow.from_square(town_bounds[0], town_bounds[2], town_bounds[1], town_bounds[3],
+            #                                    CRS_fr,
+            #                                    CRS_fr)
+            geo_window = GeoWindow(town.geometry[0], CRS_fr, CRS_fr)
+        case "FILE":
+            file_window = fiona.open(config.window_shapefile)
+            window_crs = int(file_window.crs.to_string().split(":")[1])
+            file_bounds = file_window.bounds
+            geo_window = GeoWindow.from_square(
+                file_bounds[0],
+                file_bounds[2],
+                file_bounds[1],
+                file_bounds[3],
+                window_crs,
+                CRS_fr,
+            )
+        case "COORDS":
+            geo_window: GeoWindow = GeoWindow.from_square(
+                config.geo_window.x_min,
+                config.geo_window.x_max,
+                config.geo_window.y_min,
+                config.geo_window.y_max,
+                config.geo_window.crs_from,
+                CRS_fr,
+            )
+            # 77
+            # Fublaines
+            # geo_window = GeoWindow.from_square(2.9185, 2.9314, 48.9396, 48.9466, CRS_degrees, CRS_fr)
+            # geo_window = GeoWindow.from_square(2.93, 2.945, 48.9350, 48.94, CRS_degrees, CRS_fr)
+            # geo_window = GeoWindow.from_square(2.9, 2.955, 48.93, 48.945, CRS_degrees, CRS_fr)
 
-    # La Ferté-sous-Jouarre
-    # geo_window = GeoWindow.from_square(3.1, 3.16, 48.93, 48.97, CRS_degrees, CRS_fr)
-    # geo_window = GeoWindow.from_square(3.11, 3.15, 48.933, 48.964, CRS_degrees, CRS_fr)
+            # Choisy-en-Brie
+            # geo_window = GeoWindow.from_square(3.2050, 3.2350, 48.7545, 48.7650, CRS_degrees, CRS_fr)
 
-    # 42 38 69
-    # La Chapelle-Villars
-    # geo_window = GeoWindow.from_square(4.6900, 4.7340, 45.4765, 45.4550, CRS_degrees, CRS_fr)
-    # geo_window = GeoWindow.from_square(4.6900, 4.74, 45.4600, 45.493, CRS_degrees, CRS_fr)
-    # geo_window = GeoWindow.from_square(4.6900, 4.8000, 45.4400, 45.5000, CRS_degrees, CRS_fr)
+            # Meaux
+            # geo_window = GeoWindow.from_square(2.8733, 2.9249, 48.9459, 48.9633, CRS_degrees, CRS_fr)
 
-    # 06
-    # Nice shore
-    # geo_window = GeoWindow.from_square(7.285, 7.30800, 43.68439, 43.69156, CRS_degrees, CRS_fr)
-    # geo_window = GeoWindow.from_square(7.293, 7.30800, 43.68439, 43.69156, CRS_degrees, CRS_fr)
-    # Nice inland
-    # geo_window = GeoWindow.from_square(7.245, 7.27800, 43.698, 43.716, CRS_degrees, CRS_fr)
-    # geo_window = GeoWindow.from_square(7.26, 7.275, 43.698, 43.7050, CRS_degrees, CRS_fr)
-    # Saint Sauveur sur Tinée
-    # geo_window = GeoWindow.from_square(7.097, 7.11500, 44.077, 44.09, CRS_degrees, CRS_fr)
-    geo_window = GeoWindow.from_square(7.1, 7.11, 44.077, 44.09, CRS_degrees, CRS_fr)
+            # geo_window = GeoWindow.from_square(2.8675, 2.8893, 48.9469, 48.9612, CRS_degrees, CRS_fr)
+            # geo_window = GeoWindow.from_square(2.8977, 2.9083, 48.9459, 48.9501, CRS_degrees, CRS_fr)
 
-    # 62
-    # Loos-en-gohelle
-    # geo_window = GeoWindow.from_square(2.7735, 2.8117, 50.4409, 50.4659, CRS_degrees, CRS_fr)
-    # geo_window = GeoWindow.from_square(2.7817, 2.8092, 50.4511, 50.4659, CRS_degrees, CRS_fr)
-    # geo_window = GeoWindow.from_square(2.769, 2.7892, 50.44, 50.4518, CRS_degrees, CRS_fr)
-    # geo_window = GeoWindow.from_square(2.7789, 2.7874, 50.4428, 50.4483, CRS_degrees, CRS_fr)
+            # La Ferté-sous-Jouarre
+            # geo_window = GeoWindow.from_square(3.1, 3.16, 48.93, 48.97, CRS_degrees, CRS_fr)
+            # geo_window = GeoWindow.from_square(3.11, 3.15, 48.933, 48.964, CRS_degrees, CRS_fr)
 
-    # Whole city
-    geo_window = GeoWindow.from_square(2.77, 2.8114, 50.44, 50.466, CRS_degrees, CRS_fr)
+            # 42 38 69
+            # La Chapelle-Villars
+            # geo_window = GeoWindow.from_square(4.6900, 4.7340, 45.4765, 45.4550, CRS_degrees, CRS_fr)
+            # geo_window = GeoWindow.from_square(4.6900, 4.74, 45.4600, 45.493, CRS_degrees, CRS_fr)
+            # geo_window = GeoWindow.from_square(4.6900, 4.8000, 45.4400, 45.5000, CRS_degrees, CRS_fr)
+
+            # 06
+            # Nice shore
+            # geo_window = GeoWindow.from_square(7.285, 7.30800, 43.68439, 43.69156, CRS_degrees, CRS_fr)
+            # geo_window = GeoWindow.from_square(7.293, 7.30800, 43.68439, 43.69156, CRS_degrees, CRS_fr)
+            # Nice inland
+            # geo_window = GeoWindow.from_square(7.245, 7.27800, 43.698, 43.716, CRS_degrees, CRS_fr)
+            # geo_window = GeoWindow.from_square(7.26, 7.275, 43.698, 43.7050, CRS_degrees, CRS_fr)
+            # Saint Sauveur sur Tinée
+            # geo_window = GeoWindow.from_square(7.097, 7.11500, 44.077, 44.09, CRS_degrees, CRS_fr)
+            # geo_window = GeoWindow.from_square(7.1, 7.11, 44.077, 44.09, CRS_degrees, CRS_fr)
+
+            # 62
+            # Loos-en-gohelle
+            # geo_window = GeoWindow.from_square(2.7735, 2.8117, 50.4409, 50.4659, CRS_degrees, CRS_fr)
+            # geo_window = GeoWindow.from_square(2.7817, 2.8092, 50.4511, 50.4659, CRS_degrees, CRS_fr)
+            # geo_window = GeoWindow.from_square(2.769, 2.7892, 50.44, 50.4518, CRS_degrees, CRS_fr)
+
+            # Whole city
+            # geo_window = GeoWindow.from_square(2.77, 2.8114, 50.44, 50.466, CRS_degrees, CRS_fr)
+        case _:
+            raise ValueError(
+                "Invalid config: invalid window type: ", config.window_type
+            )
 
     geo_data = Loader.load(geo_window)
 

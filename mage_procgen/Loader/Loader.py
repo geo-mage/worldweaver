@@ -24,7 +24,7 @@ class Loader:
             CRS_fr,
         )
 
-        departements_names = arrondissements["CODE_DEPT"].values
+        departements_names = set(arrondissements["CODE_DEPT"].values)
 
         building_data = None
         forest_data = None
@@ -40,6 +40,10 @@ class Loader:
 
             print("Loading data for departement " + current_departement)
 
+            # Specifically for terrain, we have to make sure it loads a complete rectangle
+            terrain_window = geo_window = GeoWindow.from_square(
+                bbox[0], bbox[2], bbox[1], bbox[3], CRS_fr, CRS_fr
+            )
             current_terrain_data = ASCParser.load(
                 os.path.join(
                     df.base_folder,
@@ -49,7 +53,7 @@ class Loader:
                     df.delivery,
                     df.terrain_data_folder,
                 ),
-                geo_window,
+                terrain_window,
                 os.path.join(
                     df.base_folder,
                     df.departements,
@@ -193,11 +197,9 @@ class Loader:
         return geo_data
 
     @staticmethod
-    def load_town_shape(geo_window: GeoWindow, departement_nbr: int, town_name: str):
+    def load_town_shape(departement_nbr: int, town_name: str):
 
-        bbox = geo_window.bounds
-
-        towns = ShapeFileParser.load(
+        towns = ShapeFileParser.load_no_window(
             os.path.join(
                 df.base_folder,
                 df.departements,
@@ -207,11 +209,11 @@ class Loader:
                 df.dpt_folder,
                 df.town_file,
             ),
-            bbox,
             CRS_fr,
         )
 
-        town = towns.query("NOM == @town_name")
+        # Need to reset the index of the dataframe to ease the access of the data, and there is only one line anyway
+        town = towns.query("NOM == @town_name").reset_index()
 
         return town
 

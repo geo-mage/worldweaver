@@ -12,6 +12,28 @@ from mage_procgen.Loader.ConfigLoader import ConfigLoader
 hex_color_regex = re.compile("^#[0-9a-fA-F]{6}$")
 hex_color_split_regex = re.compile("..")
 
+#
+# "tag_result_order": [
+#   "Buildings",
+#   "Roads",
+#   "Forest",
+#   "Still_Water",
+#   "Flowing_Water",
+#   "Flood",
+#   "Cars",
+#   "Terrain"
+# ],
+# "tagging_config": {
+#  "Background": "#000000",
+#  "Buildings": "#FF00FF",
+#  "Still_Water": "#0000FF",
+#  "Flowing_Water": "#0000FF",
+#  "Roads": "#FF0000",
+#  "Flood": "#0000FF",
+#  "Cars": "#FFFF00",
+#  "Forest": "#00FF00"
+#  }
+
 
 def tagging_file_to_png(file_name, flood_height, highest_object):
 

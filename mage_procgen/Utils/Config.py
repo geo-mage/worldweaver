@@ -1,5 +1,9 @@
 from dataclasses import dataclass
 
+window_type_coords = "COORDS"
+window_type_town = "TOWN"
+window_type_file = "FILE"
+
 
 @dataclass
 class RenderObjectConfig:
@@ -15,17 +19,15 @@ class GeoWindowConfig:
     x_max: float
     y_max: float
     crs_from: int
-    crs_to: int
 
 
 @dataclass
 class Config:
+    window_type: str
     geo_window: GeoWindowConfig
-    restrict_to_town: bool
     town_dpt: int
     town_name: str
-    render_objects: bool
-    render_terrain: bool
+    window_shapefile: str
     terrain_resolution: float
     use_sat_img: bool
     flood: bool
@@ -43,5 +45,3 @@ class Config:
     road_render_config: RenderObjectConfig
     water_render_config: RenderObjectConfig
     car_render_config: RenderObjectConfig
-    tag_result_order: list
-    tagging_config: dict
