@@ -57,36 +57,36 @@ assets_folder = "Assets"
 file_coords_regex = re.compile("_[0-9]{4}_[0-9]{4}_")
 
 
-def setup_bdtopo(departement, archive_file):
+def setup_bdtopo(departement: int, archive_file: str):
     """
-    Extracts BDTOPO archive, and changes the folders to simplify it
-    from
+    Extracts BDTOPO archive, and changes the folders to simplify it from:
 
-     BDTOPO
-         BDTOPO_3-3_TOUSTHEMES_SHP_LAMB93_D006_2023-06-15
-             BDTOPO
-                 1_DONNEES_LIVRAISON_2021-04-00084
-                     BDT_3-3_SHP_LAMB93_D006-ED2023-06-15
-                        OCCUPATION_DU_SOL
-                            ZONE_DE_VEGETATION.shp
-                        TRANSPORT
-                            TRONCON_DE_ROUTE.shp
-                        HYDROGRAPHIE
-                            SURFACE_HYDROGRAPHIQUE.shp
+        * BDTOPO
+            * BDTOPO_3-3_TOUSTHEMES_SHP_LAMB93_D006_2023-06-15
+                * BDTOPO
+                    * 1_DONNEES_LIVRAISON_2021-04-00084
+                         * BDT_3-3_SHP_LAMB93_D006-ED2023-06-15
+                             * OCCUPATION_DU_SOL
+                                 * ZONE_DE_VEGETATION.shp
+                             * TRANSPORT
+                                 * TRONCON_DE_ROUTE.shp
+                             * HYDROGRAPHIE
+                                 * SURFACE_HYDROGRAPHIQUE.shp
 
-     to
+    to:
 
-     BDTOPO
-         1_DONNEES_LIVRAISON_2021-04-00084
-            OCCUPATION_DU_SOL
-                ZONE_DE_VEGETATION.shp
-            TRANSPORT
-                TRONCON_DE_ROUTE.shp
-            HYDROGRAPHIE
-                SURFACE_HYDROGRAPHIQUE.shp
+        * BDTOPO:
+             * 1_DONNEES_LIVRAISON_2021-04-00084
+                 * OCCUPATION_DU_SOL
+                     * ZONE_DE_VEGETATION.shp
+                 * TRANSPORT
+                     * TRONCON_DE_ROUTE.shp
+                 * HYDROGRAPHIE
+                     * SURFACE_HYDROGRAPHIQUE.shp
 
-    :param departement: number of the departement
-    :param archive_file: archive of the database (or the first file of the split archive)
+    Parameters:
+        departement: number of the departement
+        archive_file: archive of the database (or the first file of the split archive)
     """
 
     current_base_folder = os.path.join(
@@ -131,34 +131,34 @@ def setup_bdtopo(departement, archive_file):
 
 
 # TODO: delete the other folders ?
-def setup_bdortho(departement, archive_file):
+def setup_bdortho(departement: int, archive_file: str):
     """
-    Extracts BDORTHO archive, and changes the folders to simplify it
-    from
+    Extracts BDORTHO archive, and changes the folders to simplify it from:
 
-     BDORTHO
-         ORTHOHR_1-0_RVB-0M20_JP2-E080_LAMB93_D006_2020-01-01
-             ORTHOHR
-                 1_DONNEES_LIVRAISON_2021-04-00084
-                     OHR_RVB_0M20_JP2-E080_LAMB93_D06-2020
-                         *.jp2
-                 2_METADONNEES_LIVRAISON_2021-04-00084
-                 3_SUPPLEMENTS_LIVRAISON_2021-04-00084
-                     OHR_RVB_0M20_JP2-E080_LAMB93_D06-2020/
-                         dalles.shp
+         * BDORTHO
+             * ORTHOHR_1-0_RVB-0M20_JP2-E080_LAMB93_D006_2020-01-01
+                 * ORTHOHR
+                     * 1_DONNEES_LIVRAISON_2021-04-00084
+                          * OHR_RVB_0M20_JP2-E080_LAMB93_D06-2020
+                              * *.jp2
+                      * 2_METADONNEES_LIVRAISON_2021-04-00084
+                      * 3_SUPPLEMENTS_LIVRAISON_2021-04-00084
+                          * OHR_RVB_0M20_JP2-E080_LAMB93_D06-2020/
+                              * dalles.shp
 
-     to
+    to:
 
-     BDORTHO
-         1_DONNEES_LIVRAISON
-             OHR_RVB
-                 *.jp2
-         3_SUPPLEMENTS_LIVRAISON
-             OHR_RVB
-                 dalles.shp
+         * BDORTHO
+             * 1_DONNEES_LIVRAISON
+                 * OHR_RVB
+                     * *.jp2
+             * 3_SUPPLEMENTS_LIVRAISON
+                 * OHR_RVB
+                      * dalles.shp
 
-    :param departement: number of the departement
-    :param archive_file: archive of the database (or the first file of the split archive)
+    Parameters:
+        departement: number of the departement
+        archive_file: archive of the database (or the first file of the split archive)
     """
 
     current_base_folder = os.path.join(
@@ -235,34 +235,34 @@ def setup_bdortho(departement, archive_file):
     )
 
 
-def setup_rgealti(departement, archive_file):
+def setup_rgealti(departement: int, archive_file: str):
     """
-    Extracts RGEALTI archive, and changes the folders to simplify it
-    from
+    Extracts RGEALTI archive, and changes the folders to simplify it from:
 
-     RGEALTI
-         RGEALTI_2-0_1M_ASC_LAMB93-IGN69_D077_2021-03-03
-             RGEALTI
-                 1_DONNEES_LIVRAISON_2021-04-00084
-                     RGEALTI_MNT_1M_ASC_LAMB93_IGN69_D077_20210303
-                         *.asc
-                 2_METADONNEES_LIVRAISON_2021-04-00084
-                 3_SUPPLEMENTS_LIVRAISON_2021-04-00084
-                     RGEALTI_MNT_1M_ASC_LAMB93_IGN69_D077_20210303
-                         dalles.shp
+         * RGEALTI
+             * RGEALTI_2-0_1M_ASC_LAMB93-IGN69_D077_2021-03-03
+                 * RGEALTI
+                     * 1_DONNEES_LIVRAISON_2021-04-00084
+                         * RGEALTI_MNT_1M_ASC_LAMB93_IGN69_D077_20210303
+                             * *.asc
+                     * 2_METADONNEES_LIVRAISON_2021-04-00084
+                     * 3_SUPPLEMENTS_LIVRAISON_2021-04-00084
+                         * RGEALTI_MNT_1M_ASC_LAMB93_IGN69_D077_20210303
+                             * dalles.shp
 
-     to
+    to:
 
-     RGEALTI
-         1_DONNEES_LIVRAISON
-             MNT
-                 *.asc
-         3_SUPPLEMENTS_LIVRAISON
-             MNT
-                 dalles.shp
+         * RGEALTI
+             * 1_DONNEES_LIVRAISON
+                 * MNT
+                     * *.asc
+             * 3_SUPPLEMENTS_LIVRAISON
+                 * MNT
+                     * dalles.shp
 
-    :param departement: number of the departement
-    :param archive_file: archive of the database (or the first file of the split archive)
+    Parameters:
+        departement: number of the departement
+        archive_file: archive of the database (or the first file of the split archive)
     """
 
     current_base_folder = os.path.join(

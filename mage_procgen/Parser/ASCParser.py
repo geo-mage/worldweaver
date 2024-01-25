@@ -1,6 +1,5 @@
 import os
 
-import re
 import pandas as p
 from mage_procgen.Utils.Utils import TerrainData
 from mage_procgen.Utils.Utils import GeoWindow, CRS_fr

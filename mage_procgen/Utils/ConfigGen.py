@@ -1,3 +1,7 @@
+"""
+    Module to create and edit configuration file for the application
+"""
+
 import os
 import dataclasses
 from mage_procgen.Loader.ConfigLoader import ConfigLoader
@@ -7,83 +11,84 @@ from mage_procgen.Utils.DataFiles import config_folder, default_config_file
 
 def generate_config(new_file_name: str, **kwargs):
     """
-        Generate a configuration file from another configuration and saves it as <new_file_name>
-        :param new_file_name: The name of the new configuration file
-        :param kwargs: Parameters of the config that will be changed from the base configuration. All are optionnal. Accepted parameters are:
-     - from_file: str, The name of the base configuration from which the new configuration will be created. If ommited, it will be the default configuration provided with the software.
+    Generate a configuration file from another configuration and saves it as 'new_file_name'
 
-    Render window parameters:
-     - window_type: str, Type of definition used for the window. Can be "COORDS", "TOWN" or "FILE"
-     - window_x_min: float, Min X of the render window. Only used if window type is "COORDS"
-     - window_y_min: float, Min Y of the render window. Only used if window type is "COORDS"
-     - window_x_max: float, Max X of the render window. Only used if window type is "COORDS"
-     - window_y_max: float, Max Y of the render window. Only used if window type is "COORDS"
-     - window_from_crs: int, CRS code the xmin, xmax, ymin and ymax are given. Only used if window type is "COORDS"
-     - town_dpt: int, Number of the departement in which the town is. Only used if window type is "TOWN"
-     - town_name: str, Name of the town that will determine the render window. Only used if window type is "TOWN"
-     - window_shapefile: str, File name of the file that will define the render window. Only used if window type is "FILE"
+    Parameters:
+        new_file_name: The name of the new configuration file
+        kwargs: Parameters of the config that will be changed from the base configuration. All are optionnal. Accepted parameters are:
 
-    Render parameters:
-     - terrain_resolution: float, Spatial resolution of the terrain in the render.
-     - use_sat_img: bool, If True, will use BDORTHO images as texture for the terrain. If false, will use a base texture.
+    Other parameters: File parameters:
+        from_file (str): The name of the base configuration from which the new configuration will be created. If ommited, it will be the default configuration provided with the software.
 
-    Flood parameters:
-     - flood: bool, If True, will generate a flood on the scene.
-     - flood_height: float, Only used if flood is True. Height of the flood in meters
-     - flood_cell_size: float, Only used if flood is True. Spatial resolution of the flood
+    Other parameters: Render window parameters:
+        window_type (str): Type of definition used for the window. Can be "COORDS", "TOWN" or "FILE"
+        window_x_min (float): Min X of the render window. Only used if window type is "COORDS"
+        window_y_min (float): Min Y of the render window. Only used if window type is "COORDS"
+        window_x_max (float): Max X of the render window. Only used if window type is "COORDS"
+        window_y_max (float): Max Y of the render window. Only used if window type is "COORDS"
+        window_from_crs (int): CRS code the xmin, xmax, ymin and ymax are given. Only used if window type is "COORDS"
+        town_dpt (int): Number of the departement in which the town is. Only used if window type is "TOWN"
+        town_name (str): Name of the town that will determine the render window. Only used if window type is "TOWN"
+        window_shapefile (str): File name of the file that will define the render window. Only used if window type is "FILE"
 
-    Output parameters:
-     - export_img: bool, If True, will generate png files from the scene. If False, will show all the buildings, cars, trees etc in the whole render scene.
-     - out_img_resolution: int, Resolution of the output images
-     - out_img_pixel_size: float, Size of a pixel, in m.
+    Other parameters: Render parameters:
+        terrain_resolution (float): Spatial resolution of the terrain in the render.
+        use_sat_img (bool): If True, will use BDORTHO images as texture for the terrain. If false, will use a base texture.
 
-    Assets:
-        * Normal buildings:
-     - building_render_config_geometry_node_file: str, Name of the asset file for normal buildings
-     - building_render_config_geometry_node_name: str, Name of the geometry node setup for normal buildings
-     - building_render_config_tagging_index: int, Index using which normal buildings will be tagged in the semantic map
+    Other parameters: Flood parameters:
+        flood (bool): If True, will generate a flood on the scene.
+        flood_height (float): Only used if flood is True. Height of the flood in meters
+        flood_cell_size (float): Only used if flood is True. Spatial resolution of the flood
 
-        * Churches:
-     - church_render_config_geometry_node_file: str, Name of the asset file for churches
-     - church_render_config_geometry_node_name: str, Name of the geometry node setup for churches
-     - church_render_config_tagging_index: int, Index using which churches will be tagged in the semantic map
+    Other parameters: Output parameters:
+        export_img (bool): If True, will generate png files from the scene. If False, will show all the buildings, cars, trees etc in the whole render scene.
+        out_img_resolution (int): Resolution of the output images
+        out_img_pixel_size (float): Size of a pixel, in m.
 
-        * Factories:
-     - factory_render_config_geometry_node_file: str, Name of the asset file for factories
-     - factory_render_config_geometry_node_name: str, Name of the geometry node setup for factories
-     - factory_render_config_tagging_index: int, Index using which factories will be tagged in the semantic map
+    Other parameters: Assets for Normal buildings:
+        building_render_config_geometry_node_file (str): Name of the asset file for normal buildings
+        building_render_config_geometry_node_name (str): Name of the geometry node setup for normal buildings
+        building_render_config_tagging_index (int): Index using which normal buildings will be tagged in the semantic map
 
-        * Malls:
-     - mall_render_config_geometry_node_file: str, Name of the asset file for malls
-     - mall_render_config_geometry_node_name: str, Name of the geometry node setup for malls
-     - mall_render_config_tagging_index: int, Index using which malls will be tagged in the semantic map
+    Other parameters: Assets for Churches:
+        church_render_config_geometry_node_file (str): Name of the asset file for churches
+        church_render_config_geometry_node_name (str): Name of the geometry node setup for churches
+        church_render_config_tagging_index (int): Index using which churches will be tagged in the semantic map
 
-        * Flood:
-     - flood_render_config_geometry_node_file: str, Name of the asset file for the flood
-     - flood_render_config_geometry_node_name: str, Name of the geometry node setup for the flood
-     - flood_render_config_tagging_index: int, Index using which the flood will be tagged in the semantic map
+    Other parameters: Assets for Factories:
+        factory_render_config_geometry_node_file (str): Name of the asset file for factories
+        factory_render_config_geometry_node_name (str): Name of the geometry node setup for factories
+        factory_render_config_tagging_index (int): Index using which factories will be tagged in the semantic map
 
-        * Forests:
-     - forest_render_config_geometry_node_file: str, Name of the asset file for forests
-     - forest_render_config_geometry_node_name: str, Name of the geometry node setup for forests
-     - forest_render_config_tagging_index: int, Index using which forests will be tagged in the semantic map
+    Other parameters: Assets for Malls:
+        mall_render_config_geometry_node_file (str): Name of the asset file for malls
+        mall_render_config_geometry_node_name (str): Name of the geometry node setup for malls
+        mall_render_config_tagging_index (int): Index using which malls will be tagged in the semantic map
 
-        * Roads:
-     - road_render_config_geometry_node_file: str, Name of the asset file for roads
-     - road_render_config_geometry_node_name: str, Name of the geometry node setup for roads
-     - road_render_config_tagging_index: int, Index using which roads will be tagged in the semantic map
+    Other parameters: Assets for Flood:
+        flood_render_config_geometry_node_file (str): Name of the asset file for the flood
+        flood_render_config_geometry_node_name (str): Name of the geometry node setup for the flood
+        flood_render_config_tagging_index (int): Index using which the flood will be tagged in the semantic map
 
-        * Water:
-     - water_render_config_geometry_node_file: str, Name of the asset file for water
-     - water_render_config_geometry_node_name: str, Name of the geometry node setup for water
-     - water_render_config_tagging_index: int, Index using which water will be tagged in the semantic map
+    Other parameters: Assets for Forests:
+        forest_render_config_geometry_node_file (str): Name of the asset file for forests
+        forest_render_config_geometry_node_name (str): Name of the geometry node setup for forests
+        forest_render_config_tagging_index (int): Index using which forests will be tagged in the semantic map
 
-        * Cars:
-     - car_render_config_geometry_node_file: str, Name of the asset file for cars
-     - car_render_config_geometry_node_name: str, Name of the geometry node setup for cars
-     - car_render_config_tagging_index: int, Index using which cars will be tagged in the semantic map
+    Other parameters: Assets for Roads:
+        road_render_config_geometry_node_file (str): Name of the asset file for roads
+        road_render_config_geometry_node_name (str): Name of the geometry node setup for roads
+        road_render_config_tagging_index (int): Index using which roads will be tagged in the semantic map
 
-        :return: Nothing
+    Other parameters: Assets for Water:
+        water_render_config_geometry_node_file (str): Name of the asset file for water
+        water_render_config_geometry_node_name (str): Name of the geometry node setup for water
+        water_render_config_tagging_index (int): Index using which water will be tagged in the semantic map
+
+    Other parameters: Assets for Cars:
+        car_render_config_geometry_node_file (str): Name of the asset file for cars
+        car_render_config_geometry_node_name (str): Name of the geometry node setup for cars
+        car_render_config_tagging_index (int): Index using which cars will be tagged in the semantic map
     """
     _location = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
     default_config_filepath = os.path.realpath(
@@ -270,19 +275,20 @@ def set_window_coords(
     window_x_max: float,
     window_y_max: float,
     window_from_crs: int,
-    from_file=None,
+    from_file: str = None,
 ):
     """
-    Changes the config to use coordinates to define the render window and saves it at <new_file_name>.
-    Base configuration will be the one in <from_file> if provided, or the base configuration if not.
-    :param new_file_name: str, Name of the new configuration file
-    :param window_x_min: float, Min X of the render window.
-    :param window_y_min: float, Min Y of the render window.
-    :param window_x_max: float, Max X of the render window.
-    :param window_y_max: float, Max Y of the render window.
-    :param window_from_crs: int, CRS code the xmin, xmax, ymin and ymax are given.
-    :param from_file: str, Optional. Name of the base configuration.
-    :return:
+    Changes the config to use coordinates to define the render window and saves it at 'new_file_name'.
+    Base configuration will be the one in 'from_file' if provided, or the base configuration if not.
+
+    Parameters:
+        new_file_name: Name of the new configuration file
+        window_x_min: Min X of the render window.
+        window_y_min: Min Y of the render window.
+        window_x_max: Max X of the render window.
+        window_y_max: ax Y of the render window.
+        window_from_crs: CRS code the xmin, xmax, ymin and ymax are given.
+        from_file: Optional. Name of the base configuration.
     """
     if from_file is not None:
         generate_config(
@@ -307,15 +313,18 @@ def set_window_coords(
         )
 
 
-def set_window_town(new_file_name: str, town_dpt: int, town_name: str, from_file=None):
+def set_window_town(
+    new_file_name: str, town_dpt: int, town_name: str, from_file: str = None
+):
     """
-    Changes the config to use town shape to define the render window and saves it at <new_file_name>.
-    Base configuration will be the one in <from_file> if provided, or the base configuration if not.
-    :param new_file_name: str, Name of the new configuration file
-    :param town_dpt: int, Number of the departement in which the town is. Only used if window type is "TOWN"
-    :param town_name: str, Name of the town that will determine the render window. Only used if window type is "TOWN"
-    :param from_file: str, Optional. Name of the base configuration.
-    :return:
+    Changes the config to use town shape to define the render window and saves it at 'new_file_name'.
+    Base configuration will be the one in 'from_file' if provided, or the base configuration if not.
+
+    Parameters:
+        new_file_name: Name of the new configuration file
+        town_dpt: Number of the departement in which the town is. Only used if window type is "TOWN"
+        town_name: Name of the town that will determine the render window. Only used if window type is "TOWN"
+        from_file: Optional. Name of the base configuration.
     """
     if from_file is not None:
         generate_config(
@@ -334,14 +343,15 @@ def set_window_town(new_file_name: str, town_dpt: int, town_name: str, from_file
         )
 
 
-def set_window_file(new_file_name: str, window_shapefile: str, from_file=None):
+def set_window_file(new_file_name: str, window_shapefile: str, from_file: str = None):
     """
-    Changes the config to use town shape to define the render window and saves it at <new_file_name>.
-    Base configuration will be the one in <from_file> if provided, or the base configuration if not.
-    :param new_file_name: str, Name of the new configuration file
-    :param window_shapefile: str, File name of the file that will define the render window.
-    :param from_file: str, Optional. Name of the base configuration.
-    :return:
+    Changes the config to use town shape to define the render window and saves it at 'new_file_name'.
+    Base configuration will be the one in 'from_file' if provided, or the base configuration if not.
+
+    Parameters:
+        new_file_name: Name of the new configuration file
+        window_shapefile: File name of the file that will define the render window.
+        from_file: Optional. Name of the base configuration.
     """
     if from_file is not None:
         generate_config(
@@ -361,25 +371,27 @@ def set_geometry_node(
     object_type: str,
     geometry_node_file: str,
     geometry_node_name: str,
-    from_file=None,
+    from_file: str = None,
 ):
     """
-    Changes the geometry node asset file or geometry nodes setup name of an object type in a config file and saves it at <new_file_name>.
-    Base configuration will be the one in <from_file> if provided, or the base configuration if not.
-    :param new_file_name: str, Name of the new configuration file
-    :param object_type: str, Type of object affected by the change. Can only be one of:
-        - "BUILDING"
-        - "CHURCH"
-        - "FACTORY"
-        - "MALL"
-        - "FLOOD"
-        - "FOREST"
-        - "ROAD"
-        - "WATER"
-        - "CAR"
-    :param geometry_node_file: str, Name of the blender asset file in which the geometrynodes setup is
-    :param geometry_node_name: str, Name of the geometrynodes setup
-    :param from_file: str, Optional. Name of the base configuration.
+    Changes the geometry node asset file or geometry nodes setup name of an object type in a config file and saves it at 'new_file_name'.
+    Base configuration will be the one in 'from_file' if provided, or the base configuration if not.
+
+    Parameters:
+        new_file_name: Name of the new configuration file
+        object_type: Type of object affected by the change. Can only be one of:
+            "BUILDING",
+            "CHURCH",
+            "FACTORY",
+            "MALL",
+            "FLOOD",
+            "FOREST",
+            "ROAD",
+            "WATER",
+            "CAR"
+        geometry_node_file: Name of the blender asset file in which the geometrynodes setup is
+        geometry_node_name: Name of the geometrynodes setup
+        from_file: Optional. Name of the base configuration.
     """
 
     match object_type:

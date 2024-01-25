@@ -36,18 +36,26 @@ from mage_procgen.Utils.Rendering import (
 )
 
 
-def main():
+def main(filepath):
 
-    _location = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
-    config_filepath = os.path.realpath(
-        os.path.join(_location, config_folder, default_config_file)
-    )
-
-    if not os.path.isfile(config_filepath):
-        print("No config file found, copying base config")
-        shutil.copyfile(
-            os.path.join(_location, config_folder, base_config_file), config_filepath
+    if len(filepath) > 0:
+        print("Using path given by user")
+        config_filepath = filepath
+    else:
+        print("Falling back to default conf")
+        _location = os.path.realpath(
+            os.path.join(os.getcwd(), os.path.dirname(__file__))
         )
+        config_filepath = os.path.realpath(
+            os.path.join(_location, config_folder, default_config_file)
+        )
+
+        if not os.path.isfile(config_filepath):
+            print("No config file found, copying base config")
+            shutil.copyfile(
+                os.path.join(_location, config_folder, base_config_file),
+                config_filepath,
+            )
 
     config = ConfigLoader.load(config_filepath)
 
@@ -164,6 +172,13 @@ def main():
             first_dpt_code = geo_data.departements["INSEE_DEP"][0]
 
             base_export_path = setup_export_folder(first_dpt_code)
+
+            config_filename = os.path.basename(config_filepath)
+            shutil.copyfile(
+                config_filepath,
+                os.path.join(base_export_path, config_filename),
+            )
+
             setup_compositing_render(base_export_path)
             now = datetime.now()
             now_str = now.strftime("%Y_%m_%d:%H:%M:%S:%f")
@@ -183,6 +198,12 @@ def main():
             first_dpt_code = geo_data.departements["INSEE_DEP"][0]
 
             base_export_path = setup_export_folder(first_dpt_code)
+
+            config_filename = os.path.basename(config_filepath)
+            shutil.copyfile(
+                config_filepath,
+                os.path.join(base_export_path, config_filename),
+            )
 
             setup_compositing_render(base_export_path)
 
