@@ -128,9 +128,7 @@ class BaseRenderer:
 
     def interpolate_z(self, x, y):
         """
-        Finds the z coordinate corresponding to the (x,y) point in the input.
-        Warning: Currently, it only returns the z coordinate of the point that is the lower left corner of the cell the input point is in.
-        Since the terrain data has a 1m resolution, it is acceptable to do this instead of doing a bilinear interpolation.
+        Finds the z coordinate corresponding to the (x,y) point in the input using bilinear interpolation
         :param x: the x coordinate of the point
         :param y: the y coordinate of the point
         :return: the corresponding z coordinate of the point
@@ -150,6 +148,7 @@ class BaseRenderer:
                 break
 
         if current_terrain is None:
+            # Should never happen
             return 0
             # raise ValueError(
             #    "Point is outside of terrain: x=" + str(x) + ", y=" + str(y)

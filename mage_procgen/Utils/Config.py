@@ -23,6 +23,7 @@ class GeoWindowConfig:
 
 @dataclass
 class Config:
+    base_folder: str
     window_type: str
     geo_window: GeoWindowConfig
     town_dpt: int
@@ -34,6 +35,7 @@ class Config:
     flood_height: float
     flood_cell_size: float
     export_img: bool
+    use_camera_ortho: bool
     out_img_resolution: int
     out_img_pixel_size: float
     building_render_config: RenderObjectConfig

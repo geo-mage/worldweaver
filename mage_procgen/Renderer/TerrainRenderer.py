@@ -18,8 +18,11 @@ class TerrainRenderer:
     _MaterialFile = "Terrain.blend"
     _AssetsFolder = "Assets"
 
-    def __init__(self, render_resolution: float, file_resolution: float):
+    def __init__(
+        self, base_folder: str, render_resolution: float, file_resolution: float
+    ):
 
+        self.base_folder = base_folder
         self.render_resolution = render_resolution
         self.file_resolution = file_resolution
 
@@ -227,12 +230,13 @@ class TerrainRenderer:
 
                 try:
                     texture_file_path = Loader.Loader.load_texture(
+                        self.base_folder,
                         (
                             mesh_info.x_min,
                             mesh_info.y_min,
                             mesh_info.x_max,
                             mesh_info.y_max,
-                        )
+                        ),
                     )
 
                     D.images.load(texture_file_path)
@@ -274,6 +278,7 @@ class TerrainRenderer:
                         start_coord[1] + cur_coord[1],
                     )
 
+        # Merging all slabs of terrain into one object to enable shrinkwrap of road later
         bpy.ops.object.select_all(action="DESELECT")
         C.view_layer.objects.active = D.collections[parent_collection_name].objects[0]
         for terrain_obj in D.collections[parent_collection_name].objects:

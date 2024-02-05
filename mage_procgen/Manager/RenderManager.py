@@ -40,7 +40,7 @@ class RenderManager:
         self.current_zone = None
         configure_render(self.window.center_deg)
         self.terrain_renderer = TerrainRenderer.TerrainRenderer(
-            self.config.terrain_resolution, 1
+            config.base_folder, self.config.terrain_resolution, 1
         )
         self.building_renderer = BuildingRenderer.BuildingRenderer(
             self.terrain_data, self.config.building_render_config
@@ -98,71 +98,107 @@ class RenderManager:
     def draw_flood(self, flood_data):
         self.flood_renderer.render(flood_data, rendering_collection_name)
 
-    def beautify_zone(self, restrict_to_camera):
+    def beautify_zone(self, restrict_to_camera, use_camera_presp=False):
 
         zone_window = self.window
 
         if restrict_to_camera:
-            camera = D.objects["Camera"]
-            origin = camera.location
-
-            # camera Z should be by far the highest so this rule of thumb should hold
-            max_distance = 2 * origin[2]
-
-            vector_coord = math.tan(camera.data.angle / 2)
 
             # To draw more than the actual view
             vector_multiplier = 1.2
 
-            vector_ul = (
-                -vector_multiplier * vector_coord,
-                -vector_multiplier * vector_coord,
-                -1,
-            )
-            vector_ur = (
-                vector_multiplier * vector_coord,
-                -vector_multiplier * vector_coord,
-                -1,
-            )
-            vector_ll = (
-                -vector_multiplier * vector_coord,
-                vector_multiplier * vector_coord,
-                -1,
-            )
-            vector_lr = (
-                vector_multiplier * vector_coord,
-                vector_multiplier * vector_coord,
-                -1,
-            )
+            if use_camera_presp:
+                camera = D.objects["Camera"]
+                origin = camera.location
 
-            zone_delimiters = (
-                self.__corner_coord(vector_ul, max_distance, origin),
-                self.__corner_coord(vector_ur, max_distance, origin),
-                self.__corner_coord(vector_ll, max_distance, origin),
-                self.__corner_coord(vector_lr, max_distance, origin),
-            )
+                # camera Z should be by far the highest so this rule of thumb should hold
+                max_distance = 2 * origin[2]
 
-            try:
+                vector_coord = math.tan(camera.data.angle / 2)
+
+                vector_ul = (
+                    -vector_multiplier * vector_coord,
+                    -vector_multiplier * vector_coord,
+                    -1,
+                )
+                vector_ur = (
+                    vector_multiplier * vector_coord,
+                    -vector_multiplier * vector_coord,
+                    -1,
+                )
+                vector_ll = (
+                    -vector_multiplier * vector_coord,
+                    vector_multiplier * vector_coord,
+                    -1,
+                )
+                vector_lr = (
+                    vector_multiplier * vector_coord,
+                    vector_multiplier * vector_coord,
+                    -1,
+                )
+
+                zone_delimiters = (
+                    self.__corner_coord(vector_ul, max_distance, origin),
+                    self.__corner_coord(vector_ur, max_distance, origin),
+                    self.__corner_coord(vector_ll, max_distance, origin),
+                    self.__corner_coord(vector_lr, max_distance, origin),
+                )
+
+                try:
+                    zone_x_min = (
+                        min([c[0][0] for c in zone_delimiters]) + self.window.center[0]
+                    )
+                    zone_x_max = (
+                        max([c[0][0] for c in zone_delimiters]) + self.window.center[0]
+                    )
+                    zone_y_min = (
+                        min([c[0][1] for c in zone_delimiters]) + self.window.center[1]
+                    )
+                    zone_y_max = (
+                        max([c[0][1] for c in zone_delimiters]) + self.window.center[1]
+                    )
+
+                    zone_window = GeoWindow.from_square(
+                        zone_x_min,
+                        zone_x_max,
+                        zone_y_min,
+                        zone_y_max,
+                        self.crs,
+                        self.crs,
+                    )
+
+                except:
+                    raise ValueError(
+                        "Zone to beautify is outside of the boundaries of the scene"
+                    )
+            else:
+                camera = D.objects["Camera_Ortho"]
+                origin = camera.location
+                window_size = camera.data.ortho_scale
+
                 zone_x_min = (
-                    min([c[0][0] for c in zone_delimiters]) + self.window.center[0]
+                    origin[0]
+                    - (window_size / 2) * vector_multiplier
+                    + self.window.center[0]
                 )
                 zone_x_max = (
-                    max([c[0][0] for c in zone_delimiters]) + self.window.center[0]
+                    origin[0]
+                    + (window_size / 2) * vector_multiplier
+                    + self.window.center[0]
                 )
                 zone_y_min = (
-                    min([c[0][1] for c in zone_delimiters]) + self.window.center[1]
+                    origin[1]
+                    - (window_size / 2) * vector_multiplier
+                    + self.window.center[1]
                 )
                 zone_y_max = (
-                    max([c[0][1] for c in zone_delimiters]) + self.window.center[1]
+                    origin[1]
+                    + (window_size / 2) * vector_multiplier
+                    + self.window.center[1]
                 )
 
                 zone_window = GeoWindow.from_square(
                     zone_x_min, zone_x_max, zone_y_min, zone_y_max, self.crs, self.crs
-                )
-
-            except:
-                raise ValueError(
-                    "Zone to beautify is outside of the boundaries of the scene"
                 )
 
         buildings_zone = self.rendering_data.default_buildings.overlay(
@@ -228,11 +264,6 @@ class RenderManager:
         return zone_window
 
     def clean_zone(self):
-        self.forests_renderer.clear_object()
-
-        self.road_renderer.clear_object()
-
-        self.still_water_renderer.clear_object()
 
         self.building_renderer.clear_object()
 
@@ -241,6 +272,12 @@ class RenderManager:
         self.malls_renderer.clear_object()
 
         self.factories_renderer.clear_object()
+
+        self.forests_renderer.clear_object()
+
+        self.road_renderer.clear_object()
+
+        self.still_water_renderer.clear_object()
 
     def __corner_coord(self, ray_direction, max_distance, origin):
 

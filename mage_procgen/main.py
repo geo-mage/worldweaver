@@ -139,7 +139,7 @@ def main(filepath):
                 "Invalid config: invalid window type: ", config.window_type
             )
 
-    geo_data = Loader.load(geo_window)
+    geo_data = Loader.load(config.base_folder, geo_window)
 
     print("Files loaded")
 
@@ -157,9 +157,10 @@ def main(filepath):
         render_manager.beautify_zone(False)
 
     if config.flood:
-        setup_compositing_flood()
+        setup_compositing_flood(config.base_folder)
         flood_threshold = 1000
         flood_data = FloodProcessor.flood(
+            config.base_folder,
             geo_window,
             config.flood_height,
             flood_threshold,
@@ -171,7 +172,7 @@ def main(filepath):
         if not config.export_img:
             first_dpt_code = geo_data.departements["INSEE_DEP"][0]
 
-            base_export_path = setup_export_folder(first_dpt_code)
+            base_export_path = setup_export_folder(config.base_folder, first_dpt_code)
 
             config_filename = os.path.basename(config_filepath)
             shutil.copyfile(
@@ -184,11 +185,19 @@ def main(filepath):
             now_str = now.strftime("%Y_%m_%d:%H:%M:%S:%f")
             set_compositing_render_image_name(now_str + "_tagging")
 
-            setup_img_ortho_res(
-                config.out_img_resolution,
-                config.out_img_pixel_size,
-                (0, 0, 0),
-            )
+            if not config.use_camera_ortho:
+                setup_img_persp(
+                    config.out_img_resolution,
+                    config.out_img_pixel_size,
+                    (0, 0, 0),
+                )
+
+            else:
+                setup_img_ortho_res(
+                    config.out_img_resolution,
+                    config.out_img_pixel_size,
+                    (0, 0, 0),
+                )
 
             render_manager.beautify_zone(False)
             export_rendered_img(base_export_path, now_str)
@@ -197,7 +206,7 @@ def main(filepath):
 
             first_dpt_code = geo_data.departements["INSEE_DEP"][0]
 
-            base_export_path = setup_export_folder(first_dpt_code)
+            base_export_path = setup_export_folder(config.base_folder, first_dpt_code)
 
             config_filename = os.path.basename(config_filepath)
             shutil.copyfile(
@@ -222,14 +231,21 @@ def main(filepath):
                         now = datetime.now()
                         now_str = now.strftime("%Y_%m_%d:%H:%M:%S:%f")
 
-                        setup_img_persp(
-                            config.out_img_resolution,
-                            config.out_img_pixel_size,
-                            (camera_x, camera_y, 0),
-                        )
-
-                        # Beautify
-                        zone_window = render_manager.beautify_zone(True)
+                        if not config.use_camera_ortho:
+                            setup_img_persp(
+                                config.out_img_resolution,
+                                config.out_img_pixel_size,
+                                (camera_x, camera_y, 0),
+                            )
+                            # Beautify
+                            zone_window = render_manager.beautify_zone(True, True)
+                        else:
+                            setup_img_ortho_res(
+                                config.out_img_resolution,
+                                config.out_img_pixel_size,
+                                (camera_x, camera_y, 0),
+                            )
+                            zone_window = render_manager.beautify_zone(True)
 
                         set_compositing_render_image_name(now_str + "_tagging")
 

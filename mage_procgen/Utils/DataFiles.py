@@ -2,8 +2,6 @@ import subprocess
 import os
 import re
 
-base_folder = "/home/verstraa/Work/maps/"
-
 rendering = "rendering"
 
 temp_folder = "TMP"
@@ -57,7 +55,7 @@ assets_folder = "Assets"
 file_coords_regex = re.compile("_[0-9]{4}_[0-9]{4}_")
 
 
-def setup_bdtopo(departement: int, archive_file: str):
+def setup_bdtopo(base_folder: str, departement: int, archive_file: str):
     """
     Extracts BDTOPO archive, and changes the folders to simplify it from:
 
@@ -85,6 +83,7 @@ def setup_bdtopo(departement: int, archive_file: str):
                      * SURFACE_HYDROGRAPHIQUE.shp
 
     Parameters:
+        base_folder: base folder of the application (same one as the one written in the config file)
         departement: number of the departement
         archive_file: archive of the database (or the first file of the split archive)
     """
@@ -131,7 +130,7 @@ def setup_bdtopo(departement: int, archive_file: str):
 
 
 # TODO: delete the other folders ?
-def setup_bdortho(departement: int, archive_file: str):
+def setup_bdortho(base_folder: str, departement: int, archive_file: str):
     """
     Extracts BDORTHO archive, and changes the folders to simplify it from:
 
@@ -157,6 +156,7 @@ def setup_bdortho(departement: int, archive_file: str):
                       * dalles.shp
 
     Parameters:
+        base_folder: base folder of the application (same one as the one written in the config file)
         departement: number of the departement
         archive_file: archive of the database (or the first file of the split archive)
     """
@@ -235,7 +235,7 @@ def setup_bdortho(departement: int, archive_file: str):
     )
 
 
-def setup_rgealti(departement: int, archive_file: str):
+def setup_rgealti(base_folder: str, departement: int, archive_file: str):
     """
     Extracts RGEALTI archive, and changes the folders to simplify it from:
 
@@ -261,6 +261,7 @@ def setup_rgealti(departement: int, archive_file: str):
                      * dalles.shp
 
     Parameters:
+        base_folder: base folder of the application (same one as the one written in the config file)
         departement: number of the departement
         archive_file: archive of the database (or the first file of the split archive)
     """

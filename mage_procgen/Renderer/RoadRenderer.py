@@ -102,6 +102,9 @@ class RoadRenderer:
         m = mesh_obj.modifiers.new("", "NODES")
         m.node_group = D.node_groups[self.geometry_node_name]
 
+        # To improve the positioning of the road, we need to first subdivide it, and shrinkwrap it just above the terrain.
+        # It is not perfect, but it works great if the terrain is not too chaotic. In cases where it does not really work,
+        # Maybe increasing the levels (and render_levels) of the subdivision could work, but it would impact performances.
         s = D.objects["Roads"].modifiers.new("", "SUBSURF")
         s.subdivision_type = "SIMPLE"
         s.levels = 3
@@ -109,7 +112,6 @@ class RoadRenderer:
 
         sw = D.objects["Roads"].modifiers.new("", "SHRINKWRAP")
         sw.wrap_mode = "ABOVE_SURFACE"
-
         sw.target = D.collections[terrain_collection_name].objects[0]
         sw.offset = 0.05
 
@@ -200,9 +202,7 @@ class RoadRenderer:
 
     def interpolate_z(self, x, y):
         """
-        Finds the z coordinate corresponding to the (x,y) point in the input.
-        Warning: Currently, it only returns the z coordinate of the point that is the lower left corner of the cell the input point is in.
-        Since the terrain data has a 1m resolution, it is acceptable to do this instead of doing a bilinear interpolation.
+        Finds the z coordinate corresponding to the (x,y) point in the input using bilinear interpolation
         :param x: the x coordinate of the point
         :param y: the y coordinate of the point
         :return: the corresponding z coordinate of the point
@@ -222,6 +222,7 @@ class RoadRenderer:
                 break
 
         if current_terrain is None:
+            # Should never happen
             return 0
             # raise ValueError(
             #    "Point is outside of terrain: x=" + str(x) + ", y=" + str(y)

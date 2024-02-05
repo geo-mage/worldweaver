@@ -12,14 +12,14 @@ import mage_procgen.Utils.DataFiles as df
 
 class Loader:
     @staticmethod
-    def load(geo_window: GeoWindow) -> GeoData:
+    def load(base_folder: str, geo_window: GeoWindow) -> GeoData:
 
         bbox = geo_window.bounds
 
         print("Loading shp files")
 
         arrondissements = ShapeFileParser.load(
-            os.path.join(df.base_folder, df.departements, df.regions_file),
+            os.path.join(base_folder, df.departements, df.regions_file),
             bbox,
             CRS_fr,
         )
@@ -46,7 +46,7 @@ class Loader:
             )
             current_terrain_data = ASCParser.load(
                 os.path.join(
-                    df.base_folder,
+                    base_folder,
                     df.departements,
                     current_departement,
                     df.terrain_DB,
@@ -55,7 +55,7 @@ class Loader:
                 ),
                 terrain_window,
                 os.path.join(
-                    df.base_folder,
+                    base_folder,
                     df.departements,
                     current_departement,
                     df.terrain_DB,
@@ -69,7 +69,7 @@ class Loader:
 
             current_building_data = ShapeFileParser.load(
                 os.path.join(
-                    df.base_folder,
+                    base_folder,
                     df.departements,
                     current_departement,
                     df.bdtopo_folder,
@@ -87,7 +87,7 @@ class Loader:
 
             current_forest_data = ShapeFileParser.load(
                 os.path.join(
-                    df.base_folder,
+                    base_folder,
                     df.departements,
                     current_departement,
                     df.bdtopo_folder,
@@ -105,7 +105,7 @@ class Loader:
 
             current_road_data = RoadShapeFileParser.load(
                 os.path.join(
-                    df.base_folder,
+                    base_folder,
                     df.departements,
                     current_departement,
                     df.bdtopo_folder,
@@ -123,7 +123,7 @@ class Loader:
 
             current_water_data = ShapeFileParser.load(
                 os.path.join(
-                    df.base_folder,
+                    base_folder,
                     df.departements,
                     current_departement,
                     df.bdtopo_folder,
@@ -142,7 +142,7 @@ class Loader:
 
             current_departement_data = ShapeFileParser.load(
                 os.path.join(
-                    df.base_folder,
+                    base_folder,
                     df.departements,
                     current_departement,
                     df.bdtopo_folder,
@@ -163,7 +163,7 @@ class Loader:
 
             if os.path.isfile(
                 os.path.join(
-                    df.base_folder,
+                    base_folder,
                     df.departements,
                     current_departement,
                     df.bdtopo_folder,
@@ -178,7 +178,7 @@ class Loader:
             # Ocean file is in degrees so we have to convert the box back to this csr
             ocean_box = geo_window.dataframe.to_crs(CRS_degrees).geometry[0].bounds
             oceans_data = ShapeFileParser.load(
-                os.path.join(df.base_folder, df.departements, df.ocean_file),
+                os.path.join(base_folder, df.departements, df.ocean_file),
                 ocean_box,
                 CRS_fr,
                 force_2d=True,
@@ -197,11 +197,11 @@ class Loader:
         return geo_data
 
     @staticmethod
-    def load_town_shape(departement_nbr: int, town_name: str):
+    def load_town_shape(base_folder: str, departement_nbr: int, town_name: str):
 
         towns = ShapeFileParser.load_no_window(
             os.path.join(
-                df.base_folder,
+                base_folder,
                 df.departements,
                 str(departement_nbr),
                 df.bdtopo_folder,
@@ -218,10 +218,12 @@ class Loader:
         return town
 
     @staticmethod
-    def load_texture(mesh_box: tuple[float, float, float, float]) -> str:
+    def load_texture(
+        base_folder: str, mesh_box: tuple[float, float, float, float]
+    ) -> str:
 
         arrondissements = ShapeFileParser.load(
-            os.path.join(df.base_folder, df.departements, df.regions_file),
+            os.path.join(base_folder, df.departements, df.regions_file),
             mesh_box,
             CRS_fr,
         )
@@ -234,7 +236,7 @@ class Loader:
         current_departement = departements[0]
 
         current_texture_folder = os.path.join(
-            df.base_folder, df.departements, df.texture_folder, current_departement
+            base_folder, df.departements, df.texture_folder, current_departement
         )
 
         if not os.path.isdir(current_texture_folder):
@@ -256,7 +258,7 @@ class Loader:
         texture_full_path = os.path.join(current_texture_folder, texture_file_name)
 
         current_texture_image_folder = os.path.join(
-            df.base_folder,
+            base_folder,
             df.departements,
             current_departement,
             df.texture_image_DB,
@@ -264,7 +266,7 @@ class Loader:
             df.texture_data_folder,
         )
         current_texture_image_slab_file = os.path.join(
-            df.base_folder,
+            base_folder,
             df.departements,
             current_departement,
             df.texture_image_DB,

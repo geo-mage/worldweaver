@@ -6,6 +6,7 @@ MAGE Procgen is a Blender addon in python, and uses a few python libraries.
 
 * [Blender](https://www.blender.org/download/) (3.5+ but only tested with 3.5) 
 * [Python](https://www.python.org/downloads/) 3.10
+* [7zip](https://www.7-zip.org/)
 * [geopandas](https://geopandas.org/en/stable/index.html) 0.12
 * [jsonpickle](https://jsonpickle.github.io/) 3
 * [rasterio](https://rasterio.readthedocs.io/en/stable/) 1.3

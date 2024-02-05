@@ -20,10 +20,10 @@ def configure_render(geo_center_deg):
         if a.type == "VIEW_3D":
             for s in a.spaces:
                 if s.type == "VIEW_3D":
-                    # Setting clip end distance to avoid the object disappearing when the camera is moved
+                    # Setting clip end distance because our scene is very large
                     s.clip_end = 100000
 
-                    # Setting the shading type to avoid setting it manually every time
+                    # Setting the shading type
                     s.shading.type = "RENDERED"
 
     # Sun and lighting
@@ -75,11 +75,11 @@ def configure_render(geo_center_deg):
     D.collections[rendering_collection_name].children.link(buildings_collection)
 
 
-def setup_export_folder(departement):
+def setup_export_folder(base_folder, departement):
     now = datetime.now()
     now_str = now.strftime("%Y_%m_%d:%H:%M")
 
-    base_path = os.path.join(df.base_folder, df.rendering, departement, now_str)
+    base_path = os.path.join(base_folder, df.rendering, departement, now_str)
     os.makedirs(base_path, exist_ok=True)
     return base_path
 
@@ -179,36 +179,60 @@ def setup_img_ortho_res(resolution, pixel_size, center):
     return camera_z
 
 
-def setup_compositing_flood():
+def setup_compositing_flood(base_folder: str):
+
+    # Enabling compositing nodes
     D.scenes["Scene"].use_nodes = True
+
+    # Enabling Z pass to be able to get the hightmap
     D.scenes["Scene"].view_layers["ViewLayer"].use_pass_z = True
+
+    # Disabling object index pass (will need to be reactivated if we want to take objects other than terrain into account)
     D.scenes["Scene"].view_layers["ViewLayer"].use_pass_object_index = False
+
+    # Adding the nodes to the node tree to get the setup we want
     scene = C.scene
     nodes = scene.node_tree.nodes
     nodes.clear()
     r_layers = nodes.new("CompositorNodeRLayers")
+
+    # Depth map as an EXR file
     output_file = nodes.new("CompositorNodeOutputFile")
     output_file.format.file_format = "OPEN_EXR"
-    output_file.base_path = os.path.join(df.base_folder, df.rendering, df.temp_folder)
+    output_file.base_path = os.path.join(base_folder, df.rendering, df.temp_folder)
     output_file.file_slots.remove(output_file.inputs[0])
     output_file.file_slots.new("depth_map")
+
+    # Linking it
     links = scene.node_tree.links
     link = links.new(nodes["Render Layers"].outputs[2], output_file.inputs[0])
 
 
 def setup_compositing_render(folder):
+
+    # Enabling compositing nodes
     D.scenes["Scene"].use_nodes = use_nodes = True
+
+    # Disabling Z pass
     D.scenes["Scene"].view_layers["ViewLayer"].use_pass_z = False
+
+    # Enabling object index pass to get the semantic map
     D.scenes["Scene"].view_layers["ViewLayer"].use_pass_object_index = True
+
+    # Adding the nodes to the node tree to get the setup we want
     scene = C.scene
     nodes = scene.node_tree.nodes
     nodes.clear()
     r_layers = nodes.new("CompositorNodeRLayers")
+
+    # Semantic map as a greyscale PNG
     output_file = nodes.new("CompositorNodeOutputFile")
     output_file.format.file_format = "PNG"
     output_file.format.color_mode = "BW"
     output_file.format.color_depth = "8"
     output_file.base_path = folder
+
+    # Linking it
     norm = nodes.new("CompositorNodeNormalize")
     links = scene.node_tree.links
     link = links.new(nodes["Render Layers"].outputs[2], norm.inputs[0])
@@ -216,17 +240,12 @@ def setup_compositing_render(folder):
 
 
 def set_compositing_render_image_name(image_name):
+
+    # The file name is tied to the input name of the node.
+    # So we have to delete the previous input, add another one, and relink it to the correct node
     output_file = D.scenes["Scene"].node_tree.nodes["File Output"]
     output_file.file_slots.remove(output_file.inputs[0])
     output_file.file_slots.new(image_name)
     norm = D.scenes["Scene"].node_tree.nodes["Normalize"]
     links = D.scenes["Scene"].node_tree.links
     link2 = links.new(norm.outputs[0], output_file.inputs[0])
-
-
-# def switch_compositing_flood():
-#     D.scenes["Scene"].use_nodes = True
-#
-#
-# def switch_compositing_render():
-#     D.scenes["Scene"].use_nodes = False

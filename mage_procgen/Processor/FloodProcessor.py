@@ -36,6 +36,7 @@ import array
 class FloodProcessor:
     @staticmethod
     def flood(
+        base_folder: str,
         geo_window: GeoWindow,
         max_flood_height: float,
         flood_threshold: float,
@@ -59,7 +60,7 @@ class FloodProcessor:
         camera_z = setup_img_ortho(size_x, size_y, flood_cell_size, (0, 0))
 
         export_rendered_img(
-            os.path.join(df.base_folder, df.rendering, df.temp_folder),
+            os.path.join(base_folder, df.rendering, df.temp_folder),
             df.temp_rendering_file,
         )
 
@@ -104,7 +105,7 @@ class FloodProcessor:
 
         depth_map_file = OpenEXR.InputFile(
             os.path.join(
-                df.base_folder,
+                base_folder,
                 df.rendering,
                 df.temp_folder,
                 df.depth_map_file_full_name,
@@ -166,10 +167,8 @@ class FloodProcessor:
 
                     # If the neighbor is actually inside the grid (no out of bounds)
                     if (
-                        comp_row >= 0
-                        and comp_row < flood_state_rows
-                        and comp_col >= 0
-                        and comp_col < flood_state_cols
+                        0 <= comp_row < flood_state_rows
+                        and 0 <= comp_col < flood_state_cols
                     ):
                         mod_index = comp_row * flood_state_cols + comp_col
                         rows.append(point_distance_index)

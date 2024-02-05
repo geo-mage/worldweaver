@@ -8,7 +8,7 @@ For this version, only data from IGN [https://www.geoportail.gouv.fr/](https://w
 IGN provides data for each Departement. For each zone you want to render, you need to 
 download:
   - BD TOPO (terrain and infrastructure definition) [https://geoservices.ign.fr/bdtopo](https://geoservices.ign.fr/bdtopo)
-  - RGE Alti (altitude raster) [https://geoservices.ign.fr/rgealti](https://geoservices.ign.fr/rgealti). It is best to chose the 1m resolution dataset rather than the 5m resolution one for more accuracy in the terrain
+  - RGE Alti (altitude raster) [https://geoservices.ign.fr/rgealti](https://geoservices.ign.fr/rgealti). Currently the application only works with the 1m resolution dataset and not the 5m one.
   - BD ORTHO (orthorectified aerial view) [https://geoservices.ign.fr/bdortho](https://geoservices.ign.fr/bdortho)
 
 !!! note "About the data"

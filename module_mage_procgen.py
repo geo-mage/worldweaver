@@ -46,7 +46,7 @@ class ObjectMageProcgenConfigSelect(bpy.types.Operator, ImportHelper):
         self.filepath = addon_prefs.filepath
 
         wm = context.window_manager.fileselect_add(self)
-        return {'RUNNING_MODAL'}
+        return {"RUNNING_MODAL"}
 
     def execute(self, context):
         """Change the configuration file for MAGE Procgen"""

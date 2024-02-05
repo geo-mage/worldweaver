@@ -19,6 +19,7 @@ def generate_config(new_file_name: str, **kwargs):
 
     Other parameters: File parameters:
         from_file (str): The name of the base configuration from which the new configuration will be created. If ommited, it will be the default configuration provided with the software.
+        base_folder (str): The name of the base folder of the application, in which all data will be found
 
     Other parameters: Render window parameters:
         window_type (str): Type of definition used for the window. Can be "COORDS", "TOWN" or "FILE"
@@ -42,6 +43,7 @@ def generate_config(new_file_name: str, **kwargs):
 
     Other parameters: Output parameters:
         export_img (bool): If True, will generate png files from the scene. If False, will show all the buildings, cars, trees etc in the whole render scene.
+        use_camera_ortho (bool): If True, will use orthographic camera for renders. If False, will use a perspective camera
         out_img_resolution (int): Resolution of the output images
         out_img_pixel_size (float): Size of a pixel, in m.
 
@@ -99,6 +101,8 @@ def generate_config(new_file_name: str, **kwargs):
     base_config = ConfigLoader.load(base_config_file)
     new_config = dataclasses.replace(base_config)
 
+    new_config.base_folder = kwargs.get("base_folder", base_config.base_folder)
+
     # Window
     new_config.window_type = kwargs.get("window_type", base_config.window_type)
     new_geo_window = GeoWindowConfig(
@@ -130,6 +134,9 @@ def generate_config(new_file_name: str, **kwargs):
 
     # Output
     new_config.export_img = kwargs.get("export_img", base_config.export_img)
+    new_config.use_camera_ortho = kwargs.get(
+        "use_camera_ortho", base_config.use_camera_ortho
+    )
     new_config.out_img_resolution = kwargs.get(
         "out_img_resolution", base_config.out_img_resolution
     )

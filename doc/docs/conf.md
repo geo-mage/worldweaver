@@ -14,6 +14,8 @@ If you modify assets, make sur they are not too polygon-heavy to avoid saturatin
 
 ## Configuration file structure detail
 
+* `base_folder` is the path to the folder containing all the data the application will use
+
 ### Render Window:
 
 * `window_type` is used to determine how the window will be defined.If it is "COORDS", it will be from the `x_min`, `x_max`, `y_min` and `y_max` coordinates; if it is "TOWN", it will be from the shape of the town indentified by `town_dpt` and `town_name`; and if it is "FILE", it will be from the bounds of the objects described in the shapefile at `window_shapefile`. 
@@ -42,14 +44,15 @@ If you modify assets, make sur they are not too polygon-heavy to avoid saturatin
 
 ### Output parameters:
 
-* `export_img` is the flag that if True, will thell the software generate png files from aerial views the scene. If False, will show all the buildings, cars, trees etc in the whole render scene.
+* `export_img` is the flag that if True, will tell the software to generate png files from aerial views the scene. If False, will show all the buildings, cars, trees etc in the whole render scene.
+* `use_camera_ortho` is the flag that if True, will tell the software to use an orthographic camera for its renders. If False, will use a perspective camera.
 * `out_img_resolution` is the resolution of the output images
 * `out_img_pixel_size` is the size of a pixel, in m.
 
 ### Assets
 
 All assets are configured with the same setup:
-
+use_camera_ortho
 * `geometry_node_file` is the name of the Blender asset file for the object. It must be in the Assets folder. 
 * `geometry_node_name` is the name of the geometry node setup for the object. For more info on how assets should be generated, go to [Assets Management](assets.md). 
 * `tagging_index` is the index using which object will be tagged in the output semantic map.
