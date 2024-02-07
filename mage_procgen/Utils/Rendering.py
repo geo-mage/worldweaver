@@ -179,12 +179,12 @@ def setup_img_ortho_res(resolution, pixel_size, center):
     return camera_z
 
 
-def setup_compositing_flood(base_folder: str):
+def setup_compositing_height_map(base_folder: str):
 
     # Enabling compositing nodes
     D.scenes["Scene"].use_nodes = True
 
-    # Enabling Z pass to be able to get the hightmap
+    # Enabling Z pass to be able to get the heightmap
     D.scenes["Scene"].view_layers["ViewLayer"].use_pass_z = True
 
     # Disabling object index pass (will need to be reactivated if we want to take objects other than terrain into account)
@@ -206,6 +206,38 @@ def setup_compositing_flood(base_folder: str):
     # Linking it
     links = scene.node_tree.links
     link = links.new(nodes["Render Layers"].outputs[2], output_file.inputs[0])
+
+
+def setup_compositing_semantic_map(base_folder: str):
+    # Enabling compositing nodes
+    D.scenes["Scene"].use_nodes = True
+
+    # Disabling Z pass
+    D.scenes["Scene"].view_layers["ViewLayer"].use_pass_z = False
+
+    # Enabling object index pass to get the semantic map
+    D.scenes["Scene"].view_layers["ViewLayer"].use_pass_object_index = True
+
+    # Adding the nodes to the node tree to get the setup we want
+    scene = C.scene
+    nodes = scene.node_tree.nodes
+    nodes.clear()
+    r_layers = nodes.new("CompositorNodeRLayers")
+
+    # Semantic map as a greyscale PNG
+    output_file = nodes.new("CompositorNodeOutputFile")
+    output_file.format.file_format = "PNG"
+    output_file.format.color_mode = "BW"
+    output_file.format.color_depth = "8"
+    output_file.base_path = os.path.join(base_folder, df.rendering, df.temp_folder)
+    output_file.file_slots.remove(output_file.inputs[0])
+    output_file.file_slots.new("semantic_map")
+
+    # Linking it
+    norm = nodes.new("CompositorNodeNormalize")
+    links = scene.node_tree.links
+    link = links.new(nodes["Render Layers"].outputs[2], norm.inputs[0])
+    link2 = links.new(norm.outputs[0], output_file.inputs[0])
 
 
 def setup_compositing_render(folder):

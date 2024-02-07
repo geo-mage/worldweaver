@@ -30,7 +30,6 @@ from mage_procgen.Utils.Rendering import (
     setup_img_persp,
     setup_img_ortho,
     setup_img_ortho_res,
-    setup_compositing_flood,
     setup_compositing_render,
     set_compositing_render_image_name,
 )
@@ -157,7 +156,27 @@ def main(filepath):
         render_manager.beautify_zone(False)
 
     if config.flood:
-        setup_compositing_flood(config.base_folder)
+
+        # First render: writing a height map
+        print("Computing height map")
+        FloodProcessor.generate_height_map(
+            config.base_folder,
+            geo_window,
+            config.flood_cell_size,
+        )
+
+        render_manager.change_terrain_visibility(False)
+
+        # Second render: getting a semantic map without terrain
+        print("Computing sources")
+        FloodProcessor.generate_semantic_map(
+            config.base_folder,
+            geo_window,
+            config.flood_cell_size,
+        )
+
+        render_manager.change_terrain_visibility(True)
+
         flood_threshold = 1000
         flood_data = FloodProcessor.flood(
             config.base_folder,

@@ -11,10 +11,13 @@ import numpy as np
 from scipy.sparse import bsr_array
 from scipy.ndimage import gaussian_filter as gf
 
+from PIL import Image
 
 from mage_procgen.Utils.Utils import GeoWindow
 from mage_procgen.Utils.Geometry import center_point
 from mage_procgen.Utils.Rendering import (
+    setup_compositing_height_map,
+    setup_compositing_semantic_map,
     export_rendered_img,
     setup_img_ortho,
 )
@@ -35,6 +38,64 @@ import array
 
 class FloodProcessor:
     @staticmethod
+    def generate_height_map(
+        base_folder: str,
+        geo_window: GeoWindow,
+        flood_cell_size: float,
+    ):
+        bounds = geo_window.bounds
+        center = geo_window.center
+
+        # We will only flood on the geowindow, but we also need to round up the coords
+        lower_left = (bounds[0], bounds[1], 0)
+        upper_right = (bounds[2], bounds[3], 0)
+        centered_ll = center_point(lower_left, center)
+        centered_ur = center_point(upper_right, center)
+        rounded_ll = (ceil(centered_ll[0]), ceil(centered_ll[1]), 0)
+        rounded_ur = (floor(centered_ur[0]), floor(centered_ur[1]), 0)
+
+        size_x = rounded_ur[0] - rounded_ll[0]
+        size_y = rounded_ur[1] - rounded_ll[1]
+
+        setup_compositing_height_map(base_folder)
+
+        camera_z = setup_img_ortho(size_x, size_y, flood_cell_size, (0, 0))
+
+        export_rendered_img(
+            os.path.join(base_folder, df.rendering, df.temp_folder),
+            df.temp_rendering_file,
+        )
+
+    @staticmethod
+    def generate_semantic_map(
+        base_folder: str,
+        geo_window: GeoWindow,
+        flood_cell_size: float,
+    ):
+        bounds = geo_window.bounds
+        center = geo_window.center
+
+        # We will only flood on the geowindow, but we also need to round up the coords
+        lower_left = (bounds[0], bounds[1], 0)
+        upper_right = (bounds[2], bounds[3], 0)
+        centered_ll = center_point(lower_left, center)
+        centered_ur = center_point(upper_right, center)
+        rounded_ll = (ceil(centered_ll[0]), ceil(centered_ll[1]), 0)
+        rounded_ur = (floor(centered_ur[0]), floor(centered_ur[1]), 0)
+
+        size_x = rounded_ur[0] - rounded_ll[0]
+        size_y = rounded_ur[1] - rounded_ll[1]
+
+        setup_compositing_semantic_map(base_folder)
+
+        camera_z = setup_img_ortho(size_x, size_y, flood_cell_size, (0, 0))
+
+        export_rendered_img(
+            os.path.join(base_folder, df.rendering, df.temp_folder),
+            df.temp_rendering_file,
+        )
+
+    @staticmethod
     def flood(
         base_folder: str,
         geo_window: GeoWindow,
@@ -42,6 +103,7 @@ class FloodProcessor:
         flood_threshold: float,
         flood_cell_size: float,
     ):
+        print("Initialising flood")
 
         bounds = geo_window.bounds
         center = geo_window.center
@@ -58,50 +120,6 @@ class FloodProcessor:
         size_y = rounded_ur[1] - rounded_ll[1]
 
         camera_z = setup_img_ortho(size_x, size_y, flood_cell_size, (0, 0))
-
-        export_rendered_img(
-            os.path.join(base_folder, df.rendering, df.temp_folder),
-            df.temp_rendering_file,
-        )
-
-        max_z = -math.inf
-        min_z = math.inf
-
-        # Calculating the maximum height of the scene, using terrain and buildings
-        # TODO: check if there are edge cases where this does not hold
-        terrain_collection = D.collections["Terrain"].objects
-        for terrain in terrain_collection:
-            terrain_box = terrain.bound_box
-            z_coords = [v[2] for v in terrain_box]
-            cur_z_max = max(z_coords)
-            cur_z_min = min(z_coords)
-            if cur_z_max > max_z:
-                max_z = cur_z_max
-            if cur_z_min < min_z:
-                min_z = cur_z_min
-
-        # Plane from which the rays shoot need to be above the scene. Margin on 50m is taken to be sure.
-        comp_plane_z = max_z + 50
-        max_distance = (comp_plane_z - min_z) + 50
-
-        # This holds every coordinate from which rays will be fired towards the terrain to get the height
-        # Step on Y in negative because y axis is north pointing
-        comp_plane = np.array(
-            [
-                [
-                    Vector([x, y, comp_plane_z])
-                    for x in np.arange(rounded_ll[0], rounded_ur[0], flood_cell_size)
-                ]
-                for y in np.arange(rounded_ur[1], rounded_ll[1], -flood_cell_size)
-            ]
-        )
-
-        ray_direction = Vector([0, 0, -1])
-
-        # Preparing for the mapping of the elevation function. Signature is necessary because elevation works on a 3 dimensional vector
-        init_source_points = np.vectorize(
-            FloodProcessor.__init_source_points, excluded={1, 2}, signature="(3)->()"
-        )
 
         depth_map_file = OpenEXR.InputFile(
             os.path.join(
@@ -127,10 +145,16 @@ class FloodProcessor:
         ).reshape(depth_map_size[1], depth_map_size[0])
 
         height_map = camera_z - depth_map
-        source_points = init_source_points(comp_plane, max_distance, ray_direction)
 
-        if height_map.shape != source_points.shape:
-            raise ValueError("Height map and source raster are not the same shape")
+        source_points_file = Image.open(
+            os.path.join(
+                base_folder,
+                df.rendering,
+                df.temp_folder,
+                df.semantic_map_file_full_name,
+            )
+        )
+        source_points = np.array(source_points_file.getdata()).reshape(height_map.shape)
 
         # Compute for each pixel the height of the flood, if applicable
         flood_state_rows = source_points.shape[0]
@@ -258,22 +282,6 @@ class FloodProcessor:
             rounded_ur,
             flood_cell_size,
         )
-
-    @staticmethod
-    def __init_source_points(point, max_distance, ray_direction):
-
-        flowing_water = D.objects["Flowing_Water"]
-
-        flowing_water_ray_result = flowing_water.ray_cast(
-            point, ray_direction, distance=max_distance
-        )
-
-        is_source = 0
-
-        if flowing_water_ray_result[0]:
-            return 1
-        else:
-            return 0
 
     # TODO: take buildings into account somehow
     # TODO: generally, calibrate this

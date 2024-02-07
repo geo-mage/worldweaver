@@ -279,9 +279,16 @@ class RenderManager:
 
         self.still_water_renderer.clear_object()
 
+    def change_terrain_visibility(self, is_terrain_visible):
+
+        terrain_collection = D.collections[terrain_collection_name].objects
+        for terrain in terrain_collection:
+            terrain.hide_viewport = not is_terrain_visible
+            terrain.hide_render = not is_terrain_visible
+
     def __corner_coord(self, ray_direction, max_distance, origin):
 
-        terrain_collection = D.collections["Terrain"].objects
+        terrain_collection = D.collections[terrain_collection_name].objects
 
         coord = None
 

@@ -14,3 +14,5 @@ plugins:
   - mkdocstrings
 markdown_extensions:
   - admonition
+extra_css:
+  - stylesheets/extra.css

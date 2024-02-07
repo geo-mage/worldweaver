@@ -15,6 +15,7 @@ MAGE Procgen is a Blender addon in python, and uses a few python libraries.
 * [numpy](https://numpy.org/) 1.24
 * [tqdm](https://github.com/tqdm/tqdm)
 * [OPENEXR](https://openexr.com/en/latest/)
+* [PIL](https://he-arc.github.io/livre-python/pillow/index.html)
 * IMath (?)
 * [Sun Position](https://docs.blender.org/manual/en/3.5/addons/lighting/sun_position.html) (Native Blender Add-on)
 

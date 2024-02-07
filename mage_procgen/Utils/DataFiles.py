@@ -9,6 +9,7 @@ temp_folder = "TMP"
 depth_map_file = "depth_map"
 
 depth_map_file_full_name = "depth_map0001.exr"
+semantic_map_file_full_name = "semantic_map0001.png"
 
 temp_rendering_file = "rendering_tmp"
 
@@ -55,7 +56,7 @@ assets_folder = "Assets"
 file_coords_regex = re.compile("_[0-9]{4}_[0-9]{4}_")
 
 
-def setup_bdtopo(base_folder: str, departement: int, archive_file: str):
+def setup_bdtopo(base_folder: str, departement: str, archive_file: str):
     """
     Extracts BDTOPO archive, and changes the folders to simplify it from:
 
@@ -84,7 +85,7 @@ def setup_bdtopo(base_folder: str, departement: int, archive_file: str):
 
     Parameters:
         base_folder: base folder of the application (same one as the one written in the config file)
-        departement: number of the departement
+        departement: number of the departement as a 2 character string (ex: "06", "77" ...)
         archive_file: archive of the database (or the first file of the split archive)
     """
 
@@ -130,7 +131,7 @@ def setup_bdtopo(base_folder: str, departement: int, archive_file: str):
 
 
 # TODO: delete the other folders ?
-def setup_bdortho(base_folder: str, departement: int, archive_file: str):
+def setup_bdortho(base_folder: str, departement: str, archive_file: str):
     """
     Extracts BDORTHO archive, and changes the folders to simplify it from:
 
@@ -157,7 +158,7 @@ def setup_bdortho(base_folder: str, departement: int, archive_file: str):
 
     Parameters:
         base_folder: base folder of the application (same one as the one written in the config file)
-        departement: number of the departement
+        departement: number of the departement as a 2 character string (ex: "06", "77" ...)
         archive_file: archive of the database (or the first file of the split archive)
     """
 
@@ -235,7 +236,7 @@ def setup_bdortho(base_folder: str, departement: int, archive_file: str):
     )
 
 
-def setup_rgealti(base_folder: str, departement: int, archive_file: str):
+def setup_rgealti(base_folder: str, departement: str, archive_file: str):
     """
     Extracts RGEALTI archive, and changes the folders to simplify it from:
 
@@ -262,7 +263,7 @@ def setup_rgealti(base_folder: str, departement: int, archive_file: str):
 
     Parameters:
         base_folder: base folder of the application (same one as the one written in the config file)
-        departement: number of the departement
+        departement: number of the departement as a 2 character string (ex: "06", "77" ...)
         archive_file: archive of the database (or the first file of the split archive)
     """
 
