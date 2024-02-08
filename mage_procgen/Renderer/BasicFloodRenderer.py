@@ -24,6 +24,10 @@ class BasicFloodRenderer:
         try:
             with bpy.data.libraries.load(filepath) as (data_from, data_to):
                 data_to.node_groups = [self.config.geometry_node_name]
+
+            # A Geometry Nodes setup with name object_config.geometry_node_name may already exist.
+            self.geometry_node_name = data_to.node_groups[0].name
+
         except Exception as _:
             raise Exception(
                 'Unable to load the Geometry Nodes setup with the name "'
@@ -31,10 +35,8 @@ class BasicFloodRenderer:
                 + '"'
                 + "from the file "
                 + filepath
+                + " . Please check that the name is correct."
             )
-
-        # A Geometry Nodes setup with name object_config.geometry_node_name may already exist.
-        self.geometry_node_name = data_to.node_groups[0].name
 
     def render(self, flood_data, parent_collection_name):
 

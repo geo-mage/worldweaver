@@ -2,7 +2,7 @@ import os
 import math
 from bpy import context as C, data as D, ops as O
 from datetime import datetime
-
+import addon_utils
 import random
 
 import mage_procgen.Utils.DataFiles as df
@@ -13,6 +13,16 @@ terrain_collection_name = "Terrain"
 cars_collection_name = "Cars"
 buildings_collection_name = "Buildings"
 base_collection_name = "Collection"
+
+
+def check_is_sun_activated():
+    try:
+        sc = C.scene
+        a = sc.sun_pos_properties.latitude
+    except Exception as _:
+        print("WARNING: Sun position addon was not enabled. Enabling it.")
+
+        addon_utils.enable("sun_position", default_set=True)
 
 
 def configure_render(geo_center_deg):
@@ -31,12 +41,17 @@ def configure_render(geo_center_deg):
     sun.data.type = "SUN"
     sun.data.energy = 10
 
-    sc = C.scene
-    sc.sun_pos_properties.sun_object = sun
-    sc.sun_pos_properties.latitude = geo_center_deg[1]
-    sc.sun_pos_properties.longitude = geo_center_deg[0]
-    sc.sun_pos_properties.UTC_zone = 2
-    sc.sun_pos_properties.time = 12
+    try:
+        sc = C.scene
+        sc.sun_pos_properties.sun_object = sun
+        sc.sun_pos_properties.latitude = geo_center_deg[1]
+        sc.sun_pos_properties.longitude = geo_center_deg[0]
+        sc.sun_pos_properties.UTC_zone = 2
+        sc.sun_pos_properties.time = 12
+    except Exception as _:
+        raise Exception(
+            "Sun position addon is not enabled. Go to Blender's Preference -> Add-ons, and enable 'Lighting: Sun Position'."
+        )
 
     # Camera
     camera = D.objects["Camera"]

@@ -1,6 +1,6 @@
 # Installation
 
-MAGE Procgen is a Blender addon in python, and uses a few python libraries. 
+MAGE Procgen is a Blender addon in python, and uses a few python libraries and other softwares
 
 ## Prerequisites [WIP]
 
@@ -12,16 +12,19 @@ MAGE Procgen is a Blender addon in python, and uses a few python libraries.
 * [rasterio](https://rasterio.readthedocs.io/en/stable/) 1.3
 * [pyogrio](https://pyogrio.readthedocs.io/en/latest/) 0.5
 * [scipy](https://scipy.org/) 1.8
+* [scikit-image](https://scikit-image.org/) 0.21.0
 * [numpy](https://numpy.org/) 1.24
 * [tqdm](https://github.com/tqdm/tqdm)
 * [OPENEXR](https://openexr.com/en/latest/)
 * [PIL](https://he-arc.github.io/livre-python/pillow/index.html)
-* IMath (?)
+* [IMath] (https://github.com/AcademySoftwareFoundation/Imath)
 * [Sun Position](https://docs.blender.org/manual/en/3.5/addons/lighting/sun_position.html) (Native Blender Add-on)
 
 ## Procedure
 
 Once you have all the prerequisites, extract the code of this program somewhere.
+
+[TODO] Git clone && pip install
 
 Then, open Blender, go to Edit->Preferences->Add-ons.
 

@@ -25,6 +25,10 @@ class FloodRenderer:
         try:
             with bpy.data.libraries.load(filepath) as (data_from, data_to):
                 data_to.node_groups = [self.config.geometry_node_name]
+
+            # A Geometry Nodes setup with name object_config.geometry_node_name may already exist.
+            self.geometry_node_name = data_to.node_groups[0].name
+
         except Exception as _:
             raise Exception(
                 'Unable to load the Geometry Nodes setup with the name "'
@@ -32,10 +36,8 @@ class FloodRenderer:
                 + '"'
                 + "from the file "
                 + filepath
+                + " . Please check that the name is correct."
             )
-
-        # A Geometry Nodes setup with name object_config.geometry_node_name may already exist.
-        self.geometry_node_name = data_to.node_groups[0].name
 
     # TODO: fix issue where only parts of the edge cells are made. currently, it does one where specifically the topright exists
     # Need to make sure that a cell is made once and only once

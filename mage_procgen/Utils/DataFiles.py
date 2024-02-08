@@ -15,9 +15,13 @@ temp_rendering_file = "rendering_tmp"
 
 departements = "Departements/"
 
+shapefiles_folder = "Shapefiles"
+
 regions_file = "ARRONDISSEMENT/ARRONDISSEMENT.shp"
+regions_archive = "ARRONDISSEMENT.7z"
 
 ocean_file = "OCEAN/World_Seas_IHO_v3.shp"
+ocean_archive = "OCEAN.7z"
 
 terrain_DB = "RGEALTI"
 terrain_data_folder = "MNT"
@@ -97,7 +101,7 @@ def setup_bdtopo(base_folder: str, departement: str, archive_file: str):
 
     out_file_option = "-o" + current_base_folder
 
-    command_line = "7zz x " + archive_file + " " + out_file_option
+    command_line = get_installed_7z() + " x " + archive_file + " " + out_file_option
 
     subprocess.run([command_line], shell=True)
 
@@ -170,7 +174,7 @@ def setup_bdortho(base_folder: str, departement: str, archive_file: str):
 
     out_file_option = "-o" + current_base_folder
 
-    command_line = "7zz x " + archive_file + " " + out_file_option
+    command_line = get_installed_7z() + " x " + archive_file + " " + out_file_option
 
     subprocess.run([command_line], shell=True)
 
@@ -275,7 +279,7 @@ def setup_rgealti(base_folder: str, departement: str, archive_file: str):
 
     out_file_option = "-o" + current_base_folder
 
-    command_line = "7zz x " + archive_file + " " + out_file_option
+    command_line = get_installed_7z() + " x " + archive_file + " " + out_file_option
 
     subprocess.run([command_line], shell=True)
 
@@ -337,4 +341,54 @@ def setup_rgealti(base_folder: str, departement: str, archive_file: str):
             additional,
             terrain_data_folder,
         ),
+    )
+
+
+def check_shapefiles_presence(base_folder: str):
+
+    if not os.path.isfile(os.path.join(base_folder, ocean_file)):
+        print("Ocean file not found. Extracting it from archive")
+
+        _location = os.path.realpath(
+            os.path.join(os.getcwd(), os.path.dirname(__file__))
+        )
+        archive_path = os.path.realpath(
+            os.path.join(_location, "..", shapefiles_folder, ocean_archive)
+        )
+
+        out_file_option = "-o" + base_folder
+
+        command_line = get_installed_7z() + " x " + archive_path + " " + out_file_option
+
+        subprocess.run([command_line], shell=True)
+
+    if not os.path.isfile(os.path.join(base_folder, regions_file)):
+        print("Region file not found. Extracting it from archive")
+
+        _location = os.path.realpath(
+            os.path.join(os.getcwd(), os.path.dirname(__file__))
+        )
+        archive_path = os.path.realpath(
+            os.path.join(_location, "..", shapefiles_folder, regions_archive)
+        )
+
+        out_file_option = "-o" + base_folder
+
+        command_line = get_installed_7z() + " x " + archive_path + " " + out_file_option
+
+        subprocess.run([command_line], shell=True)
+
+
+def get_installed_7z():
+
+    first_command = subprocess.run(["7zz"], stdout=subprocess.PIPE)
+    if first_command.returncode == 0:
+        return "7zz"
+
+    second_command = subprocess.run(["7z"], stdout=subprocess.PIPE)
+    if second_command.returncode == 0:
+        return "7z"
+
+    raise Exception(
+        "Neither 7zip nor py7zip-full are installed. Please install of one those."
     )

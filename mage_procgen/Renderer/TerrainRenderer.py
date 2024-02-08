@@ -28,7 +28,7 @@ class TerrainRenderer:
 
         if render_resolution / file_resolution != render_resolution // file_resolution:
             raise ValueError(
-                "terrain render resolution has to be a mutliple of file resolution"
+                "terrain render resolution has to be a multiple of file resolution"
             )
 
         _location = os.path.realpath(
@@ -40,12 +40,12 @@ class TerrainRenderer:
         try:
             with bpy.data.libraries.load(filepath) as (data_from, data_to):
                 data_to.materials = data_from.materials
+
+            self._base_material = data_to.materials[0]
         except Exception as _:
             raise Exception(
                 "Unable to load the terrain material " + "from the file " + filepath
             )
-
-        self._base_material = data_to.materials[0]
 
     def render(
         self,

@@ -19,7 +19,7 @@ class Loader:
         print("Loading shp files")
 
         arrondissements = ShapeFileParser.load(
-            os.path.join(base_folder, df.departements, df.regions_file),
+            os.path.join(base_folder, df.regions_file),
             bbox,
             CRS_fr,
         )
@@ -178,7 +178,7 @@ class Loader:
             # Ocean file is in degrees so we have to convert the box back to this csr
             ocean_box = geo_window.dataframe.to_crs(CRS_degrees).geometry[0].bounds
             oceans_data = ShapeFileParser.load(
-                os.path.join(base_folder, df.departements, df.ocean_file),
+                os.path.join(base_folder, df.ocean_file),
                 ocean_box,
                 CRS_fr,
                 force_2d=True,
@@ -223,7 +223,7 @@ class Loader:
     ) -> str:
 
         arrondissements = ShapeFileParser.load(
-            os.path.join(base_folder, df.departements, df.regions_file),
+            os.path.join(base_folder, df.regions_file),
             mesh_box,
             CRS_fr,
         )
