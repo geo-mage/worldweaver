@@ -1,6 +1,6 @@
 {
  "py/object": "mage_procgen.Utils.Config.Config",
- "base_folder": "/home/verstraa/Work/maps",
+ "base_folder": "../../maps",
  "window_type": "COORDS",
  "geo_window": {
   "py/object": "mage_procgen.Utils.Config.GeoWindowConfig",

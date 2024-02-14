@@ -255,7 +255,7 @@ def setup_compositing_semantic_map(base_folder: str):
     link2 = links.new(norm.outputs[0], output_file.inputs[0])
 
 
-def setup_compositing_render(folder):
+def setup_compositing_render(folder, config):
 
     # Enabling compositing nodes
     D.scenes["Scene"].use_nodes = use_nodes = True
@@ -279,20 +279,40 @@ def setup_compositing_render(folder):
     output_file.format.color_depth = "8"
     output_file.base_path = folder
 
+    # Normalizing
+    objects_config = [
+        config.building_render_config,
+        config.church_render_config,
+        config.factory_render_config,
+        config.mall_render_config,
+        config.flood_render_config,
+        config.forest_render_config,
+        config.road_render_config,
+        config.water_render_config,
+        config.car_render_config,
+    ]
+    max_tagging_index = max(
+        [object_config.tagging_index for object_config in objects_config]
+    )
+
+    math_node = nodes.new("CompositorNodeMath")
+    math_node.inputs[1].default_value = max_tagging_index
+    math_node.operation = "DIVIDE"
+
     # Linking it
-    norm = nodes.new("CompositorNodeNormalize")
     links = scene.node_tree.links
-    link = links.new(nodes["Render Layers"].outputs[2], norm.inputs[0])
-    link2 = links.new(norm.outputs[0], output_file.inputs[0])
+    link = links.new(nodes["Render Layers"].outputs[2], math_node.inputs[0])
+    link2 = links.new(math_node.outputs[0], output_file.inputs[0])
 
 
 def set_compositing_render_image_name(image_name):
 
     # The file name is tied to the input name of the node.
     # So we have to delete the previous input, add another one, and relink it to the correct node
+    # If the setup_compositing_render() is modified, this will have to change too.
     output_file = D.scenes["Scene"].node_tree.nodes["File Output"]
     output_file.file_slots.remove(output_file.inputs[0])
     output_file.file_slots.new(image_name)
-    norm = D.scenes["Scene"].node_tree.nodes["Normalize"]
+    math_node = D.scenes["Scene"].node_tree.nodes["Math"]
     links = D.scenes["Scene"].node_tree.links
-    link2 = links.new(norm.outputs[0], output_file.inputs[0])
+    link2 = links.new(math_node.outputs[0], output_file.inputs[0])

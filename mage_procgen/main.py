@@ -60,6 +60,13 @@ def main(filepath):
             )
 
     config = ConfigLoader.load(config_filepath)
+    if ".." in config.base_folder:
+        _location = os.path.realpath(
+            os.path.join(os.getcwd(), os.path.dirname(__file__))
+        )
+        config.base_folder = os.path.realpath(
+            os.path.join(_location, config.base_folder)
+        )
 
     # Pre-run checks
     check_is_sun_activated()
@@ -164,7 +171,7 @@ def main(filepath):
                 os.path.join(base_export_path, config_filename),
             )
 
-            setup_compositing_render(base_export_path)
+            setup_compositing_render(base_export_path, config)
             now = datetime.now()
             now_str = now.strftime("%Y_%m_%d:%H:%M:%S:%f")
             set_compositing_render_image_name(now_str + "_tagging")
@@ -198,7 +205,7 @@ def main(filepath):
                 os.path.join(base_export_path, config_filename),
             )
 
-            setup_compositing_render(base_export_path)
+            setup_compositing_render(base_export_path, config)
 
             img_size = config.out_img_resolution * config.out_img_pixel_size
 
