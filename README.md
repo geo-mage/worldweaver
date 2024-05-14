@@ -1,5 +1,8 @@
 # WorldWeaver
 
+![Blender](https://img.shields.io/badge/blender-%23F5792A.svg?style=for-the-badge&logo=blender&logoColor=white)
+![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)
+
 WorldWeaver is a [Blender](https://www.blender.org/) plugin to create virtual worlds based on a mix of open geodata and procedural generation.
 Currently, WorldWeaver only supports open data from [IGN](https://geoservices.ign.fr), the *French National Institute of Geographic and Forest Information*.
 
@@ -7,7 +10,7 @@ Currently, WorldWeaver only supports open data from [IGN](https://geoservices.ig
 
 WorldWeaver has been tested successfully with Blender 3.6 (LTS) and Blender 4.1. While it should support later versions, use at your own risk!
 
-For practical details on how to setup the plugin, read the documentation.
+For practical details on how to setup the plugin, read the [documentation](https://mage.science/worldweaver/).
 
 ## License
 
