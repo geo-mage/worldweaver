@@ -5,6 +5,7 @@ WorldWeaver is a Blender addon written in Python. It uses a few Python libraries
 ## Dependencies
 
 Current dependencies are as follows:
+
 * [Blender](https://www.blender.org/download/) 3.5 and later
 * [Python](https://www.python.org/downloads/) 3.10
 * [7zip](https://www.7-zip.org/)
@@ -18,8 +19,8 @@ Current dependencies are as follows:
 * [tqdm](https://github.com/tqdm/tqdm)
 * [OPENEXR](https://openexr.com/en/latest/)
 * [PIL](https://he-arc.github.io/livre-python/pillow/index.html)
-* [IMath] (https://github.com/AcademySoftwareFoundation/Imath)
-* [Sun Position](https://docs.blender.org/manual/en/3.5/addons/lighting/sun_position.html) (Native Blender Add-on)
+* [IMath](https://github.com/AcademySoftwareFoundation/Imath)
+* [Sun Position](https://docs.blender.org/manual/en/3.5/addons/lighting/sun_position.html) (native Blender add-on)
 
 ## Setup instructions
 
