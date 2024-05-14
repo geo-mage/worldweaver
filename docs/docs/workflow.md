@@ -7,6 +7,7 @@ For this version, only data from IGN [https://www.geoportail.gouv.fr/](https://w
 
 IGN provides data for each Departement. For each zone you want to render, you need to 
 download:
+
   - BD TOPO (terrain and infrastructure definition) [https://geoservices.ign.fr/bdtopo](https://geoservices.ign.fr/bdtopo)
   - RGE Alti (altitude raster) [https://geoservices.ign.fr/rgealti](https://geoservices.ign.fr/rgealti). Currently the application only works with the 1m resolution dataset and not the 5m one.
   - BD ORTHO (orthorectified aerial view) [https://geoservices.ign.fr/bdortho](https://geoservices.ign.fr/bdortho)
@@ -31,17 +32,18 @@ To do so, when you are inside the folder where blender is installed:
 
     ./blender --python-use-system-env &
 
-You can then set the configuration file used by the plugin, either by going to Edit->Preferences->Add-ons, 
-search for MAGE Procgen, and edit the "Configuration File Path" field. 
+You can then set the configuration file used by the plugin, either by going to `Edit->Preferences->Add-ons`, 
+search for MAGE Procgen, and edit the *Configuration File Path* field. 
 
-Alternatively, you can also do it by pression Ctrl + Shift + L; or go to Object->Mage Procgen Config Select.
+Alternatively, you can also do it by pressing `Ctrl + Shift + L` or go to `Object->Mage Procgen Config Select`.
 
 Once the configuration file is set (you don't have to do it if the name of the file has not changed since the last run),
-you can run the plugin by either pressing Ctrl + Shift + M; or go to Object->Mage Procgen
+you can run the plugin by either pressing `Ctrl + Shift + M` or go to `Object->Mage Procgen`.
 
 While the program is running, you will not be able to see or do anything inside Blender, 
 but you can follow the progression through the logs in the terminal you used to start Blender
 
 Once the run is finished, you will be able to see the scene, and if you have enabled it in the configuration file, you will have a folder containing:
+
 * A copy of the configuration file you used, for tracking purposes
 * The rendered images, each paired with another image with is a greyscale semantic map of the image.

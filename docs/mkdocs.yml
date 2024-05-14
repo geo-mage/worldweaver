@@ -1,13 +1,13 @@
-site_name: MAGE_procgen Documentation 
+site_name: WorldWeaver Documentation
 nav:
   - Home: index.md
   - Installation: install.md
-  - IGN Data Management: datafiles.md
-  - Configuration Files Edition: conf.md
-  - Standard Workdlow: workflow.md
-  - Assets Management: assets.md
-  - Flooding Algorithm: flood.md
-  - Dev Documentation: dev.md
+  - Usage: workflow.md
+  - Managing IGN open data: datafiles.md
+  - Configuration files: conf.md
+  - Managing assets: assets.md
+  - Flooding algorithm: flood.md
+  - Developer documentation: dev.md
 theme: readthedocs
 plugins:
   - search
