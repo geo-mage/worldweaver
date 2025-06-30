@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Installation - WorldWeaver Documentation</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../assets/_mkdocstrings.css" rel="stylesheet" />
+        <link href="../stylesheets/extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Installation";
+        var mkdocs_page_input_path = "install.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> WorldWeaver Documentation
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href="#">Installation</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#dependencies">Dependencies</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#setup-instructions">Setup instructions</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#blender-gui-version">Blender GUI Version</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#headless-version">Headless Version</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#other-dependencies">Other dependencies:</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#registering-the-addon-in-blender-only-for-gui">Registering the addon in Blender (only for GUI)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#using-worldweaver">Using WorldWeaver</a>
+    </li>
+        </ul>
+    </li>
+    </ul>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../basic_workflow/">First Run</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../file_workflow/">Working offline</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../datafiles/">Managing IGN open data</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../advanced_workflow/">Advanced features</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../filesystem/">File usage</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../assets/">Assets use</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../conf/">Configuration files</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../flood/">Flooding algorithm</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../dev/">Developer documentation</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">WorldWeaver Documentation</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Installation</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="installation">Installation</h1>
+<p>WorldWeaver is a Blender addon written in Python. It uses a few Python libraries and other softwares.</p>
+<h2 id="dependencies">Dependencies</h2>
+<p>Current dependencies are as follows:</p>
+<ul>
+<li><a href="https://www.blender.org/download/">Blender</a> 4.1 (or <a href="https://pypi.org/project/bpy/4.1.0/">bpy</a> for headless runs)</li>
+<li><a href="https://www.python.org/downloads/">Python</a> 3.11</li>
+<li><a href="https://www.7-zip.org/">7zip</a></li>
+<li><a href="https://geopandas.org/en/stable/index.html">geopandas</a> 1.0.1</li>
+<li><a href="https://rasterio.readthedocs.io/en/stable/">rasterio</a> 1.3.7</li>
+<li><a href="https://pyogrio.readthedocs.io/en/latest/">pyogrio</a> 0.5.1</li>
+<li><a href="https://scipy.org/">scipy</a> 1.10.0</li>
+<li><a href="https://scikit-image.org/">scikit-image</a> 0.21.0</li>
+<li><a href="https://scikit-learn.org/stable/">scikit-learn</a> 1.6.1</li>
+<li><a href="https://numpy.org/">numpy</a> 1.24.2</li>
+<li><a href="https://github.com/tqdm/tqdm">tqdm</a></li>
+<li><a href="https://openexr.com/en/latest/">OPENEXR</a></li>
+<li><a href="https://he-arc.github.io/livre-python/pillow/index.html">PIL</a></li>
+<li><a href="https://owslib.readthedocs.io/en/latest/">owslib</a></li>
+<li><a href="https://github.com/andreacorbellini/funkybob">funkybob</a></li>
+<li><a href="https://pypi.org/project/overpass/">overpass</a></li>
+<li><a href="https://timezonefinder.readthedocs.io/en/latest/">timezonefinder</a></li>
+<li><a href="https://www.ladybug.tools/ladybug-geometry/docs/">ladybug-geometry</a></li>
+<li><a href="https://github.com/AcademySoftwareFoundation/Imath">IMath</a></li>
+<li><a href="https://docs.blender.org/manual/en/3.5/addons/lighting/sun_position.html">Sun Position</a> (native Blender add-on)</li>
+</ul>
+<h2 id="setup-instructions">Setup instructions</h2>
+<p>The installation procedure is slightly different if you want to be able to use Blender's GUI or just use the headless version:</p>
+<h3 id="blender-gui-version">Blender GUI Version</h3>
+<p>Install Blender:</p>
+<pre><code class="language-bash">snap install blender --channel=4.1/stable
+</code></pre>
+<p>Creating the virtual environment that will be used by the software using the python interpreter packaged by Blender:</p>
+<pre><code class="language-bash">/snap/blender/current/4.1/python/bin/python3.11 -m venv &lt;path/to/virtual_env&gt;
+</code></pre>
+<p>Entering the virtual environment.</p>
+<pre><code class="language-bash">source &lt;path/to/virtual_env&gt;/bin/activate
+</code></pre>
+<p>Cloning the repository from GitHub or extract the tarball:</p>
+<pre><code class="language-bash">git clone https://github.com/geo-mage/worldweaver
+</code></pre>
+<p>Installing the python dependencies:</p>
+<pre><code class="language-bash">python -m pip install -r requirements.txt
+</code></pre>
+<p>You can then install the WorldWeaver Python module into your Python environment using:</p>
+<pre><code class="language-bash">pip install .
+</code></pre>
+<h3 id="headless-version">Headless Version</h3>
+<p>Getting the python version (this exact version is needed for compatibility with blender and use of virtual environments):</p>
+<pre><code class="language-bash">sudo apt install python3.11-venv
+</code></pre>
+<p>Creating the virtual environment that will be used by the software:</p>
+<pre><code class="language-bash">python3.11 -m venv &lt;path/to/virtual_env&gt;
+</code></pre>
+<p>Entering the virtual environment.</p>
+<pre><code class="language-bash">source &lt;path/to/virtual_env&gt;/bin/activate
+</code></pre>
+<p>Cloning the repository from GitHub or extract the tarball:</p>
+<pre><code class="language-bash">git clone https://github.com/geo-mage/worldweaver
+</code></pre>
+<p>Installing the python dependencies:</p>
+<pre><code class="language-bash">python -m pip install -r requirements_headless.txt
+</code></pre>
+<p>You can then install the WorldWeaver Python module into your Python environment using:</p>
+<pre><code class="language-bash">pip install .
+</code></pre>
+<h3 id="other-dependencies">Other dependencies:</h3>
+<p>Install 7zip (or p7zip-full, both work):</p>
+<pre><code class="language-bash">sudo apt install 7zip
+</code></pre>
+<p>or:</p>
+<pre><code class="language-bash">sudo apt install p7zip-full
+</code></pre>
+<h3 id="registering-the-addon-in-blender-only-for-gui">Registering the addon in Blender (only for GUI)</h3>
+<p>Because Blender uses its own Python interpreter, we have to specify that we now want Blender to use the system Python (or the Python from your virtualenv).
+This is achieved by setting the PYTHONPATH and passing the <code>--python-use-system-env</code> to Blender at startup:</p>
+<pre><code class="language-bash">PYTHONPATH=&quot;$(python -c &quot;import sys; print(\&quot;:\&quot;.join(sys.path))&quot;)&quot; blender --python-use-system-env
+</code></pre>
+<p>Once Blender has started, we can register the WorldWeaver plugin as an add-on in the software. To do so:</p>
+<ol>
+<li>Open the <em>Edit-&gt;Preferences-&gt;Add-ons</em> menu.</li>
+<li>Click the <em>Install</em> button.</li>
+<li>Browse the file explorer to the folder where WorldWeaver has been downloaded and select the <code>module_worldweaver.py</code> file.</li>
+</ol>
+<p>This registers WorldWeaver as a Blender add-on. In particular, this makes it possible to run the procedural generation using a simple keyboard shortcut.</p>
+<h3 id="using-worldweaver">Using WorldWeaver</h3>
+<p>Once WorldWeaver is installed, check out the <a href="../basic_workflow/">basic workflow</a> for more details on how to use the software.</p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href=".." class="btn btn-neutral float-left" title="Home"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../basic_workflow/" class="btn btn-neutral float-right" title="First Run">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href=".." style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../basic_workflow/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

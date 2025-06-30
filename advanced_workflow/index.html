@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Advanced features - WorldWeaver Documentation</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../assets/_mkdocstrings.css" rel="stylesheet" />
+        <link href="../stylesheets/extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Advanced features";
+        var mkdocs_page_input_path = "advanced_workflow.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> WorldWeaver Documentation
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../install/">Installation</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../basic_workflow/">First Run</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../file_workflow/">Working offline</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../datafiles/">Managing IGN open data</a>
+                </li>
+              </ul>
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href="#">Advanced features</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#configuration">Configuration</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#run">Run</a>
+    </li>
+    </ul>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../filesystem/">File usage</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../assets/">Assets use</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../conf/">Configuration files</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../flood/">Flooding algorithm</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../dev/">Developer documentation</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">WorldWeaver Documentation</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Advanced features</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="advanced-features">Advanced features</h1>
+<p>This tutorial is intended as a jumping point for more advanced features such as asset modifications, flood etc.</p>
+<h2 id="configuration">Configuration</h2>
+<p>Before you can render, you need to generate the configuration file for your run. 
+Please look at the documentation for this in <a href="../conf/">Configuration Files Edition</a>.</p>
+<p>There is an <code>example_advanced.json</code> file packaged with the software. 
+It is a flood simulation based around a portion of the city of Bern.</p>
+<p>Inside, you will see a few differences with the <code>example_offline.json</code>:</p>
+<ul>
+<li>The <code>input_data</code> is set to "OSM-CH". This means it uses both openstreetmap and SwissAlti3D data.</li>
+<li>The <code>geo_window</code> has a different crs (it's the code for LV95, which is Switzerland's choice for its geo data). The coordinates in this example file describe a ~1km² part of the city of Bern.</li>
+<li>There is a <code>flood</code> section, whose <code>activate</code> is set to True. This means the software will generate a flood in this scene (see <a href="../flood/">Flood</a>)</li>
+<li>There is a <code>placeholder_forest_render</code> section inside <code>rendering/objects</code>. This means that for scene, the default asset for placeholder trees (described in <code>base_config.json</code>) will be overriden by whatever is described in this <code>placeholder_forest_render</code> section.</li>
+</ul>
+<p>You can use such modifications to tweak the configuration however you like (you still need to change the <code>base_folder</code> like other files).  </p>
+<pre><code class="language-json">{
+  &quot;base_folder&quot;: &quot;../../maps&quot;,
+  &quot;input_data&quot;: {
+    &quot;type&quot;: &quot;OSM-CH&quot;
+  },
+  &quot;simulation_area&quot;: {
+    &quot;window_type&quot;: &quot;COORDS&quot;,
+    &quot;geo_window&quot;: {
+      &quot;x_min&quot;: 2600536.3,
+      &quot;y_min&quot;: 1199198.5,
+      &quot;x_max&quot;: 2601636.9,
+      &quot;y_max&quot;: 1200065.4,
+      &quot;crs_from&quot;: 2056
+    }
+  },
+  &quot;terrain&quot;: {
+    &quot;terrain_resolution&quot;: 1,
+    &quot;use_orthoimage_as_basemap&quot;: false
+  },
+  &quot;flood&quot;: {
+    &quot;activate&quot;: true,
+    &quot;flood_height&quot;: 10,
+    &quot;flood_cell_size&quot;: 1
+  },
+  &quot;rendering&quot;: {
+    &quot;export_images&quot;: true,
+    &quot;device_type&quot;: &quot;GPU&quot;,
+    &quot;camera_type&quot;: &quot;ORTHOGRAPHIC&quot;,
+    &quot;ground_sampling_distance&quot;: 0.2,
+    &quot;tile_size&quot;: 512,
+    &quot;objects&quot;:
+    {
+      &quot;placeholder_forest_render&quot;: {
+      &quot;geometry_node_file&quot;: &quot;Forests.blend&quot;,
+      &quot;geometry_node_name&quot;: &quot;Forest_feuillu&quot;,
+      &quot;tagging_index&quot;: 3
+      }
+    }
+  }
+}
+</code></pre>
+<p>Change the beginning to (for example):</p>
+<pre><code class="language-json">{
+  &quot;base_folder&quot;: &quot;/home/MyUser/data/worldweaver/maps&quot;,
+  &quot;input_data&quot;: {
+    &quot;type&quot;: &quot;OSM-CH&quot;
+  },
+  &quot;simulation_area&quot;: {
+    &quot;window_type&quot;: &quot;COORDS&quot;,
+    &quot;geo_window&quot;: {
+      &quot;x_min&quot;: 2600536.3,
+      &quot;y_min&quot;: 1199198.5,
+      &quot;x_max&quot;: 2601636.9,
+      &quot;y_max&quot;: 1200065.4,
+      &quot;crs_from&quot;: 2056
+    }
+  },
+</code></pre>
+<h2 id="run">Run</h2>
+<p>Run will work exactly as the <a href="../basic_workflow/#run">basic workflow</a>. Just select the configuration you just generated for the run.</p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../datafiles/" class="btn btn-neutral float-left" title="Managing IGN open data"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../filesystem/" class="btn btn-neutral float-right" title="File usage">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../datafiles/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../filesystem/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

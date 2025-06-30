@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Configuration files - WorldWeaver Documentation</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../assets/_mkdocstrings.css" rel="stylesheet" />
+        <link href="../stylesheets/extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Configuration files";
+        var mkdocs_page_input_path = "conf.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> WorldWeaver Documentation
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../install/">Installation</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../basic_workflow/">First Run</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../file_workflow/">Working offline</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../datafiles/">Managing IGN open data</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../advanced_workflow/">Advanced features</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../filesystem/">File usage</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../assets/">Assets use</a>
+                </li>
+              </ul>
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href="#">Configuration files</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#guidelines-for-configuration-edition">Guidelines for configuration edition</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#configuration-file-structure-detail">Configuration file structure detail</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#input-data">Input Data:</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#simulation-area">Simulation Area:</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#terrain">Terrain:</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#flood-optional">Flood (optional):</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#rendering">Rendering:</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#objects">Objects</a>
+    </li>
+        </ul>
+    </li>
+        </ul>
+    </li>
+    </ul>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../flood/">Flooding algorithm</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../dev/">Developer documentation</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">WorldWeaver Documentation</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Configuration files</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="configuration-file-generation">Configuration file generation</h1>
+<p>The behavior of the software can be configured by json configuration files.</p>
+<h2 id="guidelines-for-configuration-edition">Guidelines for configuration edition</h2>
+<p>For performances reasons, keep the window at a reasonable size (above 10 km² seems to be a bit big especially if there is flooding involved, and there is a hard limit of 20km²).</p>
+<p>The terrain size and resolution will weight heavily on the performances, but having a scene that is large and detailed enough is also important to get realistic results especially if you use flooding.</p>
+<p>If you modify assets, make sur they are not too polygon-heavy to avoid saturating Blender (especially for trees, because there can easily be a lot of them in a scene).</p>
+<p>Some parts of the configuration are optional. If not present in the file, they will take the value of the default configuration file <code>base_config.json</code>. 
+This file should not be edited except for the <code>base_folder</code>.</p>
+<h2 id="configuration-file-structure-detail">Configuration file structure detail</h2>
+<ul>
+<li><code>base_folder</code> is the path to the folder containing all the data the application will use. Should be the same for all of your files.</li>
+</ul>
+<h3 id="input-data">Input Data:</h3>
+<ul>
+<li>
+<p><code>type</code> describes where the input data will come from. Can currently take 4 values:</p>
+<ul>
+<li>"FILE" (France only): data is taken from IGN's open data files that you have to download and extract (see <a href="../datafiles/">Datafiles</a> and <a href="../file_workflow/">File Workflow</a>).</li>
+<li>"STREAM" (France only): data is taken from IGN's geo servers .</li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Issue with STREAM</p>
+<p>There is currently an issue preventing the parsing of data if using STREAM. Please rely on other input data for now.</p>
+</div>
+<ul>
+<li>"OSM-SRTM": data is taken from <a href="https://www.openstreetmap.org">OpenStreetMap</a> using <a href="https://wiki.openstreetmap.org/wiki/Overpass_API">Overpass</a>.</li>
+<li>"OSM-CH" (Switzerland only): data is taken from openstreetmap as well but the terrain is from <a href="https://www.swisstopo.admin.ch/fr/modele-altimetrique-swissalti3d">swissALTI3D</a>.</li>
+</ul>
+</li>
+</ul>
+<h3 id="simulation-area">Simulation Area:</h3>
+<ul>
+<li>
+<p><code>window_type</code> is used to determine how the window will be defined. Can take 3 values:</p>
+<ul>
+<li>"COORDS": window will be taken be from the <code>geo_window</code> block.</li>
+<li>"TOWN": window will be taken be from the <code>town</code> block.</li>
+<li>"FILE": window will be taken be from the <code>shapefile</code> block.</li>
+</ul>
+</li>
+<li>
+<p><code>geo_window</code>: only required if <code>window_type</code> is "COORDS". Contains:</p>
+<ul>
+<li><code>x_min</code>, <code>x_max</code>, <code>y_min</code> and <code>y_max</code>: coordinates of the window</li>
+<li><code>crs_from</code> (optional): code of the CRS of the coordinates</li>
+<li><code>town</code>: only required if <code>window_type</code> is "TOWN". Contains:<ul>
+<li><code>identifier</code>: An identifier of the town. Expected format is different depending of the input data type:<ul>
+<li>If using IGN data, should be the name of the town followed by the 2 digit code of the departement, for example "Loos-en-Gohelle 62" to select the town of <a href="https://www.openstreetmap.org/relation/1113031">Loos-en-Gohelle</a> in the departement <a href="https://www.openstreetmap.org/relation/7394#map=9/50.517/2.372">62 (Pas-de-Calais)</a>.</li>
+<li>If using OSM, it should just be the name of the town. In this case, the software gets the town geometry from an <a href="https://overpass-turbo.eu/#">Overpass</a> query.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Word of warning</p>
+<p>It searches in openstreetmap database for towns in the whole world with such a name, and just picks the first result, so you might not get what you expect. You can try out the request yourself first to confirm that it will select the correct zone. The request is:</p>
+<p><code>nwr[name="&lt;town_name&gt;"][boundary=administrative][type=boundary][admin_level="8"];out;(way(r); &gt;;);out skel;</code></p>
+</div>
+<ul>
+<li><code>shapefile</code>: only required if <code>window_type</code> is "FILE". Contains:<ul>
+<li><code>path</code>: Path of the shapefile describing the window</li>
+</ul>
+</li>
+</ul>
+<h3 id="terrain">Terrain:</h3>
+<ul>
+<li><code>terrain_resolution</code>: Spatial resolution of the terrain in the render. Ideally it should be the same as the terrain raster data resolution to get the best ratio of accuracy vs performance, but it can be lowered for big scenes.</li>
+<li><code>use_orthoimage_as_basemap</code>: if True, the software will use BDORTHO images as texture for the terrain (only if using IGN data). If False, it will use a shader base on landuse info</li>
+</ul>
+<h3 id="flood-optional">Flood (optional):</h3>
+<ul>
+<li><code>activate</code>: if True, will tell the software to generate a flood on the scene . For more precise info on how the flood is generated, go to <a href="../flood/">Flooding Algorithm</a>.</li>
+<li><code>flood_height</code>: Height of the flood in meters.</li>
+<li><code>flood_cell_size</code>: Spatial resolution of the flood.</li>
+</ul>
+<h3 id="rendering">Rendering:</h3>
+<ul>
+<li><code>export_images</code>: if True, will tell the software to generate png files from aerial views the scene. If False, will only render one sample image at the center of the scene.</li>
+<li><code>device_type</code>: Indicates on which hardware to render the scene. Can be "CPU" or "GPU" (preferred).</li>
+<li><code>camera_type</code>: Indicates which camera to use. Can be "PERSPECTIVE" or "ORTHOGRAPHIC" (preferred).</li>
+<li><code>ground_sampling_distance</code>: The size of a pixel, in m.</li>
+<li><code>tile_size</code>: The resolution of the output images.</li>
+</ul>
+<h4 id="objects">Objects</h4>
+<p>All objets are optional. Here is the list of possible objects you can configure:</p>
+<ul>
+<li>
+<p><code>building_render</code>: block configuring the "normal" buildings. Contains:</p>
+<ul>
+<li><code>geometry_node_file</code>: name of the Blender asset file for the object. It must be in the Assets folder. </li>
+<li><code>geometry_node_name</code>: name of the geometry node setup for the object. For more info on how assets should be generated, go to <a href="../assets/">Assets Management</a>. </li>
+<li><code>tagging_index</code>: index using which object will be tagged in the output semantic map.</li>
+<li><code>default_levels_min</code>: default value of the minimum levels of the geometry node (only used if there are no height or level value for the building in the input data)</li>
+<li><code>default_levels_max</code>: default value of the maximum levels of the geometry node (only used if there are no height or level value for the building in the input data)</li>
+</ul>
+</li>
+<li>
+<p><code>church_render</code>: block configuring the religious buildings. Contains:</p>
+<ul>
+<li><code>geometry_node_file</code>: name of the Blender asset file for the object. It must be in the Assets folder. </li>
+<li><code>geometry_node_name</code>: name of the geometry node setup for the object. For more info on how assets should be generated, go to <a href="../assets/">Assets Management</a>. </li>
+<li><code>tagging_index</code>: index using which object will be tagged in the output semantic map.</li>
+<li><code>default_levels_min</code>: default value of the minimum levels of the geometry node (only used if there are no height or level value for the building in the input data)</li>
+<li><code>default_levels_max</code>: default value of the maximum levels of the geometry node (only used if there are no height or level value for the building in the input data)</li>
+</ul>
+</li>
+<li>
+<p><code>factory_render</code>: block configuring the industrial buildings. Contains:</p>
+<ul>
+<li><code>geometry_node_file</code>: name of the Blender asset file for the object. It must be in the Assets folder. </li>
+<li><code>geometry_node_name</code>: name of the geometry node setup for the object. For more info on how assets should be generated, go to <a href="../assets/">Assets Management</a>. </li>
+<li><code>tagging_index</code>: index using which object will be tagged in the output semantic map.</li>
+<li><code>default_levels_min</code>: default value of the minimum levels of the geometry node (only used if there are no height or level value for the building in the input data)</li>
+<li><code>default_levels_max</code>: default value of the maximum levels of the geometry node (only used if there are no height or level value for the building in the input data)</li>
+</ul>
+</li>
+<li>
+<p><code>mall_render</code>: block configuring the commercial buildings. Contains:</p>
+<ul>
+<li><code>geometry_node_file</code>: name of the Blender asset file for the object. It must be in the Assets folder. </li>
+<li><code>geometry_node_name</code>: name of the geometry node setup for the object. For more info on how assets should be generated, go to <a href="../assets/">Assets Management</a>. </li>
+<li><code>tagging_index</code>: index using which object will be tagged in the output semantic map.</li>
+<li><code>default_levels_min</code>: default value of the minimum levels of the geometry node (only used if there are no height or level value for the building in the input data)</li>
+<li><code>default_levels_max</code>: default value of the maximum levels of the geometry node (only used if there are no height or level value for the building in the input data)</li>
+</ul>
+</li>
+<li>
+<p><code>house_render</code>: block configuring the houses. Contains:</p>
+<ul>
+<li><code>geometry_node_file</code>: name of the Blender asset file for the object. It must be in the Assets folder. </li>
+<li><code>geometry_node_name</code>: name of the geometry node setup for the object. For more info on how assets should be generated, go to <a href="../assets/">Assets Management</a>. </li>
+<li><code>tagging_index</code>: index using which object will be tagged in the output semantic map.</li>
+<li><code>default_height_min</code>: default value of the minimum height of the building (only used if there are no height or level value for the building in the input data)</li>
+<li><code>default_height_max</code>: default value of the maximum height of the building (only used if there are no height or level value for the building in the input data)</li>
+<li><code>roof_slope_degrees</code>: slope of the roof.</li>
+</ul>
+</li>
+<li>
+<p><code>flood_render</code>: block configuring the flood water. Contains:</p>
+<ul>
+<li><code>geometry_node_file</code>: name of the Blender asset file for the object. It must be in the Assets folder. </li>
+<li><code>geometry_node_name</code>: name of the geometry node setup for the object. For more info on how assets should be generated, go to <a href="../assets/">Assets Management</a>. </li>
+<li><code>tagging_index</code>: index using which object will be tagged in the output semantic map.</li>
+</ul>
+</li>
+<li>
+<p><code>placeholder_forest_render</code>: block configuring the "placeholder" trees. Contains:</p>
+<ul>
+<li><code>geometry_node_file</code>: name of the Blender asset file for the object. It must be in the Assets folder. </li>
+<li><code>geometry_node_name</code>: name of the geometry node setup for the object. For more info on how assets should be generated, go to <a href="../assets/">Assets Management</a>. </li>
+<li><code>tagging_index</code>: index using which object will be tagged in the output semantic map.</li>
+</ul>
+</li>
+<li>
+<p><code>pretty_forest_render</code>: block configuring the "pretty" trees. Contains:</p>
+<ul>
+<li><code>geometry_node_file</code>: name of the Blender asset file for the object. It must be in the Assets folder. </li>
+<li><code>geometry_node_name</code>: name of the geometry node setup for the object. For more info on how assets should be generated, go to <a href="../assets/">Assets Management</a>. </li>
+<li><code>tagging_index</code>: index using which object will be tagged in the output semantic map.</li>
+</ul>
+</li>
+<li>
+<p><code>road_render</code>: block configuring the roads. Contains:</p>
+<ul>
+<li><code>geometry_node_file</code>: name of the Blender asset file for the object. It must be in the Assets folder. </li>
+<li><code>geometry_node_name</code>: name of the geometry node setup for the object. For more info on how assets should be generated, go to <a href="../assets/">Assets Management</a>.</li>
+<li><code>car_collection_info_node_name</code>: name of the collection containing the cars the will be added on the roads.</li>
+<li><code>tagging_index</code>: index using which object will be tagged in the output semantic map.</li>
+<li><code>car_tagging_index</code>: index using which cars will be tagged in the output semantic map.</li>
+</ul>
+</li>
+<li>
+<p><code>bridge_render</code>: block configuring the bridges. Contains:</p>
+<ul>
+<li><code>geometry_node_file</code>: name of the Blender asset file for the object. It must be in the Assets folder. </li>
+<li><code>geometry_node_name</code>: name of the geometry node setup for the object. For more info on how assets should be generated, go to <a href="../assets/">Assets Management</a>.</li>
+<li><code>tagging_index</code>: index using which object will be tagged in the output semantic map.</li>
+<li><code>bridge_group_name</code>: name of the group containing the pillars of the bridges.</li>
+</ul>
+</li>
+<li>
+<p><code>water_render</code>: block configuring the water. Contains:</p>
+<ul>
+<li><code>geometry_node_file</code>: name of the Blender asset file for the object. It must be in the Assets folder. </li>
+<li><code>geometry_node_name</code>: name of the geometry node setup for the object. For more info on how assets should be generated, go to <a href="../assets/">Assets Management</a>. </li>
+<li><code>tagging_index</code>: index using which object will be tagged in the output semantic map.</li>
+</ul>
+</li>
+<li>
+<p><code>terrain_render</code>: block configuring the terrain. Contains:</p>
+<ul>
+<li><code>geometry_node_file</code>: name of the Blender asset file for the object. It must be in the Assets folder. </li>
+<li><code>adaptation_node_name</code>: name of the geometry node setup to smooth the terrain beneath roads, water and buildings.</li>
+<li><code>tagging_node_name</code>: name of the geometry node setup to tag the terrain in order to texture it</li>
+<li><code>decorating_node_name</code>: name of the geometry node setup to decorate the terrain with objects like trashcans etc.</li>
+<li><code>base_material_name</code>: name of the material used if <code>use_orthoimage_as_basemap</code> is True.</li>
+<li><code>tagged_material_name</code>: name of the material used if <code>use_orthoimage_as_basemap</code> is False.</li>
+<li><code>tagging_index</code>: index using which terrain will be tagged in the output semantic map.</li>
+<li><code>decor_tagging_index</code>: index using which decor will be tagged in the output semantic map.</li>
+</ul>
+</li>
+</ul>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../assets/" class="btn btn-neutral float-left" title="Assets use"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../flood/" class="btn btn-neutral float-right" title="Flooding algorithm">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../assets/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../flood/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

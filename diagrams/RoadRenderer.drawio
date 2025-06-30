@@ -1,0 +1,440 @@
+<mxfile host="Electron" modified="2024-02-06T14:31:07.555Z" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/22.1.21 Chrome/120.0.6099.109 Electron/28.1.0 Safari/537.36" etag="4oWrBSE8Nj7eHhZ51nAp" version="22.1.21" type="device">
+  <diagram id="C5RBs43oDa-KdzZeNtuy" name="Page-1">
+    <mxGraphModel dx="4780" dy="2940" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="WIyWlLk6GJQsqaUBKTNV-0" />
+        <mxCell id="WIyWlLk6GJQsqaUBKTNV-1" parent="WIyWlLk6GJQsqaUBKTNV-0" />
+        <mxCell id="nWd9DYiu0VlQMOzA8pWd-0" value="Renderer.RoadRenderer.RoadRenderer.render()" style="swimlane;whiteSpace=wrap;html=1;startSize=30;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="10" y="70" width="420" height="1060" as="geometry">
+            <mxRectangle x="80" y="890" width="250" height="30" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="XBrvubIOwSxENSqEJ7tH-195" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" parent="nWd9DYiu0VlQMOzA8pWd-0" source="nWd9DYiu0VlQMOzA8pWd-38" target="XBrvubIOwSxENSqEJ7tH-194" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="nWd9DYiu0VlQMOzA8pWd-38" value="Create road mesh" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;glass=0;strokeWidth=1;shadow=0;" parent="nWd9DYiu0VlQMOzA8pWd-0" vertex="1">
+          <mxGeometry x="195.63" y="70" width="120" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="XBrvubIOwSxENSqEJ7tH-318" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="nWd9DYiu0VlQMOzA8pWd-0" source="XBrvubIOwSxENSqEJ7tH-194" target="XBrvubIOwSxENSqEJ7tH-317" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="XBrvubIOwSxENSqEJ7tH-194" value="for each polygon" style="swimlane;whiteSpace=wrap;html=1;startSize=30;" parent="nWd9DYiu0VlQMOzA8pWd-0" vertex="1">
+          <mxGeometry x="161.25" y="160" width="188.75" height="330" as="geometry" />
+        </mxCell>
+        <mxCell id="XBrvubIOwSxENSqEJ7tH-196" value="Get polygon shell points X Y coordinates" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;glass=0;strokeWidth=1;shadow=0;" parent="XBrvubIOwSxENSqEJ7tH-194" vertex="1">
+          <mxGeometry x="30" y="50" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="XBrvubIOwSxENSqEJ7tH-204" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.506;entryY=-0.049;entryDx=0;entryDy=0;entryPerimeter=0;" parent="XBrvubIOwSxENSqEJ7tH-194" source="XBrvubIOwSxENSqEJ7tH-196" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="87.98000000000002" y="191.08000000000015" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="XBrvubIOwSxENSqEJ7tH-271" value="Get polygon shell points Z coordinates" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;glass=0;strokeWidth=1;shadow=0;" parent="XBrvubIOwSxENSqEJ7tH-194" vertex="1">
+          <mxGeometry x="27.5" y="130" width="120" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="XBrvubIOwSxENSqEJ7tH-299" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" parent="XBrvubIOwSxENSqEJ7tH-194" source="XBrvubIOwSxENSqEJ7tH-294" target="XBrvubIOwSxENSqEJ7tH-298" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="XBrvubIOwSxENSqEJ7tH-294" value="Adapt coordinates to rendering" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;glass=0;strokeWidth=1;shadow=0;" parent="XBrvubIOwSxENSqEJ7tH-194" vertex="1">
+          <mxGeometry x="30" y="190" width="120" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="XBrvubIOwSxENSqEJ7tH-298" value="Add polygon to mesh" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;glass=0;strokeWidth=1;shadow=0;" parent="XBrvubIOwSxENSqEJ7tH-194" vertex="1">
+          <mxGeometry x="30" y="270" width="120" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="XBrvubIOwSxENSqEJ7tH-321" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="nWd9DYiu0VlQMOzA8pWd-0" source="XBrvubIOwSxENSqEJ7tH-317" target="XBrvubIOwSxENSqEJ7tH-320" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="XBrvubIOwSxENSqEJ7tH-317" value="Create road object from mesh" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;glass=0;strokeWidth=1;shadow=0;" parent="nWd9DYiu0VlQMOzA8pWd-0" vertex="1">
+          <mxGeometry x="195.62" y="530" width="120" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="xQsXcqBraPOJ2Dercj9v-5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="nWd9DYiu0VlQMOzA8pWd-0" source="XBrvubIOwSxENSqEJ7tH-320" target="xQsXcqBraPOJ2Dercj9v-4" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="XBrvubIOwSxENSqEJ7tH-320" value="Add GeometryNodes modifier to road object" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;glass=0;strokeWidth=1;shadow=0;" parent="nWd9DYiu0VlQMOzA8pWd-0" vertex="1">
+          <mxGeometry x="195.62" y="590" width="120" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="xQsXcqBraPOJ2Dercj9v-7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="nWd9DYiu0VlQMOzA8pWd-0" source="xQsXcqBraPOJ2Dercj9v-4" target="xQsXcqBraPOJ2Dercj9v-6" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="xQsXcqBraPOJ2Dercj9v-4" value="Add Subdivision surface modifier to road object" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;glass=0;strokeWidth=1;shadow=0;" parent="nWd9DYiu0VlQMOzA8pWd-0" vertex="1">
+          <mxGeometry x="195.63" y="670" width="120" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="xQsXcqBraPOJ2Dercj9v-9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="nWd9DYiu0VlQMOzA8pWd-0" source="xQsXcqBraPOJ2Dercj9v-6" target="xQsXcqBraPOJ2Dercj9v-8" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="xQsXcqBraPOJ2Dercj9v-6" value="Shrinkwrap road object to jsut above terrain" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;glass=0;strokeWidth=1;shadow=0;" parent="nWd9DYiu0VlQMOzA8pWd-0" vertex="1">
+          <mxGeometry x="195.62" y="750" width="120" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="xQsXcqBraPOJ2Dercj9v-8" value="Cars" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;glass=0;strokeWidth=1;shadow=0;fillColor=#1ba1e2;fontColor=#ffffff;strokeColor=#006EAF;" parent="nWd9DYiu0VlQMOzA8pWd-0" vertex="1">
+          <mxGeometry x="195.63" y="840" width="120" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="XBrvubIOwSxENSqEJ7tH-57" value="Renderer.BaseRenderer.&lt;br&gt;BaseRenderer.clear_object()" style="swimlane;whiteSpace=wrap;html=1;startSize=30;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="420" y="2777" width="220" height="290" as="geometry">
+            <mxRectangle x="80" y="890" width="250" height="30" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="XBrvubIOwSxENSqEJ7tH-193" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" parent="XBrvubIOwSxENSqEJ7tH-57" source="XBrvubIOwSxENSqEJ7tH-75" target="XBrvubIOwSxENSqEJ7tH-78" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="XBrvubIOwSxENSqEJ7tH-75" value="Remove road object" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;glass=0;strokeWidth=1;shadow=0;" parent="XBrvubIOwSxENSqEJ7tH-57" vertex="1">
+          <mxGeometry x="50" y="50.000000000000014" width="120" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="xQsXcqBraPOJ2Dercj9v-3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="XBrvubIOwSxENSqEJ7tH-57" source="XBrvubIOwSxENSqEJ7tH-78" target="xQsXcqBraPOJ2Dercj9v-1" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="XBrvubIOwSxENSqEJ7tH-78" value="Remove road mesh" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;glass=0;strokeWidth=1;shadow=0;" parent="XBrvubIOwSxENSqEJ7tH-57" vertex="1">
+          <mxGeometry x="50" y="110.04000000000002" width="120" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="xQsXcqBraPOJ2Dercj9v-1" value="Remove car object" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;glass=0;strokeWidth=1;shadow=0;" parent="XBrvubIOwSxENSqEJ7tH-57" vertex="1">
+          <mxGeometry x="50" y="170" width="120" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="xQsXcqBraPOJ2Dercj9v-2" value="Remove car mesh" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;glass=0;strokeWidth=1;shadow=0;" parent="XBrvubIOwSxENSqEJ7tH-57" vertex="1">
+          <mxGeometry x="50" y="230.04000000000002" width="120" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="xQsXcqBraPOJ2Dercj9v-0" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" parent="XBrvubIOwSxENSqEJ7tH-57" source="xQsXcqBraPOJ2Dercj9v-1" target="xQsXcqBraPOJ2Dercj9v-2" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="XBrvubIOwSxENSqEJ7tH-205" value="Renderer.RoadRenderer.&lt;br&gt;RoadRenderer.interpolate_z()" style="swimlane;whiteSpace=wrap;html=1;startSize=30;fillColor=#d80073;fontColor=#ffffff;strokeColor=#A50040;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="10" y="2470" width="340" height="950" as="geometry">
+            <mxRectangle x="80" y="890" width="250" height="30" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="XBrvubIOwSxENSqEJ7tH-206" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" parent="XBrvubIOwSxENSqEJ7tH-205" source="XBrvubIOwSxENSqEJ7tH-207" target="XBrvubIOwSxENSqEJ7tH-208" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="XBrvubIOwSxENSqEJ7tH-207" value="Find terrain slab the point is in" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;glass=0;strokeWidth=1;shadow=0;" parent="XBrvubIOwSxENSqEJ7tH-205" vertex="1">
+          <mxGeometry x="50" y="50.000000000000014" width="120" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="XBrvubIOwSxENSqEJ7tH-208" value="Get the X and Y offest of the point in its slab" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;glass=0;strokeWidth=1;shadow=0;" parent="XBrvubIOwSxENSqEJ7tH-205" vertex="1">
+          <mxGeometry x="50" y="110.04000000000002" width="120" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="XBrvubIOwSxENSqEJ7tH-209" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" parent="XBrvubIOwSxENSqEJ7tH-205" target="XBrvubIOwSxENSqEJ7tH-210" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="110" y="140.04000000000002" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="XBrvubIOwSxENSqEJ7tH-213" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="XBrvubIOwSxENSqEJ7tH-205" source="XBrvubIOwSxENSqEJ7tH-210" target="XBrvubIOwSxENSqEJ7tH-212" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="XBrvubIOwSxENSqEJ7tH-210" value="Get the X and Y index of the lower-left corner of the point&#39;s cell in the slab" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;glass=0;strokeWidth=1;shadow=0;" parent="XBrvubIOwSxENSqEJ7tH-205" vertex="1">
+          <mxGeometry x="50" y="170.08" width="120" height="59.92" as="geometry" />
+        </mxCell>
+        <mxCell id="XBrvubIOwSxENSqEJ7tH-215" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="XBrvubIOwSxENSqEJ7tH-205" source="XBrvubIOwSxENSqEJ7tH-212" target="XBrvubIOwSxENSqEJ7tH-214" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="XBrvubIOwSxENSqEJ7tH-212" value="Get the X and Y in-cell offset of the point&amp;nbsp;" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;glass=0;strokeWidth=1;shadow=0;" parent="XBrvubIOwSxENSqEJ7tH-205" vertex="1">
+          <mxGeometry x="50" y="260" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="XBrvubIOwSxENSqEJ7tH-218" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="XBrvubIOwSxENSqEJ7tH-205" source="XBrvubIOwSxENSqEJ7tH-214" target="XBrvubIOwSxENSqEJ7tH-216" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="XBrvubIOwSxENSqEJ7tH-219" value="Yes" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="XBrvubIOwSxENSqEJ7tH-218" vertex="1" connectable="0">
+          <mxGeometry x="-0.2762" y="-1" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="XBrvubIOwSxENSqEJ7tH-220" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" parent="XBrvubIOwSxENSqEJ7tH-205" source="XBrvubIOwSxENSqEJ7tH-214" target="XBrvubIOwSxENSqEJ7tH-217" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="XBrvubIOwSxENSqEJ7tH-221" value="No" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="XBrvubIOwSxENSqEJ7tH-220" vertex="1" connectable="0">
+          <mxGeometry x="-0.4287" y="1" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="XBrvubIOwSxENSqEJ7tH-214" value="X index of &lt;br&gt;the lower-left &lt;br&gt;point is max&lt;br&gt;index of&lt;br&gt;slab" style="rhombus;whiteSpace=wrap;html=1;" parent="XBrvubIOwSxENSqEJ7tH-205" vertex="1">
+          <mxGeometry x="55" y="320" width="110" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="XBrvubIOwSxENSqEJ7tH-230" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="XBrvubIOwSxENSqEJ7tH-205" source="XBrvubIOwSxENSqEJ7tH-216" target="XBrvubIOwSxENSqEJ7tH-227" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="XBrvubIOwSxENSqEJ7tH-216" value="Only use left side of cell in interpolation" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;glass=0;strokeWidth=1;shadow=0;" parent="XBrvubIOwSxENSqEJ7tH-205" vertex="1">
+          <mxGeometry x="50" y="470" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="XBrvubIOwSxENSqEJ7tH-231" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="XBrvubIOwSxENSqEJ7tH-205" source="XBrvubIOwSxENSqEJ7tH-217" target="XBrvubIOwSxENSqEJ7tH-227" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="XBrvubIOwSxENSqEJ7tH-217" value="Use both left and right side of cell in interpolation" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;glass=0;strokeWidth=1;shadow=0;" parent="XBrvubIOwSxENSqEJ7tH-205" vertex="1">
+          <mxGeometry x="190" y="470" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="XBrvubIOwSxENSqEJ7tH-227" value="Y index of &lt;br&gt;the lower-left &lt;br&gt;point is max&lt;br&gt;index of&lt;br&gt;slab" style="rhombus;whiteSpace=wrap;html=1;" parent="XBrvubIOwSxENSqEJ7tH-205" vertex="1">
+          <mxGeometry x="55" y="560" width="110" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="XBrvubIOwSxENSqEJ7tH-233" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="XBrvubIOwSxENSqEJ7tH-205" source="XBrvubIOwSxENSqEJ7tH-228" target="XBrvubIOwSxENSqEJ7tH-232" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="XBrvubIOwSxENSqEJ7tH-228" value="Only use bottom side of cell in interpolation" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;glass=0;strokeWidth=1;shadow=0;" parent="XBrvubIOwSxENSqEJ7tH-205" vertex="1">
+          <mxGeometry x="50" y="710" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="XBrvubIOwSxENSqEJ7tH-223" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="XBrvubIOwSxENSqEJ7tH-205" source="XBrvubIOwSxENSqEJ7tH-227" target="XBrvubIOwSxENSqEJ7tH-228" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="XBrvubIOwSxENSqEJ7tH-224" value="Yes" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="XBrvubIOwSxENSqEJ7tH-223" vertex="1" connectable="0">
+          <mxGeometry x="-0.2762" y="-1" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="XBrvubIOwSxENSqEJ7tH-234" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="XBrvubIOwSxENSqEJ7tH-205" source="XBrvubIOwSxENSqEJ7tH-229" target="XBrvubIOwSxENSqEJ7tH-232" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="250" y="770" />
+              <mxPoint x="110" y="770" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="XBrvubIOwSxENSqEJ7tH-229" value="Use both top and bottom side of cell in interpolation" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;glass=0;strokeWidth=1;shadow=0;" parent="XBrvubIOwSxENSqEJ7tH-205" vertex="1">
+          <mxGeometry x="190" y="710" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="XBrvubIOwSxENSqEJ7tH-225" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" parent="XBrvubIOwSxENSqEJ7tH-205" source="XBrvubIOwSxENSqEJ7tH-227" target="XBrvubIOwSxENSqEJ7tH-229" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="XBrvubIOwSxENSqEJ7tH-226" value="No" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="XBrvubIOwSxENSqEJ7tH-225" vertex="1" connectable="0">
+          <mxGeometry x="-0.4287" y="1" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="XBrvubIOwSxENSqEJ7tH-236" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="XBrvubIOwSxENSqEJ7tH-205" source="XBrvubIOwSxENSqEJ7tH-232" target="XBrvubIOwSxENSqEJ7tH-235" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="XBrvubIOwSxENSqEJ7tH-232" value="Get the Z coordinate of all cell points considered" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;glass=0;strokeWidth=1;shadow=0;" parent="XBrvubIOwSxENSqEJ7tH-205" vertex="1">
+          <mxGeometry x="50" y="780" width="120" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="XBrvubIOwSxENSqEJ7tH-235" value="Calculate the Z coordinate of the query point" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;glass=0;strokeWidth=1;shadow=0;" parent="XBrvubIOwSxENSqEJ7tH-205" vertex="1">
+          <mxGeometry x="50" y="870" width="120" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="XBrvubIOwSxENSqEJ7tH-268" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=1;entryY=1;entryDx=0;entryDy=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" source="XBrvubIOwSxENSqEJ7tH-237" target="XBrvubIOwSxENSqEJ7tH-271" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="600" y="420" />
+              <mxPoint x="470" y="420" />
+              <mxPoint x="470" y="390" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="XBrvubIOwSxENSqEJ7tH-237" value="Renderer.RoadRenderer.&lt;br&gt;RoadRenderer.interpolate_z()" style="swimlane;whiteSpace=wrap;html=1;startSize=30;fillColor=#d80073;fontColor=#ffffff;strokeColor=#A50040;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="480" y="330" width="240" height="70" as="geometry">
+            <mxRectangle x="80" y="890" width="250" height="30" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="XBrvubIOwSxENSqEJ7tH-267" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" source="XBrvubIOwSxENSqEJ7tH-271" target="XBrvubIOwSxENSqEJ7tH-237" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="470" y="375" />
+              <mxPoint x="470" y="310" />
+              <mxPoint x="600" y="310" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="XBrvubIOwSxENSqEJ7tH-296" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" source="XBrvubIOwSxENSqEJ7tH-294" target="xQsXcqBraPOJ2Dercj9v-10" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="730" y="460" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="XBrvubIOwSxENSqEJ7tH-297" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=1;entryY=1;entryDx=0;entryDy=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" source="xQsXcqBraPOJ2Dercj9v-10" target="XBrvubIOwSxENSqEJ7tH-294" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="600" y="550" />
+              <mxPoint x="470" y="550" />
+              <mxPoint x="470" y="450" />
+            </Array>
+            <mxPoint x="730" y="530" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="xQsXcqBraPOJ2Dercj9v-10" value="Renderer.RoadRenderer.&lt;br style=&quot;color: rgb(255, 255, 255);&quot;&gt;&lt;span style=&quot;color: rgb(255, 255, 255);&quot;&gt;RoadRenderer.adapt_coords()&lt;/span&gt;" style="swimlane;whiteSpace=wrap;html=1;startSize=30;fillColor=#a20025;fontColor=#ffffff;strokeColor=#6F0000;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="480" y="460" width="240" height="70" as="geometry">
+            <mxRectangle x="80" y="890" width="250" height="30" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="xQsXcqBraPOJ2Dercj9v-13" value="Renderer.RoadRenderer.&lt;br style=&quot;color: rgb(255, 255, 255);&quot;&gt;&lt;span style=&quot;color: rgb(255, 255, 255);&quot;&gt;RoadRenderer.adapt_coords()&lt;/span&gt;" style="swimlane;whiteSpace=wrap;html=1;startSize=30;fillColor=#a20025;fontColor=#ffffff;strokeColor=#6F0000;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="420" y="2470" width="240" height="200" as="geometry">
+            <mxRectangle x="80" y="890" width="250" height="30" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="xQsXcqBraPOJ2Dercj9v-14" value="for each point" style="swimlane;whiteSpace=wrap;html=1;startSize=30;" parent="xQsXcqBraPOJ2Dercj9v-13" vertex="1">
+          <mxGeometry x="50" y="50" width="157.5" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="xQsXcqBraPOJ2Dercj9v-15" value="Substract scene center coordinates from points coordinates" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;glass=0;strokeWidth=1;shadow=0;" parent="xQsXcqBraPOJ2Dercj9v-14" vertex="1">
+          <mxGeometry x="20" y="50" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="xQsXcqBraPOJ2Dercj9v-16" value="Renderer.RoadRenderer.RoadRenderer.render():Cars" style="swimlane;whiteSpace=wrap;html=1;startSize=30;fillColor=#1ba1e2;fontColor=#ffffff;strokeColor=#006EAF;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="10" y="1200" width="460" height="1070" as="geometry">
+            <mxRectangle x="80" y="890" width="250" height="30" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="xQsXcqBraPOJ2Dercj9v-17" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" parent="xQsXcqBraPOJ2Dercj9v-16" source="xQsXcqBraPOJ2Dercj9v-42" target="xQsXcqBraPOJ2Dercj9v-20" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="xQsXcqBraPOJ2Dercj9v-18" value="Create cars mesh" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;glass=0;strokeWidth=1;shadow=0;" parent="xQsXcqBraPOJ2Dercj9v-16" vertex="1">
+          <mxGeometry x="155.01" y="70" width="120" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="xQsXcqBraPOJ2Dercj9v-20" value="for each lane" style="swimlane;whiteSpace=wrap;html=1;startSize=30;" parent="xQsXcqBraPOJ2Dercj9v-16" vertex="1">
+          <mxGeometry x="35.01" y="270" width="360" height="780" as="geometry" />
+        </mxCell>
+        <mxCell id="xQsXcqBraPOJ2Dercj9v-52" value="for each segment" style="swimlane;whiteSpace=wrap;html=1;startSize=30;" parent="xQsXcqBraPOJ2Dercj9v-20" vertex="1">
+          <mxGeometry x="50" y="75" width="280" height="675" as="geometry" />
+        </mxCell>
+        <mxCell id="xQsXcqBraPOJ2Dercj9v-48" value="while current&lt;span style=&quot;font-weight: 400;&quot;&gt;&amp;nbsp;segment&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;length &amp;gt; &lt;br&gt;next car&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;distance&lt;/span&gt;" style="swimlane;whiteSpace=wrap;html=1;startSize=30;" parent="xQsXcqBraPOJ2Dercj9v-52" vertex="1">
+          <mxGeometry x="45" y="60" width="205" height="590" as="geometry" />
+        </mxCell>
+        <mxCell id="xQsXcqBraPOJ2Dercj9v-69" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" parent="xQsXcqBraPOJ2Dercj9v-48" source="xQsXcqBraPOJ2Dercj9v-53" target="xQsXcqBraPOJ2Dercj9v-54" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="xQsXcqBraPOJ2Dercj9v-53" value="Create point 1 along segment at next_car_distance of segment start" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;glass=0;strokeWidth=1;shadow=0;" parent="xQsXcqBraPOJ2Dercj9v-48" vertex="1">
+          <mxGeometry x="29" y="50" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="xQsXcqBraPOJ2Dercj9v-70" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="xQsXcqBraPOJ2Dercj9v-48" source="xQsXcqBraPOJ2Dercj9v-54" target="xQsXcqBraPOJ2Dercj9v-23" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="xQsXcqBraPOJ2Dercj9v-54" value="Create point 2, 2m away from point 1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;glass=0;strokeWidth=1;shadow=0;" parent="xQsXcqBraPOJ2Dercj9v-48" vertex="1">
+          <mxGeometry x="29" y="130" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="xQsXcqBraPOJ2Dercj9v-71" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="xQsXcqBraPOJ2Dercj9v-48" source="xQsXcqBraPOJ2Dercj9v-23" target="xQsXcqBraPOJ2Dercj9v-55" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="xQsXcqBraPOJ2Dercj9v-23" value="Get points Z coordinates" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;glass=0;strokeWidth=1;shadow=0;" parent="xQsXcqBraPOJ2Dercj9v-48" vertex="1">
+          <mxGeometry x="29" y="199.96000000000004" width="120" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="xQsXcqBraPOJ2Dercj9v-72" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" parent="xQsXcqBraPOJ2Dercj9v-48" source="xQsXcqBraPOJ2Dercj9v-55" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="88.99000000000001" y="305" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="xQsXcqBraPOJ2Dercj9v-55" value="Adapt points for rendering" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;glass=0;strokeWidth=1;shadow=0;" parent="xQsXcqBraPOJ2Dercj9v-48" vertex="1">
+          <mxGeometry x="29" y="260" width="120" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="xQsXcqBraPOJ2Dercj9v-73" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="xQsXcqBraPOJ2Dercj9v-48" source="xQsXcqBraPOJ2Dercj9v-56" target="xQsXcqBraPOJ2Dercj9v-61" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="xQsXcqBraPOJ2Dercj9v-56" value="Create edge from adapted point 1 and point 2" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;glass=0;strokeWidth=1;shadow=0;" parent="xQsXcqBraPOJ2Dercj9v-48" vertex="1">
+          <mxGeometry x="29" y="309" width="120" height="51" as="geometry" />
+        </mxCell>
+        <mxCell id="xQsXcqBraPOJ2Dercj9v-39" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="xQsXcqBraPOJ2Dercj9v-48" target="xQsXcqBraPOJ2Dercj9v-41" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="557.75" y="295" as="targetPoint" />
+            <mxPoint x="149" y="270" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="xQsXcqBraPOJ2Dercj9v-40" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=1;entryY=1;entryDx=0;entryDy=0;" parent="xQsXcqBraPOJ2Dercj9v-48" source="xQsXcqBraPOJ2Dercj9v-41" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="490" y="385" />
+              <mxPoint x="295" y="385" />
+              <mxPoint x="295" y="285" />
+            </Array>
+            <mxPoint x="557.75" y="365" as="sourcePoint" />
+            <mxPoint x="149" y="285" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="xQsXcqBraPOJ2Dercj9v-74" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="xQsXcqBraPOJ2Dercj9v-48" source="xQsXcqBraPOJ2Dercj9v-61" target="xQsXcqBraPOJ2Dercj9v-63" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="xQsXcqBraPOJ2Dercj9v-61" value="Add edge to car mesh" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;glass=0;strokeWidth=1;shadow=0;" parent="xQsXcqBraPOJ2Dercj9v-48" vertex="1">
+          <mxGeometry x="29" y="380" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="xQsXcqBraPOJ2Dercj9v-75" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="xQsXcqBraPOJ2Dercj9v-48" source="xQsXcqBraPOJ2Dercj9v-63" target="xQsXcqBraPOJ2Dercj9v-66" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="xQsXcqBraPOJ2Dercj9v-63" value="Update next car distance" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;glass=0;strokeWidth=1;shadow=0;" parent="xQsXcqBraPOJ2Dercj9v-48" vertex="1">
+          <mxGeometry x="29" y="440" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="xQsXcqBraPOJ2Dercj9v-66" value="Current segment is updated to be point 1 to segment end" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;glass=0;strokeWidth=1;shadow=0;" parent="xQsXcqBraPOJ2Dercj9v-48" vertex="1">
+          <mxGeometry x="29" y="510" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="xQsXcqBraPOJ2Dercj9v-42" value="Get next distance to car" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;glass=0;strokeWidth=1;shadow=0;" parent="xQsXcqBraPOJ2Dercj9v-16" vertex="1">
+          <mxGeometry x="155.01" y="150" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="xQsXcqBraPOJ2Dercj9v-43" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" parent="xQsXcqBraPOJ2Dercj9v-16" source="xQsXcqBraPOJ2Dercj9v-18" target="xQsXcqBraPOJ2Dercj9v-42" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1205.38" y="170" as="sourcePoint" />
+            <mxPoint x="1205.38" y="340" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="xQsXcqBraPOJ2Dercj9v-57" value="Renderer.RoadRenderer.&lt;br&gt;RoadRenderer.next_car_distance()" style="swimlane;whiteSpace=wrap;html=1;startSize=30;" parent="xQsXcqBraPOJ2Dercj9v-16" vertex="1">
+          <mxGeometry x="500" y="130" width="240" height="70" as="geometry">
+            <mxRectangle x="80" y="890" width="250" height="30" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="xQsXcqBraPOJ2Dercj9v-58" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="xQsXcqBraPOJ2Dercj9v-16" source="xQsXcqBraPOJ2Dercj9v-42" target="xQsXcqBraPOJ2Dercj9v-57" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="480" y="170" />
+              <mxPoint x="480" y="110" />
+              <mxPoint x="620" y="110" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="xQsXcqBraPOJ2Dercj9v-59" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=1;entryY=1;entryDx=0;entryDy=0;" parent="xQsXcqBraPOJ2Dercj9v-16" source="xQsXcqBraPOJ2Dercj9v-57" target="xQsXcqBraPOJ2Dercj9v-42" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="620" y="220" />
+              <mxPoint x="480" y="220" />
+              <mxPoint x="480" y="190" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="xQsXcqBraPOJ2Dercj9v-28" value="Create car object from mesh" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;glass=0;strokeWidth=1;shadow=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="180" y="2299" width="120" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="xQsXcqBraPOJ2Dercj9v-30" value="Add GeometryNodes modifier to car object" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;glass=0;strokeWidth=1;shadow=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="180" y="2359" width="120" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="xQsXcqBraPOJ2Dercj9v-27" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" source="xQsXcqBraPOJ2Dercj9v-28" target="xQsXcqBraPOJ2Dercj9v-30" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="xQsXcqBraPOJ2Dercj9v-37" value="Renderer.RoadRenderer.&lt;br&gt;RoadRenderer.interpolate_z()" style="swimlane;whiteSpace=wrap;html=1;startSize=30;fillColor=#d80073;fontColor=#ffffff;strokeColor=#A50040;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="510" y="1780" width="240" height="70" as="geometry">
+            <mxRectangle x="80" y="890" width="250" height="30" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="xQsXcqBraPOJ2Dercj9v-36" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=1;entryY=1;entryDx=0;entryDy=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" source="xQsXcqBraPOJ2Dercj9v-37" target="xQsXcqBraPOJ2Dercj9v-23" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="630" y="1865" />
+              <mxPoint x="482" y="1865" />
+              <mxPoint x="482" y="1835" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="xQsXcqBraPOJ2Dercj9v-38" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" source="xQsXcqBraPOJ2Dercj9v-23" target="xQsXcqBraPOJ2Dercj9v-37" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="482" y="1820" />
+              <mxPoint x="482" y="1755" />
+              <mxPoint x="630" y="1755" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="xQsXcqBraPOJ2Dercj9v-41" value="Renderer.RoadRenderer.&lt;br style=&quot;color: rgb(255, 255, 255);&quot;&gt;&lt;span style=&quot;color: rgb(255, 255, 255);&quot;&gt;RoadRenderer.adapt_coords()&lt;/span&gt;" style="swimlane;whiteSpace=wrap;html=1;startSize=30;fillColor=#a20025;fontColor=#ffffff;strokeColor=#6F0000;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="510" y="1895" width="240" height="70" as="geometry">
+            <mxRectangle x="80" y="890" width="250" height="30" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="xQsXcqBraPOJ2Dercj9v-60" value="Renderer.RoadRenderer.&lt;br&gt;RoadRenderer.next_car_distance()" style="swimlane;whiteSpace=wrap;html=1;startSize=30;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="510" y="2080" width="240" height="70" as="geometry">
+            <mxRectangle x="80" y="890" width="250" height="30" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="xQsXcqBraPOJ2Dercj9v-67" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" source="xQsXcqBraPOJ2Dercj9v-63" target="xQsXcqBraPOJ2Dercj9v-60" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="630" y="2065" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="xQsXcqBraPOJ2Dercj9v-68" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=1.005;entryY=0.875;entryDx=0;entryDy=0;entryPerimeter=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" source="xQsXcqBraPOJ2Dercj9v-60" target="xQsXcqBraPOJ2Dercj9v-63" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="630" y="2170" />
+              <mxPoint x="480" y="2170" />
+              <mxPoint x="480" y="2080" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="xQsXcqBraPOJ2Dercj9v-19" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" source="xQsXcqBraPOJ2Dercj9v-16" target="xQsXcqBraPOJ2Dercj9v-28" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="199" y="2310" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

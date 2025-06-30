@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Developer documentation - WorldWeaver Documentation</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../assets/_mkdocstrings.css" rel="stylesheet" />
+        <link href="../stylesheets/extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Developer documentation";
+        var mkdocs_page_input_path = "dev.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> WorldWeaver Documentation
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../install/">Installation</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../basic_workflow/">First Run</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../file_workflow/">Working offline</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../datafiles/">Managing IGN open data</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../advanced_workflow/">Advanced features</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../filesystem/">File usage</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../assets/">Assets use</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../conf/">Configuration files</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../flood/">Flooding algorithm</a>
+                </li>
+              </ul>
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href="#">Developer documentation</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#structure">Structure</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#lighting">Lighting</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#adding-a-new-data-source">Adding a new data source</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#relevant-documentation">Relevant documentation:</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#renderingdata">RenderingData</a>
+    </li>
+        </ul>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#worldweaver.Utils.RenderingDataFrames.RenderingData">RenderingData</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#basedriver">BaseDriver</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#worldweaver.Drivers.BaseDriver.BaseDriver">BaseDriver</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#select_driver">select_driver</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#worldweaver.main.select_driver">select_driver</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#adding-a-new-object-to-the-blender-scene">Adding a new object to the Blender scene</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#relevant-documentation_1">Relevant documentation:</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#renderingdata_1">RenderingData</a>
+    </li>
+        </ul>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#worldweaver.Utils.RenderingDataFrames.RenderingData">RenderingData</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#example-of-an-object-path-factories">Example of an object path: Factories.</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#input-data">Input Data</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#rendering">Rendering</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#assets">Assets</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#configuration">Configuration</a>
+    </li>
+        </ul>
+    </li>
+        </ul>
+    </li>
+    </ul>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">WorldWeaver Documentation</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Developer documentation</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="worldweaver-dev-documention">WorldWeaver Dev Documention</h1>
+<p>This page is desgined to help you edit, customize and improve this software.
+It will describe the internal modules, their roles and interactions.</p>
+<h2 id="structure">Structure</h2>
+<p>The project is divided into a few folders:</p>
+<ul>
+<li>Assets: Stores the blender assets for rendering.</li>
+<li>Config: Stores the default configuration files.</li>
+<li>Shapefiles: Stores shapefiles that the software needs.</li>
+<li>Drivers: Python module. A Driver is an object that fetches data for a source and outputs a RenderingData that the software uses for the render.</li>
+<li>Loader: Python module. Used to load files that the software might need using</li>
+<li>Manager: Python module. High-level objects that handle a particular job.</li>
+<li>Parser: Python module. Low-level objects that parse files</li>
+<li>Processor: Python module. Objects that are used for processing and calculations</li>
+<li>Renderer: Python module. Objects that directly interact with Blender's API to display the objects.</li>
+<li>Utils: Python module. Dataclasses, utilities, constants ...</li>
+<li>main.py: the main python file</li>
+</ul>
+<h2 id="lighting">Lighting</h2>
+<p>The scene is lit using a <a href="https://docs.blender.org/manual/en/3.5/addons/lighting/sun_position.html">native Blender Add-on</a>.</p>
+<p>Currently, the sun position is set to the current date, at 12PM, located at the center of the scene, but it could be customized.</p>
+<p>Likewise, the intensity of the light is fixed for now, but could be adjusted.</p>
+<h2 id="adding-a-new-data-source">Adding a new data source</h2>
+<p>If you want to use to software on data that is not currently supported, you will want to create you own Driver.</p>
+<p>You can copy the structure of the existing ones (IGNDriver for IGN data and OSMDriver for openstreetmap data) as a template.</p>
+<p>Ideally, your new driver module should contain:
+  * A <code>Loader</code> class whose job is to fetch the data wherever it is (files, data streams ...)
+  * A <code>Preprocessor</code> class whose job is to create a <code>RenderingData</code> from the input data, using rules that you will have to devise
+  * A <code>Driver</code> class, that has to inherit from <code>BaseDriver</code>, whose job is to orchestrate the loading, parsing and preprocessing of the data.
+  * Probably a few helper classes for parsing and preprocessing (api-specific constants, column names in geodataframes etc ...)</p>
+<p>Once you have all this, you can just modify the <code>select_driver</code> method in <code>main.py</code> to reference your driver, and select your driver via the <code>input_data</code> field the json configuration file of your runs.</p>
+<h3 id="relevant-documentation">Relevant documentation:</h3>
+<h4 id="renderingdata">RenderingData</h4>
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<a id="worldweaver.Utils.RenderingDataFrames.RenderingData"></a>
+    <div class="doc doc-contents first">
+
+
+
+
+
+
+
+
+              <details class="quote">
+                <summary>Source code in <code>worldweaver/Utils/RenderingDataFrames.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">308</span>
+<span class="normal">309</span>
+<span class="normal">310</span>
+<span class="normal">311</span>
+<span class="normal">312</span>
+<span class="normal">313</span>
+<span class="normal">314</span>
+<span class="normal">315</span>
+<span class="normal">316</span>
+<span class="normal">317</span>
+<span class="normal">318</span>
+<span class="normal">319</span>
+<span class="normal">320</span>
+<span class="normal">321</span>
+<span class="normal">322</span>
+<span class="normal">323</span>
+<span class="normal">324</span>
+<span class="normal">325</span>
+<span class="normal">326</span>
+<span class="normal">327</span>
+<span class="normal">328</span>
+<span class="normal">329</span>
+<span class="normal">330</span>
+<span class="normal">331</span>
+<span class="normal">332</span>
+<span class="normal">333</span>
+<span class="normal">334</span>
+<span class="normal">335</span>
+<span class="normal">336</span>
+<span class="normal">337</span>
+<span class="normal">338</span>
+<span class="normal">339</span>
+<span class="normal">340</span>
+<span class="normal">341</span>
+<span class="normal">342</span>
+<span class="normal">343</span>
+<span class="normal">344</span>
+<span class="normal">345</span>
+<span class="normal">346</span>
+<span class="normal">347</span>
+<span class="normal">348</span>
+<span class="normal">349</span>
+<span class="normal">350</span>
+<span class="normal">351</span>
+<span class="normal">352</span>
+<span class="normal">353</span>
+<span class="normal">354</span>
+<span class="normal">355</span>
+<span class="normal">356</span>
+<span class="normal">357</span>
+<span class="normal">358</span>
+<span class="normal">359</span>
+<span class="normal">360</span>
+<span class="normal">361</span>
+<span class="normal">362</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">RenderingData</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">forests</span><span class="p">:</span> <span class="n">g</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">,</span>
+        <span class="n">buildings</span><span class="p">:</span> <span class="n">BuildingRenderingData</span><span class="p">,</span>
+        <span class="n">roads</span><span class="p">:</span> <span class="n">g</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">,</span>
+        <span class="n">still_water</span><span class="p">:</span> <span class="n">g</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">,</span>
+        <span class="n">flowing_water</span><span class="p">:</span> <span class="n">g</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">,</span>
+        <span class="n">ocean</span><span class="p">:</span> <span class="n">g</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">,</span>
+        <span class="n">zones</span><span class="p">:</span> <span class="n">ZonesRenderingData</span><span class="p">,</span>
+    <span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">forests</span> <span class="o">=</span> <span class="n">forests</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">buildings</span> <span class="o">=</span> <span class="n">buildings</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">roads</span> <span class="o">=</span> <span class="n">roads</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">still_water</span> <span class="o">=</span> <span class="n">still_water</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">flowing_water</span> <span class="o">=</span> <span class="n">flowing_water</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ocean</span> <span class="o">=</span> <span class="n">ocean</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">zones</span> <span class="o">=</span> <span class="n">zones</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">validate</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="n">is_valid</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="n">is_valid</span> <span class="o">&amp;=</span> <span class="n">RenderingDataFrame</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">forests</span><span class="p">,</span> <span class="s2">&quot;Forest&quot;</span><span class="p">)</span>
+        <span class="n">is_valid</span> <span class="o">&amp;=</span> <span class="n">RenderingBuildingDataFrame</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">buildings</span><span class="o">.</span><span class="n">churches</span><span class="p">,</span> <span class="s2">&quot;Church&quot;</span>
+        <span class="p">)</span>
+        <span class="n">is_valid</span> <span class="o">&amp;=</span> <span class="n">RenderingBuildingDataFrame</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">buildings</span><span class="o">.</span><span class="n">malls</span><span class="p">,</span> <span class="s2">&quot;Mall&quot;</span><span class="p">)</span>
+        <span class="n">is_valid</span> <span class="o">&amp;=</span> <span class="n">RenderingBuildingDataFrame</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">buildings</span><span class="o">.</span><span class="n">factories</span><span class="p">,</span> <span class="s2">&quot;Factory&quot;</span>
+        <span class="p">)</span>
+        <span class="n">is_valid</span> <span class="o">&amp;=</span> <span class="n">RenderingBuildingDataFrame</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">buildings</span><span class="o">.</span><span class="n">houses</span><span class="p">,</span> <span class="s2">&quot;House&quot;</span><span class="p">)</span>
+        <span class="n">is_valid</span> <span class="o">&amp;=</span> <span class="n">RenderingBuildingDataFrame</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">buildings</span><span class="o">.</span><span class="n">default_buildings</span><span class="p">,</span>
+            <span class="s2">&quot;Default Building&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">is_valid</span> <span class="o">&amp;=</span> <span class="n">RenderingRoadDataFrame</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">roads</span><span class="p">,</span> <span class="s2">&quot;Road&quot;</span><span class="p">)</span>
+        <span class="n">is_valid</span> <span class="o">&amp;=</span> <span class="n">RenderingDataFrame</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">still_water</span><span class="p">,</span> <span class="s2">&quot;Still Water&quot;</span><span class="p">)</span>
+        <span class="n">is_valid</span> <span class="o">&amp;=</span> <span class="n">RenderingDataFrame</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">flowing_water</span><span class="p">,</span> <span class="s2">&quot;Flowing Water&quot;</span><span class="p">)</span>
+        <span class="n">is_valid</span> <span class="o">&amp;=</span> <span class="n">RenderingDataFrame</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ocean</span><span class="p">,</span> <span class="s2">&quot;Ocean&quot;</span><span class="p">)</span>
+        <span class="n">is_valid</span> <span class="o">&amp;=</span> <span class="n">RenderingDataFrame</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">zones</span><span class="o">.</span><span class="n">wheatfields</span><span class="p">,</span> <span class="s2">&quot;Wheat Field&quot;</span><span class="p">)</span>
+        <span class="n">is_valid</span> <span class="o">&amp;=</span> <span class="n">RenderingDataFrame</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">zones</span><span class="o">.</span><span class="n">cornfields</span><span class="p">,</span> <span class="s2">&quot;Corn Field&quot;</span><span class="p">)</span>
+        <span class="n">is_valid</span> <span class="o">&amp;=</span> <span class="n">RenderingDataFrame</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">zones</span><span class="o">.</span><span class="n">grass</span><span class="p">,</span> <span class="s2">&quot;Grass&quot;</span><span class="p">)</span>
+        <span class="n">is_valid</span> <span class="o">&amp;=</span> <span class="n">RenderingDataFrame</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">zones</span><span class="o">.</span><span class="n">developed</span><span class="p">,</span> <span class="s2">&quot;Developed&quot;</span><span class="p">)</span>
+        <span class="n">is_valid</span> <span class="o">&amp;=</span> <span class="n">RenderingDataFrame</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">zones</span><span class="o">.</span><span class="n">tartan</span><span class="p">,</span> <span class="s2">&quot;Tartan&quot;</span><span class="p">)</span>
+        <span class="n">is_valid</span> <span class="o">&amp;=</span> <span class="n">RenderingDataFrame</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">zones</span><span class="o">.</span><span class="n">compacted</span><span class="p">,</span> <span class="s2">&quot;Compacted&quot;</span><span class="p">)</span>
+        <span class="n">is_valid</span> <span class="o">&amp;=</span> <span class="n">RenderingDataFrame</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">zones</span><span class="o">.</span><span class="n">asphalt</span><span class="p">,</span> <span class="s2">&quot;Asphalt&quot;</span><span class="p">)</span>
+        <span class="n">is_valid</span> <span class="o">&amp;=</span> <span class="n">RenderingDataFrame</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">zones</span><span class="o">.</span><span class="n">sand</span><span class="p">,</span> <span class="s2">&quot;Sand&quot;</span><span class="p">)</span>
+        <span class="n">is_valid</span> <span class="o">&amp;=</span> <span class="n">RenderingDataFrame</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">zones</span><span class="o">.</span><span class="n">paths</span><span class="p">,</span> <span class="s2">&quot;Path&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">is_valid</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid RenderingData&quot;</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+              </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+</div><h4 id="basedriver">BaseDriver</h4>
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<a id="worldweaver.Drivers.BaseDriver.BaseDriver"></a>
+    <div class="doc doc-contents first">
+            <p class="doc doc-class-bases">
+              Bases: <code><span title="abc.ABC">ABC</span></code></p>
+
+
+
+
+
+
+
+
+              <details class="quote">
+                <summary>Source code in <code>worldweaver/Drivers/BaseDriver.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 14</span>
+<span class="normal"> 15</span>
+<span class="normal"> 16</span>
+<span class="normal"> 17</span>
+<span class="normal"> 18</span>
+<span class="normal"> 19</span>
+<span class="normal"> 20</span>
+<span class="normal"> 21</span>
+<span class="normal"> 22</span>
+<span class="normal"> 23</span>
+<span class="normal"> 24</span>
+<span class="normal"> 25</span>
+<span class="normal"> 26</span>
+<span class="normal"> 27</span>
+<span class="normal"> 28</span>
+<span class="normal"> 29</span>
+<span class="normal"> 30</span>
+<span class="normal"> 31</span>
+<span class="normal"> 32</span>
+<span class="normal"> 33</span>
+<span class="normal"> 34</span>
+<span class="normal"> 35</span>
+<span class="normal"> 36</span>
+<span class="normal"> 37</span>
+<span class="normal"> 38</span>
+<span class="normal"> 39</span>
+<span class="normal"> 40</span>
+<span class="normal"> 41</span>
+<span class="normal"> 42</span>
+<span class="normal"> 43</span>
+<span class="normal"> 44</span>
+<span class="normal"> 45</span>
+<span class="normal"> 46</span>
+<span class="normal"> 47</span>
+<span class="normal"> 48</span>
+<span class="normal"> 49</span>
+<span class="normal"> 50</span>
+<span class="normal"> 51</span>
+<span class="normal"> 52</span>
+<span class="normal"> 53</span>
+<span class="normal"> 54</span>
+<span class="normal"> 55</span>
+<span class="normal"> 56</span>
+<span class="normal"> 57</span>
+<span class="normal"> 58</span>
+<span class="normal"> 59</span>
+<span class="normal"> 60</span>
+<span class="normal"> 61</span>
+<span class="normal"> 62</span>
+<span class="normal"> 63</span>
+<span class="normal"> 64</span>
+<span class="normal"> 65</span>
+<span class="normal"> 66</span>
+<span class="normal"> 67</span>
+<span class="normal"> 68</span>
+<span class="normal"> 69</span>
+<span class="normal"> 70</span>
+<span class="normal"> 71</span>
+<span class="normal"> 72</span>
+<span class="normal"> 73</span>
+<span class="normal"> 74</span>
+<span class="normal"> 75</span>
+<span class="normal"> 76</span>
+<span class="normal"> 77</span>
+<span class="normal"> 78</span>
+<span class="normal"> 79</span>
+<span class="normal"> 80</span>
+<span class="normal"> 81</span>
+<span class="normal"> 82</span>
+<span class="normal"> 83</span>
+<span class="normal"> 84</span>
+<span class="normal"> 85</span>
+<span class="normal"> 86</span>
+<span class="normal"> 87</span>
+<span class="normal"> 88</span>
+<span class="normal"> 89</span>
+<span class="normal"> 90</span>
+<span class="normal"> 91</span>
+<span class="normal"> 92</span>
+<span class="normal"> 93</span>
+<span class="normal"> 94</span>
+<span class="normal"> 95</span>
+<span class="normal"> 96</span>
+<span class="normal"> 97</span>
+<span class="normal"> 98</span>
+<span class="normal"> 99</span>
+<span class="normal">100</span>
+<span class="normal">101</span>
+<span class="normal">102</span>
+<span class="normal">103</span>
+<span class="normal">104</span>
+<span class="normal">105</span>
+<span class="normal">106</span>
+<span class="normal">107</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">BaseDriver</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+
+    <span class="c1"># Maximum surface, in km², that is allowed to be rendered in the software</span>
+    <span class="c1"># TODO: move this in config ? It SHOULD depend on the computing power of the machine it&#39;s being ran on</span>
+    <span class="c1"># So its role is mainly to avoid users starting something that is way too big and will drain resources</span>
+    <span class="n">max_allowed_area</span> <span class="o">=</span> <span class="mi">20</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">Config</span><span class="p">,</span> <span class="n">project_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">config</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">project_path</span> <span class="o">=</span> <span class="n">project_path</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">internal_crs</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">loader</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">processor</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">geo_window</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">terrain_data</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderingData</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">get_supported_sources</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="k">pass</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">load_texture</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mesh_box</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">__compute_geo_window__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">match</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">geo_window</span><span class="o">.</span><span class="n">window_type</span><span class="p">:</span>
+            <span class="k">case</span> <span class="n">WindowTypes</span><span class="o">.</span><span class="n">TOWN</span><span class="p">:</span>
+                <span class="n">town</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__compute_geo_window_town__</span><span class="p">()</span>
+
+                <span class="n">town_bounds</span> <span class="o">=</span> <span class="n">town</span><span class="o">.</span><span class="n">geometry</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">bounds</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">geo_window</span> <span class="o">=</span> <span class="n">GeoWindow</span><span class="o">.</span><span class="n">from_square</span><span class="p">(</span>
+                    <span class="n">x_min</span><span class="o">=</span><span class="n">town_bounds</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                    <span class="n">x_max</span><span class="o">=</span><span class="n">town_bounds</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+                    <span class="n">y_min</span><span class="o">=</span><span class="n">town_bounds</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                    <span class="n">y_max</span><span class="o">=</span><span class="n">town_bounds</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span>
+                    <span class="n">from_crs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">internal_crs</span><span class="p">,</span>
+                    <span class="n">to_crs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">internal_crs</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="k">case</span> <span class="n">WindowTypes</span><span class="o">.</span><span class="n">FILE</span><span class="p">:</span>
+                <span class="n">file_window</span> <span class="o">=</span> <span class="n">fiona</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">geo_window</span><span class="o">.</span><span class="n">window_shapefile</span><span class="p">)</span>
+                <span class="n">window_crs</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">file_window</span><span class="o">.</span><span class="n">crs</span><span class="o">.</span><span class="n">to_string</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span>
+                <span class="n">file_bounds</span> <span class="o">=</span> <span class="n">file_window</span><span class="o">.</span><span class="n">bounds</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">geo_window</span> <span class="o">=</span> <span class="n">GeoWindow</span><span class="o">.</span><span class="n">from_square</span><span class="p">(</span>
+                    <span class="n">x_min</span><span class="o">=</span><span class="n">file_bounds</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                    <span class="n">x_max</span><span class="o">=</span><span class="n">file_bounds</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+                    <span class="n">y_min</span><span class="o">=</span><span class="n">file_bounds</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                    <span class="n">y_max</span><span class="o">=</span><span class="n">file_bounds</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span>
+                    <span class="n">from_crs</span><span class="o">=</span><span class="n">window_crs</span><span class="p">,</span>
+                    <span class="n">to_crs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">internal_crs</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="k">case</span> <span class="n">WindowTypes</span><span class="o">.</span><span class="n">COORDS</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">geo_window</span><span class="p">:</span> <span class="n">GeoWindow</span> <span class="o">=</span> <span class="n">GeoWindow</span><span class="o">.</span><span class="n">from_square</span><span class="p">(</span>
+                    <span class="n">x_min</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">geo_window</span><span class="o">.</span><span class="n">geo_window</span><span class="o">.</span><span class="n">x_min</span><span class="p">,</span>
+                    <span class="n">x_max</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">geo_window</span><span class="o">.</span><span class="n">geo_window</span><span class="o">.</span><span class="n">x_max</span><span class="p">,</span>
+                    <span class="n">y_min</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">geo_window</span><span class="o">.</span><span class="n">geo_window</span><span class="o">.</span><span class="n">y_min</span><span class="p">,</span>
+                    <span class="n">y_max</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">geo_window</span><span class="o">.</span><span class="n">geo_window</span><span class="o">.</span><span class="n">y_max</span><span class="p">,</span>
+                    <span class="n">from_crs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">geo_window</span><span class="o">.</span><span class="n">geo_window</span><span class="o">.</span><span class="n">crs_from</span><span class="p">,</span>
+                    <span class="n">to_crs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">internal_crs</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="k">case</span><span class="w"> </span><span class="k">_</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;Invalid config: invalid window type: &quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">data_source</span>
+                <span class="p">)</span>
+
+        <span class="n">window_x</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">geo_window</span><span class="o">.</span><span class="n">bounds</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">geo_window</span><span class="o">.</span><span class="n">bounds</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="mi">1000</span>
+        <span class="n">window_y</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">geo_window</span><span class="o">.</span><span class="n">bounds</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">geo_window</span><span class="o">.</span><span class="n">bounds</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">/</span> <span class="mi">1000</span>
+        <span class="n">area</span> <span class="o">=</span> <span class="n">window_x</span> <span class="o">*</span> <span class="n">window_y</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Project name: &quot;</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">project_path</span><span class="p">))</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Box size: &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">window_x</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot; * &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">window_y</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot; = &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">area</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot; km²&quot;</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">area</span> <span class="o">&gt;</span> <span class="n">BaseDriver</span><span class="o">.</span><span class="n">max_allowed_area</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Window too big. Max value allowed is &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">BaseDriver</span><span class="o">.</span><span class="n">max_allowed_area</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot; km²&quot;</span>
+            <span class="p">)</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">__compute_geo_window_town__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">g</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">:</span>
+        <span class="k">pass</span>
+</code></pre></div></td></tr></table></div>
+              </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+</div><h4 id="select_driver">select_driver</h4>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<a id="worldweaver.main.select_driver"></a>
+    <div class="doc doc-contents first">
+
+        <p>Select the driver used for the project based on the data_source of the config.
+:param config: The configuration of the project.
+:param project_path: The path to the project.
+:return: The selected driver.</p>
+
+
+            <details class="quote">
+              <summary>Source code in <code>worldweaver/main.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">212</span>
+<span class="normal">213</span>
+<span class="normal">214</span>
+<span class="normal">215</span>
+<span class="normal">216</span>
+<span class="normal">217</span>
+<span class="normal">218</span>
+<span class="normal">219</span>
+<span class="normal">220</span>
+<span class="normal">221</span>
+<span class="normal">222</span>
+<span class="normal">223</span>
+<span class="normal">224</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">select_driver</span><span class="p">(</span><span class="n">config</span><span class="p">:</span> <span class="n">Config</span><span class="p">,</span> <span class="n">project_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BaseDriver</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Select the driver used for the project based on the data_source of the config.</span>
+<span class="sd">    :param config: The configuration of the project.</span>
+<span class="sd">    :param project_path: The path to the project.</span>
+<span class="sd">    :return: The selected driver.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">data_source</span> <span class="ow">in</span> <span class="n">OSMDriver</span><span class="o">.</span><span class="n">get_supported_sources</span><span class="p">():</span>
+        <span class="k">return</span> <span class="n">OSMDriver</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">project_path</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">config</span><span class="o">.</span><span class="n">data_source</span> <span class="ow">in</span> <span class="n">IGNDriver</span><span class="o">.</span><span class="n">get_supported_sources</span><span class="p">():</span>
+        <span class="k">return</span> <span class="n">IGNDriver</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">project_path</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Unsupported data source in config file:&quot;</span><span class="p">,</span> <span class="n">config</span><span class="o">.</span><span class="n">data_source</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div><h2 id="adding-a-new-object-to-the-blender-scene">Adding a new object to the Blender scene</h2>
+<p>If you want to modify the Blender scene by adding an object, you will need to:</p>
+<ul>
+<li>Determine from which data this object would be created. Depending on the complexity of the task, this could mean just editing currently-existing <code>Preprocessors</code> or also finding a way to load new data inside the <code>Loaders</code>. </li>
+<li>Add a new field to <code>RenderingData</code> and fill it with this new object data. <code>RenderingData</code> also has a validation mecanism to ensure that it's well-constructed and will not pose issues down the line during rendering, so you will have to add validation for your new data as well. Note also that adding fields to <code>RenderingData</code> will break compatibility with the existing drivers if they are not modified.</li>
+<li>Create a new <code>Renderer</code> for your object. Depending on the object there are a few examples that might be a good template inside the <code>Renderers</code> module.</li>
+<li>Reference and instantiate this new <code>Renderer</code> inside the <code>RenderManager</code>, and call the <code>render</code> method of the <code>Renderer</code> using the new data you added to <code>RenderingData</code> </li>
+<li>If you want to use a Blender asset like other objects, you will have to create it. Again, there might be examples that you can draw inspiration from in the <code>Assets</code> folder depending on what you're trying to do.</li>
+<li>If you want your <code>Renderer</code> or your asset to be customizable, you need to add a new block in the <code>RenderingConfig</code>, edit the <code>ConfigLoader</code> so it parses and fills this new block, and add this new block to your json configuration files.</li>
+</ul>
+<h3 id="relevant-documentation_1">Relevant documentation:</h3>
+<h4 id="renderingdata_1">RenderingData</h4>
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<a id="worldweaver.Utils.RenderingDataFrames.RenderingData"></a>
+    <div class="doc doc-contents first">
+
+
+
+
+
+
+
+
+              <details class="quote">
+                <summary>Source code in <code>worldweaver/Utils/RenderingDataFrames.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">308</span>
+<span class="normal">309</span>
+<span class="normal">310</span>
+<span class="normal">311</span>
+<span class="normal">312</span>
+<span class="normal">313</span>
+<span class="normal">314</span>
+<span class="normal">315</span>
+<span class="normal">316</span>
+<span class="normal">317</span>
+<span class="normal">318</span>
+<span class="normal">319</span>
+<span class="normal">320</span>
+<span class="normal">321</span>
+<span class="normal">322</span>
+<span class="normal">323</span>
+<span class="normal">324</span>
+<span class="normal">325</span>
+<span class="normal">326</span>
+<span class="normal">327</span>
+<span class="normal">328</span>
+<span class="normal">329</span>
+<span class="normal">330</span>
+<span class="normal">331</span>
+<span class="normal">332</span>
+<span class="normal">333</span>
+<span class="normal">334</span>
+<span class="normal">335</span>
+<span class="normal">336</span>
+<span class="normal">337</span>
+<span class="normal">338</span>
+<span class="normal">339</span>
+<span class="normal">340</span>
+<span class="normal">341</span>
+<span class="normal">342</span>
+<span class="normal">343</span>
+<span class="normal">344</span>
+<span class="normal">345</span>
+<span class="normal">346</span>
+<span class="normal">347</span>
+<span class="normal">348</span>
+<span class="normal">349</span>
+<span class="normal">350</span>
+<span class="normal">351</span>
+<span class="normal">352</span>
+<span class="normal">353</span>
+<span class="normal">354</span>
+<span class="normal">355</span>
+<span class="normal">356</span>
+<span class="normal">357</span>
+<span class="normal">358</span>
+<span class="normal">359</span>
+<span class="normal">360</span>
+<span class="normal">361</span>
+<span class="normal">362</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">RenderingData</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">forests</span><span class="p">:</span> <span class="n">g</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">,</span>
+        <span class="n">buildings</span><span class="p">:</span> <span class="n">BuildingRenderingData</span><span class="p">,</span>
+        <span class="n">roads</span><span class="p">:</span> <span class="n">g</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">,</span>
+        <span class="n">still_water</span><span class="p">:</span> <span class="n">g</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">,</span>
+        <span class="n">flowing_water</span><span class="p">:</span> <span class="n">g</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">,</span>
+        <span class="n">ocean</span><span class="p">:</span> <span class="n">g</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">,</span>
+        <span class="n">zones</span><span class="p">:</span> <span class="n">ZonesRenderingData</span><span class="p">,</span>
+    <span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">forests</span> <span class="o">=</span> <span class="n">forests</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">buildings</span> <span class="o">=</span> <span class="n">buildings</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">roads</span> <span class="o">=</span> <span class="n">roads</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">still_water</span> <span class="o">=</span> <span class="n">still_water</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">flowing_water</span> <span class="o">=</span> <span class="n">flowing_water</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ocean</span> <span class="o">=</span> <span class="n">ocean</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">zones</span> <span class="o">=</span> <span class="n">zones</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">validate</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="n">is_valid</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="n">is_valid</span> <span class="o">&amp;=</span> <span class="n">RenderingDataFrame</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">forests</span><span class="p">,</span> <span class="s2">&quot;Forest&quot;</span><span class="p">)</span>
+        <span class="n">is_valid</span> <span class="o">&amp;=</span> <span class="n">RenderingBuildingDataFrame</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">buildings</span><span class="o">.</span><span class="n">churches</span><span class="p">,</span> <span class="s2">&quot;Church&quot;</span>
+        <span class="p">)</span>
+        <span class="n">is_valid</span> <span class="o">&amp;=</span> <span class="n">RenderingBuildingDataFrame</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">buildings</span><span class="o">.</span><span class="n">malls</span><span class="p">,</span> <span class="s2">&quot;Mall&quot;</span><span class="p">)</span>
+        <span class="n">is_valid</span> <span class="o">&amp;=</span> <span class="n">RenderingBuildingDataFrame</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">buildings</span><span class="o">.</span><span class="n">factories</span><span class="p">,</span> <span class="s2">&quot;Factory&quot;</span>
+        <span class="p">)</span>
+        <span class="n">is_valid</span> <span class="o">&amp;=</span> <span class="n">RenderingBuildingDataFrame</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">buildings</span><span class="o">.</span><span class="n">houses</span><span class="p">,</span> <span class="s2">&quot;House&quot;</span><span class="p">)</span>
+        <span class="n">is_valid</span> <span class="o">&amp;=</span> <span class="n">RenderingBuildingDataFrame</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">buildings</span><span class="o">.</span><span class="n">default_buildings</span><span class="p">,</span>
+            <span class="s2">&quot;Default Building&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">is_valid</span> <span class="o">&amp;=</span> <span class="n">RenderingRoadDataFrame</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">roads</span><span class="p">,</span> <span class="s2">&quot;Road&quot;</span><span class="p">)</span>
+        <span class="n">is_valid</span> <span class="o">&amp;=</span> <span class="n">RenderingDataFrame</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">still_water</span><span class="p">,</span> <span class="s2">&quot;Still Water&quot;</span><span class="p">)</span>
+        <span class="n">is_valid</span> <span class="o">&amp;=</span> <span class="n">RenderingDataFrame</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">flowing_water</span><span class="p">,</span> <span class="s2">&quot;Flowing Water&quot;</span><span class="p">)</span>
+        <span class="n">is_valid</span> <span class="o">&amp;=</span> <span class="n">RenderingDataFrame</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ocean</span><span class="p">,</span> <span class="s2">&quot;Ocean&quot;</span><span class="p">)</span>
+        <span class="n">is_valid</span> <span class="o">&amp;=</span> <span class="n">RenderingDataFrame</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">zones</span><span class="o">.</span><span class="n">wheatfields</span><span class="p">,</span> <span class="s2">&quot;Wheat Field&quot;</span><span class="p">)</span>
+        <span class="n">is_valid</span> <span class="o">&amp;=</span> <span class="n">RenderingDataFrame</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">zones</span><span class="o">.</span><span class="n">cornfields</span><span class="p">,</span> <span class="s2">&quot;Corn Field&quot;</span><span class="p">)</span>
+        <span class="n">is_valid</span> <span class="o">&amp;=</span> <span class="n">RenderingDataFrame</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">zones</span><span class="o">.</span><span class="n">grass</span><span class="p">,</span> <span class="s2">&quot;Grass&quot;</span><span class="p">)</span>
+        <span class="n">is_valid</span> <span class="o">&amp;=</span> <span class="n">RenderingDataFrame</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">zones</span><span class="o">.</span><span class="n">developed</span><span class="p">,</span> <span class="s2">&quot;Developed&quot;</span><span class="p">)</span>
+        <span class="n">is_valid</span> <span class="o">&amp;=</span> <span class="n">RenderingDataFrame</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">zones</span><span class="o">.</span><span class="n">tartan</span><span class="p">,</span> <span class="s2">&quot;Tartan&quot;</span><span class="p">)</span>
+        <span class="n">is_valid</span> <span class="o">&amp;=</span> <span class="n">RenderingDataFrame</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">zones</span><span class="o">.</span><span class="n">compacted</span><span class="p">,</span> <span class="s2">&quot;Compacted&quot;</span><span class="p">)</span>
+        <span class="n">is_valid</span> <span class="o">&amp;=</span> <span class="n">RenderingDataFrame</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">zones</span><span class="o">.</span><span class="n">asphalt</span><span class="p">,</span> <span class="s2">&quot;Asphalt&quot;</span><span class="p">)</span>
+        <span class="n">is_valid</span> <span class="o">&amp;=</span> <span class="n">RenderingDataFrame</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">zones</span><span class="o">.</span><span class="n">sand</span><span class="p">,</span> <span class="s2">&quot;Sand&quot;</span><span class="p">)</span>
+        <span class="n">is_valid</span> <span class="o">&amp;=</span> <span class="n">RenderingDataFrame</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">zones</span><span class="o">.</span><span class="n">paths</span><span class="p">,</span> <span class="s2">&quot;Path&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">is_valid</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid RenderingData&quot;</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+              </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+</div><h3 id="example-of-an-object-path-factories">Example of an object path: Factories.</h3>
+<p>This section aims to give an example of how an object is processed throughout the software to be rendered in the Blender scene.</p>
+<p>It will focus on a specific kind of building: <code>Factory</code>, which is a term that in the software refers to "buildings that have an industrial nature"</p>
+<h4 id="input-data">Input Data</h4>
+<p>For the IGN Data, buildings are extracted from the <a href="https://geoservices.ign.fr/bdtopo">BD TOPO</a>, either from files or data streams.</p>
+<p>This building data is fetched and stored inside the <code>buildings</code> field of the <code>GeoData</code> object returned by the <code>Loader</code>.</p>
+<p>The <code>GeoData</code> is then passed to the <code>IGNPreprocessor</code>, which holds the rule engine that splits buildings into the various categories recognized by the software.</p>
+<p>In the <code>Factory</code> case, it looks inside the <code>buildings</code> dataframe, particularly inside a column that stores the "usage" of this building, and matches it with a list of tags that indicate the building has an "industrial" nature.</p>
+<p>Then those filtered buildings are stored into the appropriate field of the <code>RenderingData</code> the preprocessor generates.</p>
+<p>For the OSMData, the process is more or less the same, with slight variations due to both data providers not giving a 1:1 feature match.</p>
+<h4 id="rendering">Rendering</h4>
+<p>In order to render <code>Factories</code>, there is a dedicated <code>FactoryRenderer</code>, which inherits from the more general <code>BuildingRenderer</code>.</p>
+<p>This <code>FactoryRenderer</code> is instantiated inside the <code>RenderManager</code> and fed the configuration that it needs (see <a href="#configuration">configuration</a>).</p>
+<p>Then, when the render of the scene happens, the <code>render</code> method of the <code>FactoryRenderer</code> is called to transform the data inside <code>RenderingData</code> into Blender objects.</p>
+<p>In this example, for each dataframe entry, a face representing the building footprint is drawn at the surface of the terrain, and a modifier is placed on the face to transform it into a 3D Building (see <a href="#assets">asset</a>), with a number of levels either taken from the input data or from the configuration (if the input data does not contain this info).</p>
+<h4 id="assets">Assets</h4>
+<p>The asset for <code>Factories</code> is based on <a href="https://paveloliva.gumroad.com/l/buildify">Buildify</a>, and takes the footprint and transforms it into a 3D building.</p>
+<p>The number of levels of the building can be set for each building, or attributed a random value inside a range.</p>
+<h4 id="configuration">Configuration</h4>
+<p>Configuring the rendering of <code>Factories</code> takes a few parameters (example taken from <code>base_config.json</code>):</p>
+<pre><code class="language-json">      ...
+      &quot;factory_render&quot;: {
+        &quot;geometry_node_file&quot;: &quot;Factories.blend&quot;,
+        &quot;geometry_node_name&quot;: &quot;Factories&quot;,
+        &quot;tagging_index&quot;: 6,
+        &quot;default_levels_min&quot;: 2,
+        &quot;default_levels_max&quot;: 5
+      },
+      ...
+</code></pre>
+<p>See <a href="../conf/#objects">configuration documentation</a> for detailed definitions.</p>
+<p>This configuration is parsed by the <code>ConfigLoader</code>, and used to create a <code>BuildingRendererConfig</code> that will be passed to the <code>FactoryRenderer</code>. </p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../flood/" class="btn btn-neutral float-left" title="Flooding algorithm"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../flood/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
